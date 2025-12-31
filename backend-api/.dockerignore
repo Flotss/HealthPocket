@@ -1,0 +1,24 @@
+# Git
+.git
+.gitignore
+
+# Gradle
+.gradle
+build
+
+# IntelliJ / IDE
+.idea
+*.iml
+
+# Logs
+*.log
+
+# Env files
+.env
+.env.*
+
+# OS
+.DS_Store
+
+# Tests (optionnel en prod)
+src/test
