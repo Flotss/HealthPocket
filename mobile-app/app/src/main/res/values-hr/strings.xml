@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App -->
+    <string name="app_name">HealthPocket</string>
+
+    <!-- Navigation -->
+    <string name="nav_home">Početna</string>
+    <string name="nav_medications">Lijekovi</string>
+    <string name="nav_appointments">Termini</string>
+    <string name="nav_journal">Dnevnik</string>
+    <string name="nav_profile">Profil</string>
+
+    <!-- Auth -->
+    <string name="login">Prijava</string>
+    <string name="register">Registracija</string>
+    <string name="login_subtitle">Upravljajte svojim zdravljem svakodnevno</string>
+    <string name="email">Email</string>
+    <string name="password">Lozinka</string>
+    <string name="confirm_password">Potvrdi lozinku</string>
+    <string name="first_name">Ime</string>
+    <string name="last_name">Prezime</string>
+    <string name="no_account_register">Nemate račun? Registrirajte se</string>
+    <string name="already_have_account">Već imate račun? Prijavite se</string>
+    <string name="create_account">Kreiraj račun</string>
+    <string name="passwords_dont_match">Lozinke se ne podudaraju</string>
+
+    <!-- Home -->
+    <string name="welcome_back">Zdravo!</string>
+    <string name="todays_medications">Današnji lijekovi</string>
+    <string name="pending_intakes">%d uzimanja na čekanju</string>
+    <string name="upcoming_appointments">Nadolazeći termini</string>
+    <string name="this_week">Ovaj tjedan</string>
+    <string name="health_journal">Zdravstveni dnevnik</string>
+    <string name="today_logged">Danas zabilježeno</string>
+    <string name="log_today">Zabilježi danas</string>
+    <string name="medications_to_take">Lijekovi za uzimanje</string>
+
+    <!-- Medications -->
+    <string name="medications">Lijekovi</string>
+    <string name="add_medication">Dodaj lijek</string>
+    <string name="medication_name">Naziv lijeka</string>
+    <string name="dosage">Doza</string>
+    <string name="frequency">Učestalost</string>
+    <string name="schedule_time">Raspored</string>
+    <string name="color">Boja</string>
+    <string name="enable_reminders">Omogući podsjetnike</string>
+    <string name="notes">Bilješke</string>
+    <string name="no_medications">Nema lijekova</string>
+    <string name="add_first_medication">Dodajte svoj prvi lijek</string>
+    <string name="delete_medication">Obriši lijek</string>
+    <string name="delete_medication_confirm">Želite li stvarno obrisati %s?</string>
+    <string name="inactive">Neaktivan</string>
+
+    <!-- Appointments -->
+    <string name="appointments">Termini</string>
+    <string name="add_appointment">Dodaj termin</string>
+    <string name="appointment_title">Naslov</string>
+    <string name="doctor_name">Ime liječnika</string>
+    <string name="location">Lokacija</string>
+    <string name="date">Datum</string>
+    <string name="time">Vrijeme</string>
+    <string name="description">Opis</string>
+    <string name="enable_reminder">Omogući podsjetnik</string>
+    <string name="no_appointments">Nema termina</string>
+    <string name="add_first_appointment">Zakazite svoj prvi termin</string>
+    <string name="completed">Završeno</string>
+    <string name="cancelled">Otkazano</string>
+
+    <!-- Journal -->
+    <string name="add_journal_entry">Dodaj unos</string>
+    <string name="how_are_you_feeling">Kako se osjećate?</string>
+    <string name="save_mood">Spremi moje raspoloženje</string>
+    <string name="recent_entries">Nedavni unosi</string>
+    <string name="no_journal_entries">Nema unosa u dnevniku</string>
+    <string name="mood_label">Raspoloženje</string>
+    <string name="energy_level">Razina energije</string>
+    <string name="sleep_quality">Kvaliteta sna</string>
+    <string name="sleep_hours">Sati sna</string>
+
+    <!-- Profile -->
+    <string name="profile">Profil</string>
+    <string name="health_info">Zdravstvene informacije</string>
+    <string name="blood_type">Krvna grupa</string>
+    <string name="allergies">Alergije</string>
+    <string name="emergency_contact">Kontakt za hitne slučajeve</string>
+    <string name="logout">Odjava</string>
+    <string name="logout_confirm">Želite li se stvarno odjaviti?</string>
+
+    <!-- Settings -->
+    <string name="settings">Postavke</string>
+    <string name="appearance">Izgled</string>
+    <string name="dark_mode">Tamni način</string>
+    <string name="language">Jezik</string>
+    <string name="about">O aplikaciji</string>
+    <string name="version">Verzija</string>
+
+    <!-- Common -->
+    <string name="save">Spremi</string>
+    <string name="cancel">Odustani</string>
+    <string name="delete">Obriši</string>
+    <string name="edit">Uredi</string>
+    <string name="loading">Učitavanje…</string>
+    <string name="error">Greška</string>
+    <string name="retry">Pokušaj ponovno</string>
+
+    <!-- Notifications -->
+    <string name="notification_channel_medication">Podsjetnici za lijekove</string>
+    <string name="notification_channel_medication_desc">Obavijesti za uzimanje lijekova</string>
+    <string name="notification_channel_appointment">Podsjetnici za termine</string>
+    <string name="notification_channel_appointment_desc">Obavijesti za medicinske termine</string>
+    <string name="notification_channel_sync">Sinkronizacija</string>
+    <string name="notification_channel_sync_desc">Obavijesti o sinkronizaciji podataka</string>
+</resources>

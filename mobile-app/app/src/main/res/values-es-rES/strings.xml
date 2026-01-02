@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App -->
+    <string name="app_name">HealthPocket</string>
+
+    <!-- Navigation -->
+    <string name="nav_home">Inicio</string>
+    <string name="nav_medications">Medicamentos</string>
+    <string name="nav_appointments">Citas</string>
+    <string name="nav_journal">Diario</string>
+    <string name="nav_profile">Perfil</string>
+
+    <!-- Auth -->
+    <string name="login">Iniciar sesión</string>
+    <string name="register">Registrarse</string>
+    <string name="login_subtitle">Gestiona tu salud diariamente</string>
+    <string name="email">Correo electrónico</string>
+    <string name="password">Contraseña</string>
+    <string name="confirm_password">Confirmar contraseña</string>
+    <string name="first_name">Nombre</string>
+    <string name="last_name">Apellidos</string>
+    <string name="no_account_register">¿No tienes cuenta? Regístrate</string>
+    <string name="already_have_account">¿Ya tienes cuenta? Inicia sesión</string>
+    <string name="create_account">Crear cuenta</string>
+    <string name="passwords_dont_match">Las contraseñas no coinciden</string>
+
+    <!-- Home -->
+    <string name="welcome_back">¡Hola!</string>
+    <string name="todays_medications">Medicamentos de hoy</string>
+    <string name="pending_intakes">%d toma(s) pendiente(s)</string>
+    <string name="upcoming_appointments">Próximas citas</string>
+    <string name="this_week">Esta semana</string>
+    <string name="health_journal">Diario de salud</string>
+    <string name="today_logged">Registrado hoy</string>
+    <string name="log_today">Registrar hoy</string>
+    <string name="medications_to_take">Medicamentos a tomar</string>
+
+    <!-- Medications -->
+    <string name="medications">Medicamentos</string>
+    <string name="add_medication">Añadir medicamento</string>
+    <string name="medication_name">Nombre del medicamento</string>
+    <string name="dosage">Dosis</string>
+    <string name="frequency">Frecuencia</string>
+    <string name="schedule_time">Horario</string>
+    <string name="color">Color</string>
+    <string name="enable_reminders">Activar recordatorios</string>
+    <string name="notes">Notas</string>
+    <string name="no_medications">No hay medicamentos</string>
+    <string name="add_first_medication">Añade tu primer medicamento</string>
+    <string name="delete_medication">Eliminar medicamento</string>
+    <string name="delete_medication_confirm">¿Realmente quieres eliminar %s?</string>
+    <string name="inactive">Inactivo</string>
+
+    <!-- Appointments -->
+    <string name="appointments">Citas</string>
+    <string name="add_appointment">Añadir cita</string>
+    <string name="appointment_title">Título</string>
+    <string name="doctor_name">Nombre del médico</string>
+    <string name="location">Ubicación</string>
+    <string name="date">Fecha</string>
+    <string name="time">Hora</string>
+    <string name="description">Descripción</string>
+    <string name="enable_reminder">Activar recordatorio</string>
+    <string name="no_appointments">No hay citas</string>
+    <string name="add_first_appointment">Programa tu primera cita</string>
+    <string name="completed">Completado</string>
+    <string name="cancelled">Cancelado</string>
+
+    <!-- Journal -->
+    <string name="add_journal_entry">Añadir entrada</string>
+    <string name="how_are_you_feeling">¿Cómo te sientes?</string>
+    <string name="save_mood">Guardar mi estado de ánimo</string>
+    <string name="recent_entries">Entradas recientes</string>
+    <string name="no_journal_entries">No hay entradas en el diario</string>
+    <string name="mood_label">Estado de ánimo</string>
+    <string name="energy_level">Nivel de energía</string>
+    <string name="sleep_quality">Calidad del sueño</string>
+    <string name="sleep_hours">Horas de sueño</string>
+
+    <!-- Profile -->
+    <string name="profile">Perfil</string>
+    <string name="health_info">Información de salud</string>
+    <string name="blood_type">Grupo sanguíneo</string>
+    <string name="allergies">Alergias</string>
+    <string name="emergency_contact">Contacto de emergencia</string>
+    <string name="logout">Cerrar sesión</string>
+    <string name="logout_confirm">¿Realmente quieres cerrar sesión?</string>
+
+    <!-- Settings -->
+    <string name="settings">Ajustes</string>
+    <string name="appearance">Apariencia</string>
+    <string name="dark_mode">Modo oscuro</string>
+    <string name="language">Idioma</string>
+    <string name="about">Acerca de</string>
+    <string name="version">Versión</string>
+
+    <!-- Common -->
+    <string name="save">Guardar</string>
+    <string name="cancel">Cancelar</string>
+    <string name="delete">Eliminar</string>
+    <string name="edit">Editar</string>
+    <string name="loading">Cargando…</string>
+    <string name="error">Error</string>
+    <string name="retry">Reintentar</string>
+
+    <!-- Notifications -->
+    <string name="notification_channel_medication">Recordatorios de medicamentos</string>
+    <string name="notification_channel_medication_desc">Notificaciones para la toma de medicamentos</string>
+    <string name="notification_channel_appointment">Recordatorios de citas</string>
+    <string name="notification_channel_appointment_desc">Notificaciones para citas médicas</string>
+    <string name="notification_channel_sync">Sincronización</string>
+    <string name="notification_channel_sync_desc">Notificaciones de sincronización de datos</string>
+</resources>
