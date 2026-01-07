@@ -1,8 +1,34 @@
 package com.healthpocket.data.remote.api
 
-import com.healthpocket.data.remote.dto.*
+import com.healthpocket.data.remote.dto.AppointmentRequest
+import com.healthpocket.data.remote.dto.AppointmentResponse
+import com.healthpocket.data.remote.dto.AuthResponse
+import com.healthpocket.data.remote.dto.HealthLogRequest
+import com.healthpocket.data.remote.dto.HealthLogResponse
+import com.healthpocket.data.remote.dto.LoginRequest
+import com.healthpocket.data.remote.dto.MedicationIntakeRequest
+import com.healthpocket.data.remote.dto.MedicationIntakeResponse
+import com.healthpocket.data.remote.dto.MedicationRequest
+import com.healthpocket.data.remote.dto.MedicationResponse
+import com.healthpocket.data.remote.dto.RefreshTokenRequest
+import com.healthpocket.data.remote.dto.RegisterRequest
+import com.healthpocket.data.remote.dto.SyncRequest
+import com.healthpocket.data.remote.dto.SyncResponse
+import com.healthpocket.data.remote.dto.TokenResponse
+import com.healthpocket.data.remote.dto.UpdateIntakeStatusRequest
+import com.healthpocket.data.remote.dto.UpdateProfileRequest
+import com.healthpocket.data.remote.dto.UserResponse
+import com.healthpocket.data.remote.dto.VitalMetricRequest
+import com.healthpocket.data.remote.dto.VitalMetricResponse
+import com.healthpocket.data.remote.dto.VitalMetricsSummary
 import retrofit2.Response
-import retrofit2.http.*
+import retrofit2.http.Body
+import retrofit2.http.DELETE
+import retrofit2.http.GET
+import retrofit2.http.POST
+import retrofit2.http.PUT
+import retrofit2.http.Path
+import retrofit2.http.Query
 
 /**
  * Retrofit API interface for HealthPocket backend.

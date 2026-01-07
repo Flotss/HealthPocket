@@ -1,6 +1,11 @@
 package com.healthpocket.data.local.dao
 
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
+import androidx.room.Update
 import com.healthpocket.data.local.entity.MedicationEntity
 import com.healthpocket.data.local.entity.SyncStatus
 import kotlinx.coroutines.flow.Flow
@@ -23,8 +28,8 @@ interface MedicationDao {
     @Query("SELECT * FROM medications WHERE id = :id")
     suspend fun getMedicationByIdSync(id: String): MedicationEntity?
     
-    @Query("SELECT * FROM medications WHERE sync_status = :status")
-    suspend fun getMedicationsBySyncStatus(status: SyncStatus): List<MedicationEntity>
+    @Query("SELECT * FROM medications WHERE server_id = :serverId")
+    suspend fun getMedicationByServerId(serverId: String): MedicationEntity?
     
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(medication: MedicationEntity)

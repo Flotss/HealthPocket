@@ -1,30 +1,47 @@
 package com.healthpocket.ui
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material.icons.filled.CalendarMonth
+import androidx.compose.material.icons.filled.EditNote
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Medication
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
-import androidx.navigation.compose.*
-import com.healthpocket.R
+import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import com.healthpocket.ui.appointments.AddAppointmentScreen
+import com.healthpocket.ui.appointments.AppointmentsScreen
 import com.healthpocket.ui.auth.LoginScreen
 import com.healthpocket.ui.auth.RegisterScreen
 import com.healthpocket.ui.home.HomeScreen
-import com.healthpocket.ui.medications.MedicationsScreen
-import com.healthpocket.ui.medications.AddMedicationScreen
-import com.healthpocket.ui.appointments.AppointmentsScreen
-import com.healthpocket.ui.appointments.AddAppointmentScreen
 import com.healthpocket.ui.journal.JournalScreen
+import com.healthpocket.ui.medications.AddMedicationScreen
+import com.healthpocket.ui.medications.EditMedicationScreen
+import com.healthpocket.ui.medications.MedicationDetailScreen
+import com.healthpocket.ui.medications.MedicationsScreen
+import com.healthpocket.ui.navigation.BottomNavItem
+import com.healthpocket.ui.navigation.NavRoutes
 import com.healthpocket.ui.profile.ProfileScreen
 import com.healthpocket.ui.settings.SettingsScreen
 import com.healthpocket.ui.settings.SettingsViewModel
-import com.healthpocket.ui.navigation.BottomNavItem
-import com.healthpocket.ui.navigation.NavRoutes
 
 /**
  * Main composable for the HealthPocket application.
@@ -49,8 +66,10 @@ fun HealthPocketApp() {
     )
 
     // Check if current route should show bottom nav
-    val showBottomNav = currentDestination?.hierarchy?.any { dest ->
-        bottomNavItems.any { it.route == dest.route }
+    val showBottomNav = currentDestination?.let { dest ->
+        bottomNavItems.any { item -> 
+            dest.hierarchy.any { it.route == item.route } || dest.route == item.route
+        }
     } == true
 
     Scaffold(
@@ -69,14 +88,19 @@ fun HealthPocketApp() {
                                 }
                             },
                             label = { Text(stringResource(item.titleResId)) },
-                            selected = currentDestination?.hierarchy?.any { it.route == item.route } == true,
+                            selected = currentDestination?.let { dest ->
+                                dest.hierarchy.any { it.route == item.route } || dest.route == item.route
+                            } == true,
                             onClick = {
-                                navController.navigate(item.route) {
-                                    popUpTo(navController.graph.findStartDestination().id) {
-                                        saveState = true
+                                val currentRoute = currentDestination?.route
+                                if (currentRoute != item.route) {
+                                    navController.navigate(item.route) {
+                                        popUpTo(navController.graph.findStartDestination().id) {
+                                            saveState = true
+                                        }
+                                        launchSingleTop = true
+                                        restoreState = true
                                     }
-                                    launchSingleTop = true
-                                    restoreState = true
                                 }
                             }
                         )
@@ -117,12 +141,39 @@ fun HealthPocketApp() {
                 )
             }
 
-            // Main routes
+            // Main routes - Home must be first
             composable(NavRoutes.Home.route) {
                 HomeScreen(
                     onNavigateToMedications = { navController.navigate(NavRoutes.Medications.route) },
                     onNavigateToAppointments = { navController.navigate(NavRoutes.Appointments.route) },
                     onNavigateToJournal = { navController.navigate(NavRoutes.Journal.route) }
+                )
+            }
+
+            composable(NavRoutes.AddMedication.route) {
+                AddMedicationScreen(
+                    onNavigateBack = { navController.popBackStack() }
+                )
+            }
+
+            composable(
+                route = NavRoutes.MedicationDetail.route,
+                arguments = listOf(navArgument("medicationId") { type = NavType.StringType })
+            ) {
+                MedicationDetailScreen(
+                    onNavigateBack = { navController.popBackStack() },
+                    onNavigateToEdit = { medicationId ->
+                        navController.navigate(NavRoutes.EditMedication.createRoute(medicationId))
+                    }
+                )
+            }
+
+            composable(
+                route = NavRoutes.EditMedication.route,
+                arguments = listOf(navArgument("medicationId") { type = NavType.StringType })
+            ) {
+                EditMedicationScreen(
+                    onNavigateBack = { navController.popBackStack() }
                 )
             }
 
@@ -132,12 +183,6 @@ fun HealthPocketApp() {
                     onNavigateToMedicationDetail = { medicationId ->
                         navController.navigate(NavRoutes.MedicationDetail.createRoute(medicationId))
                     }
-                )
-            }
-
-            composable(NavRoutes.AddMedication.route) {
-                AddMedicationScreen(
-                    onNavigateBack = { navController.popBackStack() }
                 )
             }
 

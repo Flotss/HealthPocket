@@ -22,12 +22,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.HealthPocket"
-        tools:targetApi="34">
+        tools:targetApi="34"
+        tools:replace="android:name">
 
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:label="@string/app_name"
             android:theme="@style/Theme.HealthPocket">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

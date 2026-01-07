@@ -4,14 +4,25 @@ import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.os.Build
+import androidx.hilt.work.HiltWorkerFactory
+import androidx.work.Configuration
 import dagger.hilt.android.HiltAndroidApp
+import javax.inject.Inject
 
 /**
  * Main Application class for HealthPocket.
- * Initializes Hilt for dependency injection and notification channels.
+ * Initializes Hilt for dependency injection, WorkManager, and notification channels.
  */
 @HiltAndroidApp
-class HealthPocketApplication : Application() {
+class HealthPocketApplication : Application(), Configuration.Provider {
+
+    @Inject
+    lateinit var workerFactory: HiltWorkerFactory
+
+    override val workManagerConfiguration: Configuration
+        get() = Configuration.Builder()
+            .setWorkerFactory(workerFactory)
+            .build()
 
     override fun onCreate() {
         super.onCreate()

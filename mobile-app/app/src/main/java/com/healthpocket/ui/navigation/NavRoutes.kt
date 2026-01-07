@@ -19,6 +19,9 @@ sealed class NavRoutes(val route: String) {
     object MedicationDetail : NavRoutes("medication/{medicationId}") {
         fun createRoute(medicationId: String) = "medication/$medicationId"
     }
+    object EditMedication : NavRoutes("medication/{medicationId}/edit") {
+        fun createRoute(medicationId: String) = "medication/$medicationId/edit"
+    }
     object AddMedication : NavRoutes("medication/add")
     
     object AppointmentDetail : NavRoutes("appointment/{appointmentId}") {

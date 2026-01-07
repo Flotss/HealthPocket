@@ -3,6 +3,7 @@ package com.healthpocket.ui.medications
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.healthpocket.data.repository.MedicationRepository
+import com.healthpocket.ui.theme.AppColors
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -33,7 +34,7 @@ class AddMedicationViewModel @Inject constructor(
         startDate: LocalDate,
         endDate: LocalDate? = null,
         notes: String? = null,
-        color: String = "#4CAF50",
+        color: String = AppColors.MEDICATION_DEFAULT,
         reminderEnabled: Boolean = true
     ) {
         viewModelScope.launch {

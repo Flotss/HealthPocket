@@ -1,6 +1,7 @@
 package com.healthpocket.api.exception
 
 import com.healthpocket.api.dto.ApiError
+import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.FieldError
@@ -12,11 +13,14 @@ import org.springframework.web.context.request.WebRequest
 @RestControllerAdvice
 class GlobalExceptionHandler {
 
+    private val logger = LoggerFactory.getLogger(GlobalExceptionHandler::class.java)
+
     @ExceptionHandler(ResourceNotFoundException::class)
     fun handleResourceNotFoundException(
         ex: ResourceNotFoundException,
         request: WebRequest
     ): ResponseEntity<ApiError> {
+        logger.warn("Resource not found: {}", ex.message)
         val error = ApiError(
             status = HttpStatus.NOT_FOUND.value(),
             error = HttpStatus.NOT_FOUND.reasonPhrase,
@@ -31,6 +35,7 @@ class GlobalExceptionHandler {
         ex: BadRequestException,
         request: WebRequest
     ): ResponseEntity<ApiError> {
+        logger.warn("Bad request: {}", ex.message)
         val error = ApiError(
             status = HttpStatus.BAD_REQUEST.value(),
             error = HttpStatus.BAD_REQUEST.reasonPhrase,
@@ -45,6 +50,7 @@ class GlobalExceptionHandler {
         ex: UnauthorizedException,
         request: WebRequest
     ): ResponseEntity<ApiError> {
+        logger.warn("Unauthorized access: {}", ex.message)
         val error = ApiError(
             status = HttpStatus.UNAUTHORIZED.value(),
             error = HttpStatus.UNAUTHORIZED.reasonPhrase,
@@ -59,6 +65,7 @@ class GlobalExceptionHandler {
         ex: ForbiddenException,
         request: WebRequest
     ): ResponseEntity<ApiError> {
+        logger.warn("Forbidden access: {}", ex.message)
         val error = ApiError(
             status = HttpStatus.FORBIDDEN.value(),
             error = HttpStatus.FORBIDDEN.reasonPhrase,
@@ -73,6 +80,7 @@ class GlobalExceptionHandler {
         ex: ConflictException,
         request: WebRequest
     ): ResponseEntity<ApiError> {
+        logger.warn("Conflict detected: {}", ex.message)
         val error = ApiError(
             status = HttpStatus.CONFLICT.value(),
             error = HttpStatus.CONFLICT.reasonPhrase,
@@ -93,6 +101,8 @@ class GlobalExceptionHandler {
             "$fieldName: $message"
         }
 
+        logger.warn("Validation failed: {}", errors)
+
         val error = ApiError(
             status = HttpStatus.BAD_REQUEST.value(),
             error = HttpStatus.BAD_REQUEST.reasonPhrase,
@@ -107,6 +117,7 @@ class GlobalExceptionHandler {
         ex: IllegalArgumentException,
         request: WebRequest
     ): ResponseEntity<ApiError> {
+        logger.warn("Illegal argument: {}", ex.message)
         val error = ApiError(
             status = HttpStatus.BAD_REQUEST.value(),
             error = HttpStatus.BAD_REQUEST.reasonPhrase,
@@ -121,6 +132,7 @@ class GlobalExceptionHandler {
         ex: Exception,
         request: WebRequest
     ): ResponseEntity<ApiError> {
+        logger.error("Unexpected error occurred", ex)
         val error = ApiError(
             status = HttpStatus.INTERNAL_SERVER_ERROR.value(),
             error = HttpStatus.INTERNAL_SERVER_ERROR.reasonPhrase,
@@ -130,4 +142,3 @@ class GlobalExceptionHandler {
         return ResponseEntity(error, HttpStatus.INTERNAL_SERVER_ERROR)
     }
 }
-

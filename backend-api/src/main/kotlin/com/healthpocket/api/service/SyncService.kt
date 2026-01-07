@@ -1,6 +1,7 @@
 package com.healthpocket.api.service
 
 import com.healthpocket.api.dto.*
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.OffsetDateTime
@@ -16,6 +17,8 @@ class SyncService(
     private val healthLogService: HealthLogService,
     private val vitalMetricService: VitalMetricService
 ) {
+
+    private val logger = LoggerFactory.getLogger(SyncService::class.java)
 
     /**
      * Synchronize data from mobile app.
@@ -35,6 +38,7 @@ class SyncService(
                 medicationService.createMedication(userId, medicationRequest)
                 medicationsUploaded++
             } catch (e: Exception) {
+                logger.error("Failed to sync medication for user $userId. Data: $medicationRequest", e)
                 conflicts++
             }
         }
@@ -44,6 +48,7 @@ class SyncService(
             try {
                 medicationService.createIntake(userId, intakeRequest)
             } catch (e: Exception) {
+                logger.error("Failed to sync medication intake for user $userId. Data: $intakeRequest", e)
                 conflicts++
             }
         }
@@ -54,6 +59,7 @@ class SyncService(
                 appointmentService.createAppointment(userId, appointmentRequest)
                 appointmentsUploaded++
             } catch (e: Exception) {
+                logger.error("Failed to sync appointment for user $userId. Data: $appointmentRequest", e)
                 conflicts++
             }
         }
@@ -64,6 +70,7 @@ class SyncService(
                 healthLogService.createOrUpdateHealthLog(userId, healthLogRequest)
                 healthLogsUploaded++
             } catch (e: Exception) {
+                logger.error("Failed to sync health log for user $userId. Data: $healthLogRequest", e)
                 conflicts++
             }
         }
@@ -74,6 +81,7 @@ class SyncService(
                 vitalMetricService.createVitalMetric(userId, vitalMetricRequest)
                 vitalMetricsUploaded++
             } catch (e: Exception) {
+                logger.error("Failed to sync vital metric for user $userId. Data: $vitalMetricRequest", e)
                 conflicts++
             }
         }
@@ -89,6 +97,7 @@ class SyncService(
             try {
                 medicationService.getIntakesForMedication(userId, medication.id)
             } catch (e: Exception) {
+                logger.error("Failed to fetch intakes for medication ${medication.id}", e)
                 emptyList()
             }
         }
@@ -114,4 +123,3 @@ class SyncService(
         )
     }
 }
-

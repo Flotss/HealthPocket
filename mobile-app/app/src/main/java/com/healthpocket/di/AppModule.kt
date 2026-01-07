@@ -3,7 +3,12 @@ package com.healthpocket.di
 import android.content.Context
 import androidx.room.Room
 import com.healthpocket.data.local.HealthPocketDatabase
-import com.healthpocket.data.local.dao.*
+import com.healthpocket.data.local.dao.AppointmentDao
+import com.healthpocket.data.local.dao.HealthLogDao
+import com.healthpocket.data.local.dao.MedicationDao
+import com.healthpocket.data.local.dao.MedicationIntakeDao
+import com.healthpocket.data.local.dao.UserDao
+import com.healthpocket.data.local.dao.VitalMetricDao
 import com.healthpocket.data.preferences.UserPreferences
 import com.healthpocket.data.remote.ApiConfig
 import com.healthpocket.data.remote.api.HealthPocketApi

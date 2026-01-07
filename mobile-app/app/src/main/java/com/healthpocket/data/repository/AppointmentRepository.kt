@@ -6,7 +6,9 @@ import com.healthpocket.data.local.entity.AppointmentStatus
 import com.healthpocket.data.local.entity.SyncStatus
 import com.healthpocket.data.remote.api.HealthPocketApi
 import com.healthpocket.data.remote.dto.AppointmentRequest
+import com.healthpocket.util.DateTimeUtils
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import java.util.UUID
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -21,19 +23,19 @@ class AppointmentRepository @Inject constructor(
 ) {
 
     fun getAllAppointments(): Flow<List<AppointmentEntity>> {
-        return appointmentDao.getAllAppointments()
+        return appointmentDao.getAllAppointments().distinctUntilChanged()
     }
 
     fun getUpcomingAppointments(): Flow<List<AppointmentEntity>> {
-        return appointmentDao.getUpcomingAppointments(System.currentTimeMillis())
+        return appointmentDao.getUpcomingAppointments(System.currentTimeMillis()).distinctUntilChanged()
     }
 
     fun getAppointmentsInRange(startDate: Long, endDate: Long): Flow<List<AppointmentEntity>> {
-        return appointmentDao.getAppointmentsInRange(startDate, endDate)
+        return appointmentDao.getAppointmentsInRange(startDate, endDate).distinctUntilChanged()
     }
 
     fun getAppointmentById(id: String): Flow<AppointmentEntity?> {
-        return appointmentDao.getAppointmentById(id)
+        return appointmentDao.getAppointmentById(id).distinctUntilChanged()
     }
 
     suspend fun createAppointment(
@@ -99,8 +101,7 @@ class AppointmentRepository @Inject constructor(
                 description = appointment.description,
                 doctorName = appointment.doctorName,
                 location = appointment.location,
-                appointmentDate = java.time.Instant.ofEpochMilli(appointment.appointmentDate)
-                    .atOffset(java.time.ZoneOffset.UTC).toString(),
+                appointmentDate = DateTimeUtils.millisToOffsetDateTimeString(appointment.appointmentDate),
                 durationMinutes = appointment.durationMinutes,
                 reminderMinutesBefore = appointment.reminderMinutesBefore,
                 reminderEnabled = appointment.reminderEnabled,
@@ -131,6 +132,39 @@ class AppointmentRepository @Inject constructor(
 
     suspend fun getPendingAppointments(): List<AppointmentEntity> {
         return appointmentDao.getAppointmentsBySyncStatus(SyncStatus.PENDING)
+    }
+
+    suspend fun syncAppointments() {
+        try {
+            val appointments = api.getAllAppointments().body()
+            appointments?.forEach { serverAppointment ->
+                val localAppointment = appointmentDao.getAppointmentByIdSync(serverAppointment.id)
+                if (localAppointment == null) {
+                    val entity = AppointmentEntity(
+                        id = UUID.randomUUID().toString(),
+                        serverId = serverAppointment.id,
+                        title = serverAppointment.title,
+                        description = serverAppointment.description,
+                        doctorName = serverAppointment.doctorName,
+                        location = serverAppointment.location,
+                        appointmentDate = DateTimeUtils.offsetDateTimeStringToMillis(serverAppointment.appointmentDate),
+                        durationMinutes = serverAppointment.durationMinutes ?: 30,
+                        reminderMinutesBefore = serverAppointment.reminderMinutesBefore ?: 60,
+                        reminderEnabled = serverAppointment.reminderEnabled ?: true,
+                        status = try {
+                            AppointmentStatus.valueOf(serverAppointment.status ?: "SCHEDULED")
+                        } catch (e: Exception) {
+                            AppointmentStatus.SCHEDULED
+                        },
+                        notes = serverAppointment.notes,
+                        syncStatus = SyncStatus.SYNCED
+                    )
+                    appointmentDao.insert(entity)
+                }
+            }
+        } catch (e: Exception) {
+            // Silent fail
+        }
     }
 }
 

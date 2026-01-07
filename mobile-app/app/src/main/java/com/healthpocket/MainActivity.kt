@@ -12,8 +12,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.healthpocket.ui.HealthPocketApp
-import com.healthpocket.ui.theme.HealthPocketTheme
 import com.healthpocket.ui.settings.SettingsViewModel
+import com.healthpocket.ui.theme.HealthPocketTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 /**

@@ -1,7 +1,5 @@
 package com.healthpocket.ui.auth
 
-import com.healthpocket.data.remote.dto.AuthResponse
-import com.healthpocket.data.remote.dto.UserResponse
 import com.healthpocket.data.repository.AuthRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -10,12 +8,13 @@ import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Test
-import org.junit.Assert.*
 import org.mockito.kotlin.mock
-import org.mockito.kotlin.whenever
-import org.mockito.kotlin.any
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class AuthViewModelTest {

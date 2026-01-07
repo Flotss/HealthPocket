@@ -1,58 +1,65 @@
 package com.healthpocket.ui.theme
 
 import androidx.compose.ui.graphics.Color
+import androidx.core.graphics.toColorInt
+
+/**
+ * Helper function to convert hex color string to Compose Color.
+ */
+private fun String.toColor(): Color {
+    return Color(this.toColorInt())
+}
 
 // Primary colors - Teal/Cyan health theme
-val Primary = Color(0xFF00897B)
-val PrimaryLight = Color(0xFF4DB6AC)
-val PrimaryDark = Color(0xFF00695C)
+val Primary = AppColors.PRIMARY.toColor()
+val PrimaryLight = AppColors.PRIMARY_LIGHT.toColor()
+val PrimaryDark = AppColors.PRIMARY_DARK.toColor()
 val OnPrimary = Color.White
 
 // Secondary colors - Warm coral accent
-val Secondary = Color(0xFFFF7043)
-val SecondaryLight = Color(0xFFFFAB91)
-val SecondaryDark = Color(0xFFE64A19)
+val Secondary = AppColors.SECONDARY.toColor()
+val SecondaryLight = AppColors.SECONDARY_LIGHT.toColor()
+val SecondaryDark = AppColors.SECONDARY_DARK.toColor()
 val OnSecondary = Color.White
 
 // Tertiary - Purple for special elements
-val Tertiary = Color(0xFF7E57C2)
-val TertiaryLight = Color(0xFFB39DDB)
+val Tertiary = AppColors.TERTIARY.toColor()
+val TertiaryLight = AppColors.TERTIARY_LIGHT.toColor()
 val OnTertiary = Color.White
 
 // Background colors
-val BackgroundLight = Color(0xFFF5F5F5)
-val BackgroundDark = Color(0xFF121212)
-val SurfaceLight = Color.White
-val SurfaceDark = Color(0xFF1E1E1E)
+val BackgroundLight = AppColors.BACKGROUND_LIGHT.toColor()
+val BackgroundDark = AppColors.BACKGROUND_DARK.toColor()
+val SurfaceLight = AppColors.SURFACE_LIGHT.toColor()
+val SurfaceDark = AppColors.SURFACE_DARK.toColor()
 
 // Status colors
-val Success = Color(0xFF4CAF50)
-val Warning = Color(0xFFFFC107)
-val Error = Color(0xFFE53935)
-val Info = Color(0xFF2196F3)
+val Success = AppColors.SUCCESS.toColor()
+val Warning = AppColors.WARNING.toColor()
+val Error = AppColors.ERROR.toColor()
+val Info = AppColors.INFO.toColor()
 
 // Text colors
-val OnBackgroundLight = Color(0xFF1C1B1F)
-val OnBackgroundDark = Color(0xFFE6E1E5)
-val OnSurfaceLight = Color(0xFF1C1B1F)
-val OnSurfaceDark = Color(0xFFE6E1E5)
+val OnBackgroundLight = AppColors.TEXT_LIGHT.toColor()
+val OnBackgroundDark = AppColors.TEXT_DARK.toColor()
+val OnSurfaceLight = AppColors.TEXT_LIGHT.toColor()
+val OnSurfaceDark = AppColors.TEXT_DARK.toColor()
 
 // Mood colors
-val MoodExcellent = Color(0xFF4CAF50)
-val MoodGood = Color(0xFF8BC34A)
-val MoodNeutral = Color(0xFFFFC107)
-val MoodBad = Color(0xFFFF9800)
-val MoodVeryBad = Color(0xFFE53935)
+val MoodExcellent = AppColors.MOOD_EXCELLENT.toColor()
+val MoodGood = AppColors.MOOD_GOOD.toColor()
+val MoodNeutral = AppColors.MOOD_NEUTRAL.toColor()
+val MoodBad = AppColors.MOOD_BAD.toColor()
+val MoodVeryBad = AppColors.MOOD_VERY_BAD.toColor()
 
 // Medication colors
 val MedicationColors = listOf(
-    Color(0xFF4CAF50), // Green
-    Color(0xFF2196F3), // Blue
-    Color(0xFFF44336), // Red
-    Color(0xFFFF9800), // Orange
-    Color(0xFF9C27B0), // Purple
-    Color(0xFF009688), // Teal
-    Color(0xFFE91E63), // Pink
-    Color(0xFF3F51B5)  // Indigo
+    AppColors.MEDICATION_GREEN.toColor(),
+    AppColors.MEDICATION_BLUE.toColor(),
+    AppColors.MEDICATION_RED.toColor(),
+    AppColors.MEDICATION_ORANGE.toColor(),
+    AppColors.MEDICATION_PURPLE.toColor(),
+    AppColors.MEDICATION_TEAL.toColor(),
+    AppColors.MEDICATION_PINK.toColor(),
+    AppColors.MEDICATION_INDIGO.toColor()
 )
-

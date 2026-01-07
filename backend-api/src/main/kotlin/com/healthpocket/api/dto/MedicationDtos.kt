@@ -1,5 +1,6 @@
 package com.healthpocket.api.dto
 
+import com.fasterxml.jackson.annotation.JsonFormat
 import com.healthpocket.api.model.IntakeStatus
 import com.healthpocket.api.model.Medication
 import com.healthpocket.api.model.MedicationIntake
@@ -28,8 +29,10 @@ data class MedicationRequest(
     val scheduleTimes: List<String>,
 
     @field:NotNull(message = "Start date is required")
+    @field:JsonFormat(pattern = "yyyy-MM-dd")
     val startDate: LocalDate,
 
+    @field:JsonFormat(pattern = "yyyy-MM-dd")
     val endDate: LocalDate? = null,
     val notes: String? = null,
     val color: String = "#4CAF50",
@@ -47,7 +50,9 @@ data class MedicationResponse(
     val dosage: String,
     val frequency: String,
     val scheduleTimes: List<String>,
+    @field:JsonFormat(pattern = "yyyy-MM-dd")
     val startDate: LocalDate,
+    @field:JsonFormat(pattern = "yyyy-MM-dd")
     val endDate: LocalDate?,
     val notes: String?,
     val color: String,
@@ -151,4 +156,3 @@ data class UpdateIntakeStatusRequest(
     val takenTime: OffsetDateTime? = null,
     val notes: String? = null
 )
-

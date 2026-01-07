@@ -8,7 +8,9 @@ import com.healthpocket.data.repository.AuthRepository
 import com.healthpocket.data.repository.HealthLogRepository
 import com.healthpocket.data.repository.MedicationRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.ZoneId
@@ -45,17 +47,40 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun loadHomeData() {
+        syncMedicationsSilently()
+        syncAppointmentsSilently()
+        syncHealthLogsSilently()
+        observeCurrentUser()
+        observeTodaysPendingIntakes()
+        observeMedicationNames()
+        observeUpcomingAppointmentsCount()
+        observeTodayLogExistence()
+    }
+
+    private fun syncMedicationsSilently() {
+        viewModelScope.launch { medicationRepository.syncMedications() }
+    }
+
+    private fun syncAppointmentsSilently() {
+        viewModelScope.launch { appointmentRepository.syncAppointments() }
+    }
+
+    private fun syncHealthLogsSilently() {
+        viewModelScope.launch { healthLogRepository.syncHealthLogs() }
+    }
+
+    private fun observeCurrentUser() {
         viewModelScope.launch {
-            // Load user name
             authRepository.getCurrentUser().collect { user ->
                 _uiState.value = _uiState.value.copy(
                     userName = user?.let { "${it.firstName} ${it.lastName}" } ?: ""
                 )
             }
         }
+    }
 
+    private fun observeTodaysPendingIntakes() {
         viewModelScope.launch {
-            // Load today's pending intakes
             val today = LocalDate.now()
             val startOfDay = today.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
             val endOfDay = today.plusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
@@ -67,26 +92,29 @@ class HomeViewModel @Inject constructor(
                 )
             }
         }
+    }
 
+    private fun observeMedicationNames() {
         viewModelScope.launch {
-            // Load medication names for display
             medicationRepository.getAllMedications().collect { medications ->
                 val names = medications.associate { it.id to it.name }
                 _uiState.value = _uiState.value.copy(medicationNames = names)
             }
         }
+    }
 
+    private fun observeUpcomingAppointmentsCount() {
         viewModelScope.launch {
-            // Load upcoming appointments count
             appointmentRepository.getUpcomingAppointments().collect { appointments ->
                 _uiState.value = _uiState.value.copy(
                     upcomingAppointmentsCount = appointments.size
                 )
             }
         }
+    }
 
+    private fun observeTodayLogExistence() {
         viewModelScope.launch {
-            // Check if today's log exists
             healthLogRepository.getHealthLogByDate(LocalDate.now()).collect { log ->
                 _uiState.value = _uiState.value.copy(
                     todayLogExists = log != null
@@ -96,15 +124,11 @@ class HomeViewModel @Inject constructor(
     }
 
     fun markIntakeAsTaken(intake: MedicationIntakeEntity) {
-        viewModelScope.launch {
-            medicationRepository.markIntakeAsTaken(intake)
-        }
+        viewModelScope.launch { medicationRepository.markIntakeAsTaken(intake) }
     }
 
     fun markIntakeAsSkipped(intake: MedicationIntakeEntity) {
-        viewModelScope.launch {
-            medicationRepository.markIntakeAsSkipped(intake)
-        }
+        viewModelScope.launch { medicationRepository.markIntakeAsSkipped(intake) }
     }
 }
 

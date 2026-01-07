@@ -4,9 +4,9 @@ import com.healthpocket.data.local.dao.UserDao
 import com.healthpocket.data.local.entity.UserEntity
 import com.healthpocket.data.preferences.UserPreferences
 import com.healthpocket.data.remote.api.HealthPocketApi
+import com.healthpocket.data.remote.dto.AuthResponse
 import com.healthpocket.data.remote.dto.LoginRequest
 import com.healthpocket.data.remote.dto.RegisterRequest
-import com.healthpocket.data.remote.dto.AuthResponse
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import javax.inject.Inject
@@ -95,7 +95,7 @@ class AuthRepository @Inject constructor(
                         firstName = userResponse.firstName,
                         lastName = userResponse.lastName,
                         birthDate = userResponse.birthDate?.let { 
-                            java.time.LocalDate.parse(it) 
+                            com.healthpocket.util.DateTimeUtils.parseDateString(it) 
                         },
                         gender = userResponse.gender,
                         bloodType = userResponse.bloodType,
@@ -136,7 +136,7 @@ class AuthRepository @Inject constructor(
             firstName = authResponse.user.firstName,
             lastName = authResponse.user.lastName,
             birthDate = authResponse.user.birthDate?.let { 
-                java.time.LocalDate.parse(it) 
+                com.healthpocket.util.DateTimeUtils.parseDateString(it) 
             },
             gender = authResponse.user.gender,
             bloodType = authResponse.user.bloodType,

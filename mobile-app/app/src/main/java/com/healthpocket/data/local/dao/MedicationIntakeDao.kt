@@ -1,6 +1,11 @@
 package com.healthpocket.data.local.dao
 
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
+import androidx.room.Update
 import com.healthpocket.data.local.entity.IntakeStatus
 import com.healthpocket.data.local.entity.MedicationIntakeEntity
 import com.healthpocket.data.local.entity.SyncStatus

@@ -7,29 +7,29 @@ import com.squareup.moshi.JsonClass
 data class UserResponse(
     val id: String,
     val email: String,
-    @Json(name = "firstName") val firstName: String,
-    @Json(name = "lastName") val lastName: String,
-    @Json(name = "birthDate") val birthDate: String? = null,
+    @field:Json(name = "firstName") val firstName: String,
+    @field:Json(name = "lastName") val lastName: String,
+    @field:Json(name = "birthDate") val birthDate: String? = null,
     val gender: String? = null,
-    @Json(name = "bloodType") val bloodType: String? = null,
+    @field:Json(name = "bloodType") val bloodType: String? = null,
     val allergies: List<String> = emptyList(),
-    @Json(name = "emergencyContactName") val emergencyContactName: String? = null,
-    @Json(name = "emergencyContactPhone") val emergencyContactPhone: String? = null,
-    @Json(name = "preferredLanguage") val preferredLanguage: String = "fr",
-    @Json(name = "darkModeEnabled") val darkModeEnabled: Boolean = false
+    @field:Json(name = "emergencyContactName") val emergencyContactName: String? = null,
+    @field:Json(name = "emergencyContactPhone") val emergencyContactPhone: String? = null,
+    @field:Json(name = "preferredLanguage") val preferredLanguage: String = "fr",
+    @field:Json(name = "darkModeEnabled") val darkModeEnabled: Boolean = false
 )
 
 @JsonClass(generateAdapter = true)
 data class UpdateProfileRequest(
-    @Json(name = "firstName") val firstName: String,
-    @Json(name = "lastName") val lastName: String,
-    @Json(name = "birthDate") val birthDate: String? = null,
+    @field:Json(name = "firstName") val firstName: String,
+    @field:Json(name = "lastName") val lastName: String,
+    @field:Json(name = "birthDate") val birthDate: String? = null,
     val gender: String? = null,
-    @Json(name = "bloodType") val bloodType: String? = null,
+    @field:Json(name = "bloodType") val bloodType: String? = null,
     val allergies: List<String>? = null,
-    @Json(name = "emergencyContactName") val emergencyContactName: String? = null,
-    @Json(name = "emergencyContactPhone") val emergencyContactPhone: String? = null,
-    @Json(name = "preferredLanguage") val preferredLanguage: String? = null,
-    @Json(name = "darkModeEnabled") val darkModeEnabled: Boolean? = null
+    @field:Json(name = "emergencyContactName") val emergencyContactName: String? = null,
+    @field:Json(name = "emergencyContactPhone") val emergencyContactPhone: String? = null,
+    @field:Json(name = "preferredLanguage") val preferredLanguage: String? = null,
+    @field:Json(name = "darkModeEnabled") val darkModeEnabled: Boolean? = null
 )
 

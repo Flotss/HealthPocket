@@ -3,6 +3,7 @@ package com.healthpocket.data.local.entity
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.healthpocket.ui.theme.AppColors
 import java.time.LocalDate
 
 /**
@@ -42,7 +43,7 @@ data class MedicationEntity(
     
     val notes: String? = null,
     
-    val color: String = "#4CAF50",
+    val color: String = AppColors.MEDICATION_DEFAULT,
     
     @ColumnInfo(name = "reminder_enabled")
     val reminderEnabled: Boolean = true,

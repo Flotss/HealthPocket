@@ -1,10 +1,30 @@
 package com.healthpocket.ui.settings
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material.icons.Icons.AutoMirrored.Filled
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.DarkMode
+import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -27,7 +47,7 @@ fun SettingsScreen(
                 title = { Text(stringResource(R.string.settings)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Filled.ArrowBack, contentDescription = "Back")
                     }
                 }
             )
@@ -83,19 +103,19 @@ fun SettingsScreen(
                     LanguageOption(
                         language = "fr",
                         label = "Français",
-                        selected = language == "fr",
+                        currentLanguage = language,
                         onClick = { viewModel.setLanguage("fr") }
                     )
                     LanguageOption(
                         language = "en",
                         label = "English",
-                        selected = language == "en",
+                        currentLanguage = language,
                         onClick = { viewModel.setLanguage("en") }
                     )
                     LanguageOption(
                         language = "es",
                         label = "Español",
-                        selected = language == "es",
+                        currentLanguage = language,
                         onClick = { viewModel.setLanguage("es") }
                     )
                 }
@@ -130,7 +150,7 @@ fun SettingsScreen(
 fun LanguageOption(
     language: String,
     label: String,
-    selected: Boolean,
+    currentLanguage: String,
     onClick: () -> Unit
 ) {
     Row(
@@ -142,7 +162,7 @@ fun LanguageOption(
     ) {
         Text(text = label)
         RadioButton(
-            selected = selected,
+            selected = language == currentLanguage,
             onClick = onClick
         )
     }

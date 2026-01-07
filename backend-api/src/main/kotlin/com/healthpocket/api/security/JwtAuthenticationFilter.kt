@@ -3,6 +3,7 @@ package com.healthpocket.api.security
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
+import org.slf4j.LoggerFactory
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.context.SecurityContextHolder
@@ -13,6 +14,8 @@ import org.springframework.web.filter.OncePerRequestFilter
 class JwtAuthenticationFilter(
     private val jwtTokenProvider: JwtTokenProvider
 ) : OncePerRequestFilter() {
+
+    private val logger = LoggerFactory.getLogger(JwtAuthenticationFilter::class.java)
 
     override fun doFilterInternal(
         request: HttpServletRequest,
@@ -36,6 +39,7 @@ class JwtAuthenticationFilter(
             }
         } catch (e: Exception) {
             // Token invalid or expired - continue without authentication
+            logger.debug("Could not set user authentication in security context", e)
             SecurityContextHolder.clearContext()
         }
 
@@ -59,4 +63,3 @@ data class UserPrincipal(
     val userId: java.util.UUID,
     val email: String
 )
-

@@ -1,7 +1,10 @@
 package com.healthpocket.data.local
 
 import androidx.room.TypeConverter
-import com.healthpocket.data.local.entity.*
+import com.healthpocket.data.local.entity.AppointmentStatus
+import com.healthpocket.data.local.entity.IntakeStatus
+import com.healthpocket.data.local.entity.MetricType
+import com.healthpocket.data.local.entity.SyncStatus
 import java.time.LocalDate
 
 /**

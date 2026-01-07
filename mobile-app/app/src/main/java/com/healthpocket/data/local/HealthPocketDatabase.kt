@@ -3,8 +3,18 @@ package com.healthpocket.data.local
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.healthpocket.data.local.dao.*
-import com.healthpocket.data.local.entity.*
+import com.healthpocket.data.local.dao.AppointmentDao
+import com.healthpocket.data.local.dao.HealthLogDao
+import com.healthpocket.data.local.dao.MedicationDao
+import com.healthpocket.data.local.dao.MedicationIntakeDao
+import com.healthpocket.data.local.dao.UserDao
+import com.healthpocket.data.local.dao.VitalMetricDao
+import com.healthpocket.data.local.entity.AppointmentEntity
+import com.healthpocket.data.local.entity.HealthLogEntity
+import com.healthpocket.data.local.entity.MedicationEntity
+import com.healthpocket.data.local.entity.MedicationIntakeEntity
+import com.healthpocket.data.local.entity.UserEntity
+import com.healthpocket.data.local.entity.VitalMetricEntity
 
 /**
  * Main Room database for the HealthPocket application.

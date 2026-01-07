@@ -6,9 +6,8 @@ import com.healthpocket.data.local.entity.SyncStatus
 import com.healthpocket.data.local.entity.VitalMetricEntity
 import com.healthpocket.data.remote.api.HealthPocketApi
 import com.healthpocket.data.remote.dto.VitalMetricRequest
+import com.healthpocket.util.DateTimeUtils
 import kotlinx.coroutines.flow.Flow
-import java.time.Instant
-import java.time.ZoneOffset
 import java.util.UUID
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -85,8 +84,7 @@ class VitalMetricRepository @Inject constructor(
                 value = metric.value,
                 secondaryValue = metric.secondaryValue,
                 unit = metric.unit,
-                measuredAt = Instant.ofEpochMilli(metric.measuredAt)
-                    .atOffset(ZoneOffset.UTC).toString(),
+                measuredAt = DateTimeUtils.millisToOffsetDateTimeString(metric.measuredAt),
                 notes = metric.notes,
                 localId = metric.id
             )
@@ -109,19 +107,6 @@ class VitalMetricRepository @Inject constructor(
 
     suspend fun getPendingVitalMetrics(): List<VitalMetricEntity> {
         return vitalMetricDao.getVitalMetricsBySyncStatus(SyncStatus.PENDING)
-    }
-
-    /**
-     * Get the appropriate unit for a metric type.
-     */
-    fun getUnitForType(type: MetricType): String {
-        return when (type) {
-            MetricType.WEIGHT -> "kg"
-            MetricType.BLOOD_PRESSURE -> "mmHg"
-            MetricType.BLOOD_GLUCOSE -> "mg/dL"
-            MetricType.HEART_RATE -> "bpm"
-            MetricType.TEMPERATURE -> "°C"
-        }
     }
 }
 

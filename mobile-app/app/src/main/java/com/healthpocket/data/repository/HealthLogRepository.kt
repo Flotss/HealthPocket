@@ -5,7 +5,9 @@ import com.healthpocket.data.local.entity.HealthLogEntity
 import com.healthpocket.data.local.entity.SyncStatus
 import com.healthpocket.data.remote.api.HealthPocketApi
 import com.healthpocket.data.remote.dto.HealthLogRequest
+import com.healthpocket.util.DateTimeUtils
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import java.time.LocalDate
 import java.util.UUID
 import javax.inject.Inject
@@ -21,15 +23,15 @@ class HealthLogRepository @Inject constructor(
 ) {
 
     fun getAllHealthLogs(): Flow<List<HealthLogEntity>> {
-        return healthLogDao.getAllHealthLogs()
+        return healthLogDao.getAllHealthLogs().distinctUntilChanged()
     }
 
     fun getRecentHealthLogs(limit: Int = 7): Flow<List<HealthLogEntity>> {
-        return healthLogDao.getRecentHealthLogs(limit)
+        return healthLogDao.getRecentHealthLogs(limit).distinctUntilChanged()
     }
 
     fun getHealthLogByDate(date: LocalDate): Flow<HealthLogEntity?> {
-        return healthLogDao.getHealthLogByDate(date)
+        return healthLogDao.getHealthLogByDate(date).distinctUntilChanged()
     }
 
     suspend fun createOrUpdateHealthLog(
@@ -117,6 +119,32 @@ class HealthLogRepository @Inject constructor(
 
     suspend fun getPendingHealthLogs(): List<HealthLogEntity> {
         return healthLogDao.getHealthLogsBySyncStatus(SyncStatus.PENDING)
+    }
+
+    suspend fun syncHealthLogs() {
+        try {
+            val logs = api.getAllHealthLogs().body()
+            logs?.forEach { serverLog ->
+                val localLog = healthLogDao.getHealthLogByDateSync(DateTimeUtils.parseDateString(serverLog.logDate))
+                if (localLog == null) {
+                    val entity = HealthLogEntity(
+                        id = UUID.randomUUID().toString(),
+                        serverId = serverLog.id,
+                        logDate = DateTimeUtils.parseDateString(serverLog.logDate),
+                        mood = serverLog.mood,
+                        energyLevel = serverLog.energyLevel,
+                        sleepQuality = serverLog.sleepQuality,
+                        sleepHours = serverLog.sleepHours,
+                        symptoms = serverLog.symptoms?.joinToString(","),
+                        notes = serverLog.notes,
+                        syncStatus = SyncStatus.SYNCED
+                    )
+                    healthLogDao.insert(entity)
+                }
+            }
+        } catch (e: Exception) {
+            // Silent fail
+        }
     }
 }
 

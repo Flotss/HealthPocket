@@ -82,6 +82,7 @@ dependencies {
     // Room Database
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
+    implementation(libs.identity.jvm)
     ksp(libs.androidx.room.compiler)
 
     // Retrofit + OkHttp
@@ -109,6 +110,8 @@ dependencies {
 
     // WorkManager
     implementation(libs.androidx.work.runtime.ktx)
+    implementation(libs.hilt.work)
+    ksp(libs.hilt.work.compiler)
 
     // Coil
     implementation(libs.coil.compose)

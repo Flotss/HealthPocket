@@ -1,5 +1,6 @@
 package com.healthpocket.data.remote.dto
 
+import com.healthpocket.ui.theme.AppColors
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
@@ -8,14 +9,14 @@ data class MedicationRequest(
     val name: String,
     val dosage: String,
     val frequency: String,
-    @Json(name = "scheduleTimes") val scheduleTimes: List<String>,
-    @Json(name = "startDate") val startDate: String,
-    @Json(name = "endDate") val endDate: String? = null,
+    @field:Json(name = "scheduleTimes") val scheduleTimes: List<String>,
+    @field:Json(name = "startDate") val startDate: String,
+    @field:Json(name = "endDate") val endDate: String? = null,
     val notes: String? = null,
-    val color: String = "#4CAF50",
-    @Json(name = "reminderEnabled") val reminderEnabled: Boolean = true,
-    @Json(name = "isActive") val isActive: Boolean = true,
-    @Json(name = "localId") val localId: String? = null
+    val color: String = AppColors.MEDICATION_DEFAULT,
+    @field:Json(name = "reminderEnabled") val reminderEnabled: Boolean = true,
+    @field:Json(name = "isActive") val isActive: Boolean = true,
+    @field:Json(name = "localId") val localId: String? = null
 )
 
 @JsonClass(generateAdapter = true)
@@ -24,47 +25,47 @@ data class MedicationResponse(
     val name: String,
     val dosage: String,
     val frequency: String,
-    @Json(name = "scheduleTimes") val scheduleTimes: List<String>,
-    @Json(name = "startDate") val startDate: String,
-    @Json(name = "endDate") val endDate: String? = null,
+    @field:Json(name = "scheduleTimes") val scheduleTimes: List<String>,
+    @field:Json(name = "startDate") val startDate: String,
+    @field:Json(name = "endDate") val endDate: String? = null,
     val notes: String? = null,
     val color: String,
-    @Json(name = "reminderEnabled") val reminderEnabled: Boolean,
-    @Json(name = "isActive") val isActive: Boolean,
-    @Json(name = "syncStatus") val syncStatus: String,
-    @Json(name = "localId") val localId: String? = null,
-    @Json(name = "createdAt") val createdAt: String,
-    @Json(name = "updatedAt") val updatedAt: String
+    @field:Json(name = "reminderEnabled") val reminderEnabled: Boolean,
+    @field:Json(name = "isActive") val isActive: Boolean,
+    @field:Json(name = "syncStatus") val syncStatus: String,
+    @field:Json(name = "localId") val localId: String? = null,
+    @field:Json(name = "createdAt") val createdAt: String,
+    @field:Json(name = "updatedAt") val updatedAt: String
 )
 
 @JsonClass(generateAdapter = true)
 data class MedicationIntakeRequest(
-    @Json(name = "medicationId") val medicationId: String,
-    @Json(name = "scheduledTime") val scheduledTime: String,
-    @Json(name = "takenTime") val takenTime: String? = null,
+    @field:Json(name = "medicationId") val medicationId: String,
+    @field:Json(name = "scheduledTime") val scheduledTime: String,
+    @field:Json(name = "takenTime") val takenTime: String? = null,
     val status: String = "PENDING",
     val notes: String? = null,
-    @Json(name = "localId") val localId: String? = null
+    @field:Json(name = "localId") val localId: String? = null
 )
 
 @JsonClass(generateAdapter = true)
 data class MedicationIntakeResponse(
     val id: String,
-    @Json(name = "medicationId") val medicationId: String,
-    @Json(name = "scheduledTime") val scheduledTime: String,
-    @Json(name = "takenTime") val takenTime: String? = null,
+    @field:Json(name = "medicationId") val medicationId: String,
+    @field:Json(name = "scheduledTime") val scheduledTime: String,
+    @field:Json(name = "takenTime") val takenTime: String? = null,
     val status: String,
     val notes: String? = null,
-    @Json(name = "syncStatus") val syncStatus: String,
-    @Json(name = "localId") val localId: String? = null,
-    @Json(name = "createdAt") val createdAt: String,
-    @Json(name = "updatedAt") val updatedAt: String
+    @field:Json(name = "syncStatus") val syncStatus: String,
+    @field:Json(name = "localId") val localId: String? = null,
+    @field:Json(name = "createdAt") val createdAt: String,
+    @field:Json(name = "updatedAt") val updatedAt: String
 )
 
 @JsonClass(generateAdapter = true)
 data class UpdateIntakeStatusRequest(
     val status: String,
-    @Json(name = "takenTime") val takenTime: String? = null,
+    @field:Json(name = "takenTime") val takenTime: String? = null,
     val notes: String? = null
 )
 
