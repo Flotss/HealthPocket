@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- App -->
-    <string name="app_name">HealthPocket</string>
 
     <!-- Navigation -->
     <string name="nav_home">Početna</string>
@@ -39,17 +38,52 @@
     <string name="medications">Lijekovi</string>
     <string name="add_medication">Dodaj lijek</string>
     <string name="medication_name">Naziv lijeka</string>
+    <string name="medication_detail">Detalji lijeka</string>
+    <string name="edit_medication">Uredi lijek</string>
     <string name="dosage">Doza</string>
+    <string name="dosage_information">Informacije o dozi</string>
     <string name="frequency">Učestalost</string>
+    <string name="schedule">Raspored</string>
     <string name="schedule_time">Raspored</string>
+    <string name="start_date">Datum početka</string>
+    <string name="end_date">Datum završetka</string>
     <string name="color">Boja</string>
     <string name="enable_reminders">Omogući podsjetnike</string>
+    <string name="reminders">Podsjetnici</string>
+    <string name="enabled">Omogućeno</string>
+    <string name="disabled">Onemogućeno</string>
     <string name="notes">Bilješke</string>
     <string name="no_medications">Nema lijekova</string>
     <string name="add_first_medication">Dodajte svoj prvi lijek</string>
     <string name="delete_medication">Obriši lijek</string>
     <string name="delete_medication_confirm">Želite li stvarno obrisati %s?</string>
+    <string name="active">Aktivan</string>
     <string name="inactive">Neaktivan</string>
+    <string name="activate">Aktiviraj</string>
+    <string name="deactivate">Deaktiviraj</string>
+    <string name="dosage_example">npr.: 500mg, 2 tablete</string>
+    <string name="frequency_example">npr.: 3 puta dnevno</string>
+    <string name="time_format">HH:mm</string>
+    <string name="time_example">14:00</string>
+    <string name="no_reminders_add_one">Nema podsjetnika. Dodajte jedan.</string>
+    <string name="add_reminder">Dodaj podsjetnik</string>
+    <string name="reminder">Podsjetnik</string>
+    <string name="days_of_week">Dani u tjednu</string>
+    <string name="times">Vremena</string>
+    <string name="add_time">Dodaj vrijeme</string>
+    <string name="select_time">Odaberite vrijeme</string>
+    <string name="hour">Sat</string>
+    <string name="minute">Minuta</string>
+    <string name="confirm">Potvrdi</string>
+    <string name="monday_short">Pon</string>
+    <string name="tuesday_short">Uto</string>
+    <string name="wednesday_short">Sri</string>
+    <string name="thursday_short">Čet</string>
+    <string name="friday_short">Pet</string>
+    <string name="saturday_short">Sub</string>
+    <string name="sunday_short">Ned</string>
+    <string name="select_all_days">Odaberi sve dane</string>
+    <string name="deselect_all_days">Poništi sve</string>
 
     <!-- Appointments -->
     <string name="appointments">Termini</string>

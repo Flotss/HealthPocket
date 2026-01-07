@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- App -->
-    <string name="app_name">HealthPocket</string>
 
     <!-- Navigation -->
     <string name="nav_home">Home</string>
@@ -39,17 +38,52 @@
     <string name="medications">Medications</string>
     <string name="add_medication">Add medication</string>
     <string name="medication_name">Medication name</string>
+    <string name="medication_detail">Medication detail</string>
+    <string name="edit_medication">Edit medication</string>
     <string name="dosage">Dosage</string>
+    <string name="dosage_information">Dosage information</string>
     <string name="frequency">Frequency</string>
-    <string name="schedule_time">Schedule</string>
+    <string name="schedule">Schedule</string>
+    <string name="schedule_time">Schedule time</string>
+    <string name="start_date">Start date</string>
+    <string name="end_date">End date</string>
     <string name="color">Color</string>
     <string name="enable_reminders">Enable reminders</string>
+    <string name="reminders">Reminders</string>
+    <string name="enabled">Enabled</string>
+    <string name="disabled">Disabled</string>
     <string name="notes">Notes</string>
     <string name="no_medications">No medications</string>
     <string name="add_first_medication">Add your first medication</string>
     <string name="delete_medication">Delete medication</string>
     <string name="delete_medication_confirm">Do you really want to delete %s?</string>
+    <string name="active">Active</string>
     <string name="inactive">Inactive</string>
+    <string name="activate">Activate</string>
+    <string name="deactivate">Deactivate</string>
+    <string name="dosage_example">e.g.: 500mg, 2 tablets</string>
+    <string name="frequency_example">e.g.: 3 times a day</string>
+    <string name="time_format">HH:mm</string>
+    <string name="time_example">2:00 PM</string>
+    <string name="no_reminders_add_one">No reminders. Please add one.</string>
+    <string name="add_reminder">Add reminder</string>
+    <string name="reminder">Reminder</string>
+    <string name="days_of_week">Days of week</string>
+    <string name="times">Times</string>
+    <string name="add_time">Add time</string>
+    <string name="select_time">Select time</string>
+    <string name="hour">Hour</string>
+    <string name="minute">Minute</string>
+    <string name="confirm">Confirm</string>
+    <string name="monday_short">Mon</string>
+    <string name="tuesday_short">Tue</string>
+    <string name="wednesday_short">Wed</string>
+    <string name="thursday_short">Thu</string>
+    <string name="friday_short">Fri</string>
+    <string name="saturday_short">Sat</string>
+    <string name="sunday_short">Sun</string>
+    <string name="select_all_days">Select all days</string>
+    <string name="deselect_all_days">Deselect all</string>
 
     <!-- Appointments -->
     <string name="appointments">Appointments</string>

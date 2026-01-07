@@ -1,148 +1,148 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- App -->
-    <string name="app_name">HealthPocket</string>
+    <string name="app_name" translatable="false">HealthPocket</string>
 
     <!-- Navigation -->
-    <string name="nav_home">Accueil</string>
-    <string name="nav_medications">Médicaments</string>
-    <string name="nav_appointments">Rendez-vous</string>
+    <string name="nav_home">Home</string>
+    <string name="nav_medications">Medications</string>
+    <string name="nav_appointments">Appointments</string>
     <string name="nav_journal">Journal</string>
-    <string name="nav_profile">Profil</string>
+    <string name="nav_profile">Profile</string>
 
     <!-- Auth -->
-    <string name="login">Connexion</string>
-    <string name="register">S\'inscrire</string>
-    <string name="login_subtitle">Gérez votre santé au quotidien</string>
+    <string name="login">Login</string>
+    <string name="register">Sign up</string>
+    <string name="login_subtitle">Manage your health daily</string>
     <string name="email">Email</string>
-    <string name="password">Mot de passe</string>
-    <string name="confirm_password">Confirmer le mot de passe</string>
-    <string name="first_name">Prénom</string>
-    <string name="last_name">Nom</string>
-    <string name="no_account_register">Pas encore de compte ? S\'inscrire</string>
-    <string name="already_have_account">Déjà un compte ? Se connecter</string>
-    <string name="create_account">Créer un compte</string>
-    <string name="passwords_dont_match">Les mots de passe ne correspondent pas</string>
+    <string name="password">Password</string>
+    <string name="confirm_password">Confirm password</string>
+    <string name="first_name">First name</string>
+    <string name="last_name">Last name</string>
+    <string name="no_account_register">Don\'t have an account? Sign up</string>
+    <string name="already_have_account">Already have an account? Sign in</string>
+    <string name="create_account">Create account</string>
+    <string name="passwords_dont_match">Passwords don\'t match</string>
 
     <!-- Home -->
-    <string name="welcome_back">Bonjour !</string>
-    <string name="todays_medications">Médicaments du jour</string>
-    <string name="pending_intakes">%d prise(s) en attente</string>
-    <string name="upcoming_appointments">Prochains rendez-vous</string>
-    <string name="this_week">Cette semaine</string>
-    <string name="health_journal">Journal santé</string>
-    <string name="today_logged">Aujourd\'hui enregistré</string>
-    <string name="log_today">Enregistrer aujourd\'hui</string>
-    <string name="medications_to_take">Médicaments à prendre</string>
+    <string name="welcome_back">Hello!</string>
+    <string name="todays_medications">Today\'s medications</string>
+    <string name="pending_intakes">%d intake(s) pending</string>
+    <string name="upcoming_appointments">Upcoming appointments</string>
+    <string name="this_week">This week</string>
+    <string name="health_journal">Health journal</string>
+    <string name="today_logged">Logged today</string>
+    <string name="log_today">Log today</string>
+    <string name="medications_to_take">Medications to take</string>
 
     <!-- Medications -->
-    <string name="medications">Médicaments</string>
-    <string name="add_medication">Ajouter un médicament</string>
-    <string name="medication_name">Nom du médicament</string>
-    <string name="medication_detail">Détail du médicament</string>
-    <string name="edit_medication">Modifier le médicament</string>
-    <string name="dosage">Posologie</string>
-    <string name="dosage_information">Informations de posologie</string>
-    <string name="frequency">Fréquence</string>
-    <string name="schedule">Horaire</string>
-    <string name="schedule_time">Horaires</string>
-    <string name="start_date">Date de début</string>
-    <string name="end_date">Date de fin</string>
-    <string name="color">Couleur</string>
-    <string name="enable_reminders">Activer les rappels</string>
-    <string name="reminders">Rappels</string>
-    <string name="enabled">Activé</string>
-    <string name="disabled">Désactivé</string>
+    <string name="medications">Medications</string>
+    <string name="add_medication">Add medication</string>
+    <string name="medication_name">Medication name</string>
+    <string name="medication_detail">Medication detail</string>
+    <string name="edit_medication">Edit medication</string>
+    <string name="dosage">Dosage</string>
+    <string name="dosage_information">Dosage information</string>
+    <string name="frequency">Frequency</string>
+    <string name="schedule">Schedule</string>
+    <string name="schedule_time">Schedule time</string>
+    <string name="start_date">Start date</string>
+    <string name="end_date">End date</string>
+    <string name="color">Color</string>
+    <string name="enable_reminders">Enable reminders</string>
+    <string name="reminders">Reminders</string>
+    <string name="enabled">Enabled</string>
+    <string name="disabled">Disabled</string>
     <string name="notes">Notes</string>
-    <string name="no_medications">Aucun médicament</string>
-    <string name="add_first_medication">Ajouter votre premier médicament</string>
-    <string name="delete_medication">Supprimer le médicament</string>
-    <string name="delete_medication_confirm">Voulez-vous vraiment supprimer %s ?</string>
-    <string name="active">Actif</string>
-    <string name="inactive">Inactif</string>
-    <string name="activate">Activer</string>
-    <string name="deactivate">Désactiver</string>
-    <string name="dosage_example">ex: 500mg, 2 comprimés</string>
-    <string name="frequency_example">ex: 3 fois par jour</string>
+    <string name="no_medications">No medications</string>
+    <string name="add_first_medication">Add your first medication</string>
+    <string name="delete_medication">Delete medication</string>
+    <string name="delete_medication_confirm">Do you really want to delete %s?</string>
+    <string name="active">Active</string>
+    <string name="inactive">Inactive</string>
+    <string name="activate">Activate</string>
+    <string name="deactivate">Deactivate</string>
+    <string name="dosage_example">e.g.: 500mg, 2 tablets</string>
+    <string name="frequency_example">e.g.: 3 times a day</string>
     <string name="time_format">HH:mm</string>
-    <string name="time_example">14:00</string>
-    <string name="no_reminders_add_one">Aucun rappel. Veuillez en ajouter un.</string>
-    <string name="add_reminder">Ajouter un rappel</string>
-    <string name="reminder">Rappel</string>
-    <string name="days_of_week">Jours de la semaine</string>
-    <string name="times">Heures</string>
-    <string name="add_time">Ajouter une heure</string>
-    <string name="select_time">Sélectionner l\'heure</string>
-    <string name="hour">Heure</string>
+    <string name="time_example">2:00 PM</string>
+    <string name="no_reminders_add_one">No reminders. Please add one.</string>
+    <string name="add_reminder">Add reminder</string>
+    <string name="reminder">Reminder</string>
+    <string name="days_of_week">Days of week</string>
+    <string name="times">Times</string>
+    <string name="add_time">Add time</string>
+    <string name="select_time">Select time</string>
+    <string name="hour">Hour</string>
     <string name="minute">Minute</string>
-    <string name="confirm">Confirmer</string>
-    <string name="monday_short">Lun</string>
-    <string name="tuesday_short">Mar</string>
-    <string name="wednesday_short">Mer</string>
-    <string name="thursday_short">Jeu</string>
-    <string name="friday_short">Ven</string>
-    <string name="saturday_short">Sam</string>
-    <string name="sunday_short">Dim</string>
-    <string name="select_all_days">Sélectionner tous les jours</string>
-    <string name="deselect_all_days">Tout désélectionner</string>
+    <string name="confirm">Confirm</string>
+    <string name="monday_short">Mon</string>
+    <string name="tuesday_short">Tue</string>
+    <string name="wednesday_short">Wed</string>
+    <string name="thursday_short">Thu</string>
+    <string name="friday_short">Fri</string>
+    <string name="saturday_short">Sat</string>
+    <string name="sunday_short">Sun</string>
+    <string name="select_all_days">Select all days</string>
+    <string name="deselect_all_days">Deselect all</string>
 
     <!-- Appointments -->
-    <string name="appointments">Rendez-vous</string>
-    <string name="add_appointment">Ajouter un rendez-vous</string>
-    <string name="appointment_title">Titre</string>
-    <string name="doctor_name">Nom du médecin</string>
-    <string name="location">Lieu</string>
+    <string name="appointments">Appointments</string>
+    <string name="add_appointment">Add appointment</string>
+    <string name="appointment_title">Title</string>
+    <string name="doctor_name">Doctor name</string>
+    <string name="location">Location</string>
     <string name="date">Date</string>
-    <string name="time">Heure</string>
+    <string name="time">Time</string>
     <string name="description">Description</string>
-    <string name="enable_reminder">Activer le rappel</string>
-    <string name="no_appointments">Aucun rendez-vous</string>
-    <string name="add_first_appointment">Planifier votre premier rendez-vous</string>
-    <string name="completed">Terminé</string>
-    <string name="cancelled">Annulé</string>
+    <string name="enable_reminder">Enable reminder</string>
+    <string name="no_appointments">No appointments</string>
+    <string name="add_first_appointment">Schedule your first appointment</string>
+    <string name="completed">Completed</string>
+    <string name="cancelled">Cancelled</string>
 
     <!-- Journal -->
-    <string name="add_journal_entry">Ajouter une entrée</string>
-    <string name="how_are_you_feeling">Comment vous sentez-vous ?</string>
-    <string name="save_mood">Enregistrer mon humeur</string>
-    <string name="recent_entries">Entrées récentes</string>
-    <string name="no_journal_entries">Aucune entrée de journal</string>
-    <string name="mood_label">Humeur</string>
-    <string name="energy_level">Niveau d\'énergie</string>
-    <string name="sleep_quality">Qualité du sommeil</string>
-    <string name="sleep_hours">Heures de sommeil</string>
+    <string name="add_journal_entry">Add entry</string>
+    <string name="how_are_you_feeling">How are you feeling?</string>
+    <string name="save_mood">Save my mood</string>
+    <string name="recent_entries">Recent entries</string>
+    <string name="no_journal_entries">No journal entries</string>
+    <string name="mood_label">Mood</string>
+    <string name="energy_level">Energy level</string>
+    <string name="sleep_quality">Sleep quality</string>
+    <string name="sleep_hours">Sleep hours</string>
 
     <!-- Profile -->
-    <string name="profile">Profil</string>
-    <string name="health_info">Informations de santé</string>
-    <string name="blood_type">Groupe sanguin</string>
+    <string name="profile">Profile</string>
+    <string name="health_info">Health information</string>
+    <string name="blood_type">Blood type</string>
     <string name="allergies">Allergies</string>
-    <string name="emergency_contact">Contact d\'urgence</string>
-    <string name="logout">Déconnexion</string>
-    <string name="logout_confirm">Voulez-vous vraiment vous déconnecter ?</string>
+    <string name="emergency_contact">Emergency contact</string>
+    <string name="logout">Logout</string>
+    <string name="logout_confirm">Do you really want to logout?</string>
 
     <!-- Settings -->
-    <string name="settings">Paramètres</string>
-    <string name="appearance">Apparence</string>
-    <string name="dark_mode">Mode sombre</string>
-    <string name="language">Langue</string>
-    <string name="about">À propos</string>
+    <string name="settings">Settings</string>
+    <string name="appearance">Appearance</string>
+    <string name="dark_mode">Dark mode</string>
+    <string name="language">Language</string>
+    <string name="about">About</string>
     <string name="version">Version</string>
 
     <!-- Common -->
-    <string name="save">Enregistrer</string>
-    <string name="cancel">Annuler</string>
-    <string name="delete">Supprimer</string>
-    <string name="edit">Modifier</string>
-    <string name="loading">Chargement…</string>
-    <string name="error">Erreur</string>
-    <string name="retry">Réessayer</string>
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
+    <string name="delete">Delete</string>
+    <string name="edit">Edit</string>
+    <string name="loading">Loading…</string>
+    <string name="error">Error</string>
+    <string name="retry">Retry</string>
 
     <!-- Notifications -->
-    <string name="notification_channel_medication">Rappels de médicaments</string>
-    <string name="notification_channel_medication_desc">Notifications pour les prises de médicaments</string>
-    <string name="notification_channel_appointment">Rappels de rendez-vous</string>
-    <string name="notification_channel_appointment_desc">Notifications pour les rendez-vous médicaux</string>
-    <string name="notification_channel_sync">Synchronisation</string>
-    <string name="notification_channel_sync_desc">Notifications de synchronisation des données</string>
+    <string name="notification_channel_medication">Medication reminders</string>
+    <string name="notification_channel_medication_desc">Notifications for medication intake</string>
+    <string name="notification_channel_appointment">Appointment reminders</string>
+    <string name="notification_channel_appointment_desc">Notifications for medical appointments</string>
+    <string name="notification_channel_sync">Synchronization</string>
+    <string name="notification_channel_sync_desc">Data synchronization notifications</string>
 </resources>
