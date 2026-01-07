@@ -20,6 +20,9 @@ interface VitalMetricDao {
     @Query("SELECT * FROM vital_metrics ORDER BY measured_at DESC")
     fun getAllVitalMetrics(): Flow<List<VitalMetricEntity>>
     
+    @Query("SELECT * FROM vital_metrics ORDER BY measured_at DESC")
+    suspend fun getAllVitalMetricsAsync(): List<VitalMetricEntity>
+    
     @Query("SELECT * FROM vital_metrics WHERE metric_type = :type ORDER BY measured_at DESC")
     fun getVitalMetricsByType(type: MetricType): Flow<List<VitalMetricEntity>>
     
@@ -34,6 +37,9 @@ interface VitalMetricDao {
     
     @Query("SELECT * FROM vital_metrics WHERE id = :id")
     suspend fun getVitalMetricById(id: String): VitalMetricEntity?
+    
+    @Query("SELECT * FROM vital_metrics WHERE server_id = :serverId")
+    suspend fun getVitalMetricByServerId(serverId: String): VitalMetricEntity?
     
     @Query("SELECT * FROM vital_metrics WHERE sync_status = :status")
     suspend fun getVitalMetricsBySyncStatus(status: SyncStatus): List<VitalMetricEntity>
@@ -55,5 +61,8 @@ interface VitalMetricDao {
     
     @Query("UPDATE vital_metrics SET sync_status = :status WHERE id = :id")
     suspend fun updateSyncStatus(id: String, status: SyncStatus)
+    
+    @Query("UPDATE vital_metrics SET server_id = :serverId, sync_status = :status WHERE id = :localId")
+    suspend fun updateServerIdAndStatus(localId: String, serverId: String, status: SyncStatus)
 }
 

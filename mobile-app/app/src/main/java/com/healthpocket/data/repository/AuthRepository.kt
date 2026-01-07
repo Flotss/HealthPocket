@@ -85,6 +85,11 @@ class AuthRepository @Inject constructor(
     }
 
     suspend fun refreshUserProfile(): Result<Unit> {
+        // Check token expiration before making API call
+        if (!checkTokenExpiration()) {
+            return Result.failure(Exception("Token expired"))
+        }
+        
         return try {
             val response = api.getProfile()
             if (response.isSuccessful) {
@@ -118,7 +123,34 @@ class AuthRepository @Inject constructor(
     }
 
     suspend fun isAuthenticated(): Boolean {
-        return userPreferences.accessToken.first()?.isNotBlank() == true
+        val token = userPreferences.accessToken.first()
+        if (token.isNullOrBlank()) {
+            return false
+        }
+        
+        // Check if token is expired
+        val expirationTimestamp = userPreferences.tokenExpirationTimestamp.first()
+        if (expirationTimestamp != null && System.currentTimeMillis() >= expirationTimestamp) {
+            // Token expired, logout automatically
+            logout()
+            return false
+        }
+        
+        return true
+    }
+
+    /**
+     * Check if the current token is expired and logout if necessary.
+     * Returns true if token is valid, false if expired and logged out.
+     */
+    suspend fun checkTokenExpiration(): Boolean {
+        val expirationTimestamp = userPreferences.tokenExpirationTimestamp.first()
+        if (expirationTimestamp != null && System.currentTimeMillis() >= expirationTimestamp) {
+            // Token expired, logout automatically
+            logout()
+            return false
+        }
+        return true
     }
 
     private suspend fun saveAuthData(authResponse: AuthResponse) {
@@ -126,7 +158,8 @@ class AuthRepository @Inject constructor(
             accessToken = authResponse.accessToken,
             refreshToken = authResponse.refreshToken,
             userId = authResponse.user.id,
-            email = authResponse.user.email
+            email = authResponse.user.email,
+            expiresIn = authResponse.expiresIn
         )
 
         // Save user to local DB

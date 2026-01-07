@@ -58,15 +58,15 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun syncMedicationsSilently() {
-        viewModelScope.launch { medicationRepository.syncMedications() }
+        viewModelScope.launch { medicationRepository.syncAll() }
     }
 
     private fun syncAppointmentsSilently() {
-        viewModelScope.launch { appointmentRepository.syncAppointments() }
+        viewModelScope.launch { appointmentRepository.syncAll() }
     }
 
     private fun syncHealthLogsSilently() {
-        viewModelScope.launch { healthLogRepository.syncHealthLogs() }
+        viewModelScope.launch { healthLogRepository.syncAll() }
     }
 
     private fun observeCurrentUser() {

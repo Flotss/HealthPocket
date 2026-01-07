@@ -1,11 +1,13 @@
 package com.healthpocket.data.repository
 
+import android.util.Log
 import com.healthpocket.data.local.dao.AppointmentDao
 import com.healthpocket.data.local.entity.AppointmentEntity
 import com.healthpocket.data.local.entity.AppointmentStatus
 import com.healthpocket.data.local.entity.SyncStatus
 import com.healthpocket.data.remote.api.HealthPocketApi
 import com.healthpocket.data.remote.dto.AppointmentRequest
+import com.healthpocket.data.remote.dto.AppointmentResponse
 import com.healthpocket.util.DateTimeUtils
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -81,20 +83,28 @@ class AppointmentRepository @Inject constructor(
 
     suspend fun updateAppointmentStatus(id: String, status: AppointmentStatus) {
         appointmentDao.updateStatus(id, status, SyncStatus.PENDING)
+        
+        // Sync status change to server
+        val appointment = appointmentDao.getAppointmentByIdSync(id)
+        appointment?.let { trySync(it) }
     }
 
     suspend fun deleteAppointment(appointment: AppointmentEntity) {
         appointmentDao.delete(appointment)
         appointment.serverId?.let { serverId ->
             try {
+                Log.d("AppointmentRepository", "Syncing deletion for appointment ${appointment.id}")
                 api.deleteAppointment(serverId)
+                Log.d("AppointmentRepository", "Deletion synced for appointment ${appointment.id}")
             } catch (e: Exception) {
+                Log.e("AppointmentRepository", "Deletion sync failed for appointment ${appointment.id}", e)
                 // Ignore network errors
             }
         }
     }
 
     private suspend fun trySync(appointment: AppointmentEntity) {
+        Log.d("AppointmentRepository", "Starting sync for appointment ${appointment.id}")
         try {
             val request = AppointmentRequest(
                 title = appointment.title,
@@ -117,6 +127,7 @@ class AppointmentRepository @Inject constructor(
             }
 
             if (response.isSuccessful) {
+                Log.d("AppointmentRepository", "Sync successful for appointment ${appointment.id}")
                 response.body()?.let { serverAppointment ->
                     val synced = appointment.copy(
                         serverId = serverAppointment.id,
@@ -124,8 +135,12 @@ class AppointmentRepository @Inject constructor(
                     )
                     appointmentDao.update(synced)
                 }
+            } else {
+                Log.e("AppointmentRepository", "Sync failed for appointment ${appointment.id}: ${response.code()}")
+                appointmentDao.updateSyncStatus(appointment.id, SyncStatus.ERROR)
             }
         } catch (e: Exception) {
+            Log.e("AppointmentRepository", "Sync exception for appointment ${appointment.id}", e)
             appointmentDao.updateSyncStatus(appointment.id, SyncStatus.ERROR)
         }
     }
@@ -134,37 +149,168 @@ class AppointmentRepository @Inject constructor(
         return appointmentDao.getAppointmentsBySyncStatus(SyncStatus.PENDING)
     }
 
-    suspend fun syncAppointments() {
+    suspend fun syncAll() {
+        Log.d("AppointmentRepository", "Starting bidirectional sync of appointments")
         try {
-            val appointments = api.getAllAppointments().body()
-            appointments?.forEach { serverAppointment ->
-                val localAppointment = appointmentDao.getAppointmentByIdSync(serverAppointment.id)
-                if (localAppointment == null) {
-                    val entity = AppointmentEntity(
-                        id = UUID.randomUUID().toString(),
-                        serverId = serverAppointment.id,
-                        title = serverAppointment.title,
-                        description = serverAppointment.description,
-                        doctorName = serverAppointment.doctorName,
-                        location = serverAppointment.location,
-                        appointmentDate = DateTimeUtils.offsetDateTimeStringToMillis(serverAppointment.appointmentDate),
-                        durationMinutes = serverAppointment.durationMinutes ?: 30,
-                        reminderMinutesBefore = serverAppointment.reminderMinutesBefore ?: 60,
-                        reminderEnabled = serverAppointment.reminderEnabled ?: true,
-                        status = try {
-                            AppointmentStatus.valueOf(serverAppointment.status ?: "SCHEDULED")
-                        } catch (e: Exception) {
-                            AppointmentStatus.SCHEDULED
-                        },
-                        notes = serverAppointment.notes,
-                        syncStatus = SyncStatus.SYNCED
-                    )
-                    appointmentDao.insert(entity)
+            val serverAppointments = api.getAllAppointments().body() ?: emptyList()
+            val localAppointments = appointmentDao.getAllAppointmentsAsync()
+            
+            mergeAndSync(serverAppointments, localAppointments)
+            
+            Log.d("AppointmentRepository", "Bidirectional sync completed successfully")
+        } catch (e: Exception) {
+            Log.e("AppointmentRepository", "Bidirectional sync failed", e)
+        }
+    }
+    
+    @Deprecated("Use syncAll() for bidirectional sync", ReplaceWith("syncAll()"))
+    suspend fun syncAppointments() {
+        syncAll()
+    }
+    
+    private suspend fun mergeAndSync(
+        serverAppointments: List<AppointmentResponse>,
+        localAppointments: List<AppointmentEntity>
+    ) {
+        val serverById = serverAppointments.associateBy { it.id }
+        val localByServerId = localAppointments
+            .filter { it.serverId != null }
+            .associateBy { it.serverId!! }
+        
+        // Process server appointments
+        serverAppointments.forEach { serverAppointment ->
+            val localMatch = localByServerId[serverAppointment.id]
+            
+            when {
+                localMatch == null -> {
+                    handleNewServerAppointment(serverAppointment)
                 }
+                isServerNewer(serverAppointment.updatedAt, localMatch.updatedAt) -> {
+                    handleServerNewerAppointment(serverAppointment, localMatch)
+                }
+                isLocalNewer(serverAppointment.updatedAt, localMatch.updatedAt) -> {
+                    handleLocalNewerAppointment(serverAppointment, localMatch)
+                }
+                // If timestamps equal, no action needed
+            }
+        }
+        
+        // Process unsynchronized local appointments
+        val unsyncedLocalAppointments = localAppointments.filter { it.serverId == null }
+        unsyncedLocalAppointments.forEach { localAppointment ->
+            pushLocalAppointmentToServer(localAppointment)
+        }
+    }
+    
+    private suspend fun handleNewServerAppointment(serverAppointment: AppointmentResponse) {
+        Log.d("AppointmentRepository", "Adding new appointment from server: ${serverAppointment.id}")
+        val entity = serverAppointment.toEntity()
+        appointmentDao.insert(entity)
+    }
+    
+    private suspend fun handleServerNewerAppointment(
+        serverAppointment: AppointmentResponse,
+        localAppointment: AppointmentEntity
+    ) {
+        Log.d("AppointmentRepository", "Updating local appointment from server: ${serverAppointment.id}")
+        val updatedEntity = serverAppointment.toEntity(localId = localAppointment.id)
+        appointmentDao.update(updatedEntity)
+    }
+    
+    private suspend fun handleLocalNewerAppointment(
+        serverAppointment: AppointmentResponse,
+        localAppointment: AppointmentEntity
+    ) {
+        Log.d("AppointmentRepository", "Updating server with local appointment: ${localAppointment.id}")
+        try {
+            val request = localAppointment.toRequest()
+            val response = api.updateAppointment(serverAppointment.id, request)
+            
+            if (response.isSuccessful) {
+                appointmentDao.updateSyncStatus(localAppointment.id, SyncStatus.SYNCED)
+            } else {
+                Log.e("AppointmentRepository", "Failed to update server appointment: ${response.code()}")
+                appointmentDao.updateSyncStatus(localAppointment.id, SyncStatus.ERROR)
             }
         } catch (e: Exception) {
-            // Silent fail
+            Log.w("AppointmentRepository", "Network error updating appointment to server: ${e.message}")
+            // Keep PENDING status for retry when network returns
         }
+    }
+    
+    private suspend fun pushLocalAppointmentToServer(localAppointment: AppointmentEntity) {
+        Log.d("AppointmentRepository", "Pushing local appointment to server: ${localAppointment.id}")
+        try {
+            val request = localAppointment.toRequest()
+            val response = api.createAppointment(request)
+            
+            if (response.isSuccessful) {
+                response.body()?.let { serverAppointment ->
+                    appointmentDao.updateServerIdAndStatus(
+                        localId = localAppointment.id,
+                        serverId = serverAppointment.id,
+                        status = SyncStatus.SYNCED
+                    )
+                }
+            } else {
+                Log.e("AppointmentRepository", "Failed to create appointment on server: ${response.code()}")
+                appointmentDao.updateSyncStatus(localAppointment.id, SyncStatus.ERROR)
+            }
+        } catch (e: Exception) {
+            Log.w("AppointmentRepository", "Network error pushing appointment to server: ${e.message}")
+            // Keep PENDING status for retry when network returns
+        }
+    }
+    
+    private fun isServerNewer(serverUpdatedAt: String, localUpdatedAt: Long): Boolean {
+        val serverMillis = DateTimeUtils.offsetDateTimeStringToMillis(serverUpdatedAt)
+        return serverMillis > localUpdatedAt
+    }
+    
+    private fun isLocalNewer(serverUpdatedAt: String, localUpdatedAt: Long): Boolean {
+        val serverMillis = DateTimeUtils.offsetDateTimeStringToMillis(serverUpdatedAt)
+        return localUpdatedAt > serverMillis
+    }
+    
+    private fun AppointmentResponse.toEntity(
+        localId: String = UUID.randomUUID().toString()
+    ): AppointmentEntity {
+        return AppointmentEntity(
+            id = localId,
+            serverId = this.id,
+            title = this.title,
+            description = this.description,
+            doctorName = this.doctorName,
+            location = this.location,
+            appointmentDate = DateTimeUtils.offsetDateTimeStringToMillis(this.appointmentDate),
+            durationMinutes = this.durationMinutes,
+            reminderMinutesBefore = this.reminderMinutesBefore,
+            reminderEnabled = this.reminderEnabled,
+            status = try {
+                AppointmentStatus.valueOf(this.status)
+            } catch (e: Exception) {
+                AppointmentStatus.SCHEDULED
+            },
+            notes = this.notes,
+            syncStatus = SyncStatus.SYNCED,
+            updatedAt = DateTimeUtils.offsetDateTimeStringToMillis(this.updatedAt)
+        )
+    }
+    
+    private fun AppointmentEntity.toRequest(): AppointmentRequest {
+        return AppointmentRequest(
+            title = this.title,
+            description = this.description,
+            doctorName = this.doctorName,
+            location = this.location,
+            appointmentDate = DateTimeUtils.millisToOffsetDateTimeString(this.appointmentDate),
+            durationMinutes = this.durationMinutes,
+            reminderMinutesBefore = this.reminderMinutesBefore,
+            reminderEnabled = this.reminderEnabled,
+            status = this.status.name,
+            notes = this.notes,
+            localId = this.id
+        )
     }
 }
 

@@ -14,6 +14,7 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -55,6 +56,15 @@ fun HealthPocketApp() {
     
     val settingsViewModel: SettingsViewModel = hiltViewModel()
     val isLoggedIn by settingsViewModel.isLoggedIn.collectAsState(initial = false)
+
+    // Redirect to login if user becomes logged out (e.g., token expired or invalid)
+    LaunchedEffect(isLoggedIn) {
+        if (!isLoggedIn && currentDestination?.route != NavRoutes.Login.route && currentDestination?.route != NavRoutes.Register.route) {
+            navController.navigate(NavRoutes.Login.route) {
+                popUpTo(0) { inclusive = true }
+            }
+        }
+    }
 
     // Bottom nav items
     val bottomNavItems = listOf(

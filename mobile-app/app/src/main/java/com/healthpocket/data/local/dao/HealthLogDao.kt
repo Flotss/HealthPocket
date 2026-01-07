@@ -20,6 +20,9 @@ interface HealthLogDao {
     @Query("SELECT * FROM health_logs ORDER BY log_date DESC")
     fun getAllHealthLogs(): Flow<List<HealthLogEntity>>
     
+    @Query("SELECT * FROM health_logs ORDER BY log_date DESC")
+    suspend fun getAllHealthLogsAsync(): List<HealthLogEntity>
+    
     @Query("SELECT * FROM health_logs ORDER BY log_date DESC LIMIT :limit")
     fun getRecentHealthLogs(limit: Int): Flow<List<HealthLogEntity>>
     
@@ -31,6 +34,9 @@ interface HealthLogDao {
     
     @Query("SELECT * FROM health_logs WHERE id = :id")
     suspend fun getHealthLogById(id: String): HealthLogEntity?
+    
+    @Query("SELECT * FROM health_logs WHERE server_id = :serverId")
+    suspend fun getHealthLogByServerId(serverId: String): HealthLogEntity?
     
     @Query("SELECT * FROM health_logs WHERE sync_status = :status")
     suspend fun getHealthLogsBySyncStatus(status: SyncStatus): List<HealthLogEntity>
@@ -52,5 +58,8 @@ interface HealthLogDao {
     
     @Query("UPDATE health_logs SET sync_status = :status WHERE id = :id")
     suspend fun updateSyncStatus(id: String, status: SyncStatus)
+    
+    @Query("UPDATE health_logs SET server_id = :serverId, sync_status = :status WHERE id = :localId")
+    suspend fun updateServerIdAndStatus(localId: String, serverId: String, status: SyncStatus)
 }
 

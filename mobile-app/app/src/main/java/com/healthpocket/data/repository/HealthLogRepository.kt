@@ -5,6 +5,7 @@ import com.healthpocket.data.local.entity.HealthLogEntity
 import com.healthpocket.data.local.entity.SyncStatus
 import com.healthpocket.data.remote.api.HealthPocketApi
 import com.healthpocket.data.remote.dto.HealthLogRequest
+import com.healthpocket.data.remote.dto.HealthLogResponse
 import com.healthpocket.util.DateTimeUtils
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -81,14 +82,18 @@ class HealthLogRepository @Inject constructor(
         healthLogDao.delete(healthLog)
         healthLog.serverId?.let { serverId ->
             try {
+                android.util.Log.d("HealthLogRepository", "Syncing deletion for log ${healthLog.id}")
                 api.deleteHealthLog(serverId)
+                android.util.Log.d("HealthLogRepository", "Deletion synced for log ${healthLog.id}")
             } catch (e: Exception) {
+                android.util.Log.e("HealthLogRepository", "Deletion sync failed for log ${healthLog.id}", e)
                 // Ignore network errors
             }
         }
     }
 
     private suspend fun trySync(healthLog: HealthLogEntity) {
+        android.util.Log.d("HealthLogRepository", "Starting sync for log ${healthLog.id}")
         try {
             val request = HealthLogRequest(
                 logDate = healthLog.logDate.toString(),
@@ -104,6 +109,7 @@ class HealthLogRepository @Inject constructor(
             val response = api.createOrUpdateHealthLog(request)
 
             if (response.isSuccessful) {
+                android.util.Log.d("HealthLogRepository", "Sync successful for log ${healthLog.id}")
                 response.body()?.let { serverLog ->
                     val synced = healthLog.copy(
                         serverId = serverLog.id,
@@ -111,8 +117,12 @@ class HealthLogRepository @Inject constructor(
                     )
                     healthLogDao.update(synced)
                 }
+            } else {
+                android.util.Log.e("HealthLogRepository", "Sync failed for log ${healthLog.id}: ${response.code()}")
+                healthLogDao.updateSyncStatus(healthLog.id, SyncStatus.ERROR)
             }
         } catch (e: Exception) {
+            android.util.Log.e("HealthLogRepository", "Sync exception for log ${healthLog.id}", e)
             healthLogDao.updateSyncStatus(healthLog.id, SyncStatus.ERROR)
         }
     }
@@ -121,30 +131,158 @@ class HealthLogRepository @Inject constructor(
         return healthLogDao.getHealthLogsBySyncStatus(SyncStatus.PENDING)
     }
 
-    suspend fun syncHealthLogs() {
+    suspend fun syncAll() {
+        android.util.Log.d("HealthLogRepository", "Starting bidirectional sync of health logs")
         try {
-            val logs = api.getAllHealthLogs().body()
-            logs?.forEach { serverLog ->
-                val localLog = healthLogDao.getHealthLogByDateSync(DateTimeUtils.parseDateString(serverLog.logDate))
-                if (localLog == null) {
-                    val entity = HealthLogEntity(
-                        id = UUID.randomUUID().toString(),
-                        serverId = serverLog.id,
-                        logDate = DateTimeUtils.parseDateString(serverLog.logDate),
-                        mood = serverLog.mood,
-                        energyLevel = serverLog.energyLevel,
-                        sleepQuality = serverLog.sleepQuality,
-                        sleepHours = serverLog.sleepHours,
-                        symptoms = serverLog.symptoms?.joinToString(","),
-                        notes = serverLog.notes,
-                        syncStatus = SyncStatus.SYNCED
-                    )
-                    healthLogDao.insert(entity)
+            val serverLogs = api.getAllHealthLogs().body() ?: emptyList()
+            val localLogs = healthLogDao.getAllHealthLogsAsync()
+            
+            mergeAndSync(serverLogs, localLogs)
+            
+            android.util.Log.d("HealthLogRepository", "Bidirectional sync completed successfully")
+        } catch (e: Exception) {
+            android.util.Log.e("HealthLogRepository", "Bidirectional sync failed", e)
+        }
+    }
+    
+    @Deprecated("Use syncAll() for bidirectional sync", ReplaceWith("syncAll()"))
+    suspend fun syncHealthLogs() {
+        syncAll()
+    }
+    
+    private suspend fun mergeAndSync(
+        serverLogs: List<HealthLogResponse>,
+        localLogs: List<HealthLogEntity>
+    ) {
+        val serverById = serverLogs.associateBy { it.id }
+        val localByServerId = localLogs
+            .filter { it.serverId != null }
+            .associateBy { it.serverId!! }
+        
+        // Process server logs
+        serverLogs.forEach { serverLog ->
+            val localMatch = localByServerId[serverLog.id]
+            
+            when {
+                localMatch == null -> {
+                    handleNewServerLog(serverLog)
                 }
+                isServerNewer(serverLog.updatedAt, localMatch.updatedAt) -> {
+                    handleServerNewerLog(serverLog, localMatch)
+                }
+                isLocalNewer(serverLog.updatedAt, localMatch.updatedAt) -> {
+                    handleLocalNewerLog(serverLog, localMatch)
+                }
+                // If timestamps equal, no action needed
+            }
+        }
+        
+        // Process unsynchronized local logs
+        val unsyncedLocalLogs = localLogs.filter { it.serverId == null }
+        unsyncedLocalLogs.forEach { localLog ->
+            pushLocalLogToServer(localLog)
+        }
+    }
+    
+    private suspend fun handleNewServerLog(serverLog: HealthLogResponse) {
+        android.util.Log.d("HealthLogRepository", "Adding new log from server: ${serverLog.id}")
+        val entity = serverLog.toEntity()
+        healthLogDao.insert(entity)
+    }
+    
+    private suspend fun handleServerNewerLog(
+        serverLog: HealthLogResponse,
+        localLog: HealthLogEntity
+    ) {
+        android.util.Log.d("HealthLogRepository", "Updating local log from server: ${serverLog.id}")
+        val updatedEntity = serverLog.toEntity(localId = localLog.id)
+        healthLogDao.update(updatedEntity)
+    }
+    
+    private suspend fun handleLocalNewerLog(
+        serverLog: HealthLogResponse,
+        localLog: HealthLogEntity
+    ) {
+        android.util.Log.d("HealthLogRepository", "Updating server with local log: ${localLog.id}")
+        try {
+            val request = localLog.toRequest()
+            val response = api.createOrUpdateHealthLog(request)
+            
+            if (response.isSuccessful) {
+                healthLogDao.updateSyncStatus(localLog.id, SyncStatus.SYNCED)
+            } else {
+                android.util.Log.e("HealthLogRepository", "Failed to update server log: ${response.code()}")
+                healthLogDao.updateSyncStatus(localLog.id, SyncStatus.ERROR)
             }
         } catch (e: Exception) {
-            // Silent fail
+            android.util.Log.w("HealthLogRepository", "Network error updating log to server: ${e.message}")
+            // Keep PENDING status for retry when network returns
         }
+    }
+    
+    private suspend fun pushLocalLogToServer(localLog: HealthLogEntity) {
+        android.util.Log.d("HealthLogRepository", "Pushing local log to server: ${localLog.id}")
+        try {
+            val request = localLog.toRequest()
+            val response = api.createOrUpdateHealthLog(request)
+            
+            if (response.isSuccessful) {
+                response.body()?.let { serverLog ->
+                    healthLogDao.updateServerIdAndStatus(
+                        localId = localLog.id,
+                        serverId = serverLog.id,
+                        status = SyncStatus.SYNCED
+                    )
+                }
+            } else {
+                android.util.Log.e("HealthLogRepository", "Failed to create log on server: ${response.code()}")
+                healthLogDao.updateSyncStatus(localLog.id, SyncStatus.ERROR)
+            }
+        } catch (e: Exception) {
+            android.util.Log.w("HealthLogRepository", "Network error pushing log to server: ${e.message}")
+            // Keep PENDING status for retry when network returns
+        }
+    }
+    
+    private fun isServerNewer(serverUpdatedAt: String, localUpdatedAt: Long): Boolean {
+        val serverMillis = DateTimeUtils.offsetDateTimeStringToMillis(serverUpdatedAt)
+        return serverMillis > localUpdatedAt
+    }
+    
+    private fun isLocalNewer(serverUpdatedAt: String, localUpdatedAt: Long): Boolean {
+        val serverMillis = DateTimeUtils.offsetDateTimeStringToMillis(serverUpdatedAt)
+        return localUpdatedAt > serverMillis
+    }
+    
+    private fun HealthLogResponse.toEntity(
+        localId: String = UUID.randomUUID().toString()
+    ): HealthLogEntity {
+        return HealthLogEntity(
+            id = localId,
+            serverId = this.id,
+            logDate = DateTimeUtils.parseDateString(this.logDate),
+            mood = this.mood,
+            energyLevel = this.energyLevel,
+            sleepQuality = this.sleepQuality,
+            sleepHours = this.sleepHours,
+            symptoms = this.symptoms.takeIf { it.isNotEmpty() }?.joinToString(","),
+            notes = this.notes,
+            syncStatus = SyncStatus.SYNCED,
+            updatedAt = DateTimeUtils.offsetDateTimeStringToMillis(this.updatedAt)
+        )
+    }
+    
+    private fun HealthLogEntity.toRequest(): HealthLogRequest {
+        return HealthLogRequest(
+            logDate = this.logDate.toString(),
+            mood = this.mood,
+            energyLevel = this.energyLevel,
+            sleepQuality = this.sleepQuality,
+            sleepHours = this.sleepHours,
+            symptoms = this.symptoms?.split(",")?.filter { it.isNotBlank() },
+            notes = this.notes,
+            localId = this.id
+        )
     }
 }
 

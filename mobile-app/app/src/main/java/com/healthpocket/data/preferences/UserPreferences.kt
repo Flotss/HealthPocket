@@ -32,63 +32,26 @@ class UserPreferences @Inject constructor(
         private val REFRESH_TOKEN = stringPreferencesKey("refresh_token")
         private val USER_ID = stringPreferencesKey("user_id")
         private val USER_EMAIL = stringPreferencesKey("user_email")
+        private val TOKEN_EXPIRATION_TIMESTAMP = longPreferencesKey("token_expiration_timestamp")
         private val DARK_MODE = booleanPreferencesKey("dark_mode")
         private val LANGUAGE = stringPreferencesKey("language")
-        private val LAST_SYNC_TIME = longPreferencesKey("last_sync_time")
         private val IS_LOGGED_IN = booleanPreferencesKey("is_logged_in")
     }
 
     // Access Token
     val accessToken: Flow<String?> = dataStore.data.map { it[ACCESS_TOKEN] }
 
-    suspend fun setAccessToken(token: String?) {
-        dataStore.edit { prefs ->
-            if (token == null) {
-                prefs.remove(ACCESS_TOKEN)
-            } else {
-                prefs[ACCESS_TOKEN] = token
-            }
-        }
-    }
-
     // Refresh Token
     val refreshToken: Flow<String?> = dataStore.data.map { it[REFRESH_TOKEN] }
-
-    suspend fun setRefreshToken(token: String?) {
-        dataStore.edit { prefs ->
-            if (token == null) {
-                prefs.remove(REFRESH_TOKEN)
-            } else {
-                prefs[REFRESH_TOKEN] = token
-            }
-        }
-    }
 
     // User ID
     val userId: Flow<String?> = dataStore.data.map { it[USER_ID] }
 
-    suspend fun setUserId(id: String?) {
-        dataStore.edit { prefs ->
-            if (id == null) {
-                prefs.remove(USER_ID)
-            } else {
-                prefs[USER_ID] = id
-            }
-        }
-    }
-
     // User Email
     val userEmail: Flow<String?> = dataStore.data.map { it[USER_EMAIL] }
 
-    suspend fun setUserEmail(email: String?) {
-        dataStore.edit { prefs ->
-            if (email == null) {
-                prefs.remove(USER_EMAIL)
-            } else {
-                prefs[USER_EMAIL] = email
-            }
-        }
-    }
+    // Token Expiration Timestamp
+    val tokenExpirationTimestamp: Flow<Long?> = dataStore.data.map { it[TOKEN_EXPIRATION_TIMESTAMP] }
 
     // Dark Mode
     val darkMode: Flow<Boolean> = dataStore.data.map { it[DARK_MODE] ?: false }
@@ -108,23 +71,8 @@ class UserPreferences @Inject constructor(
         }
     }
 
-    // Last Sync Time
-    val lastSyncTime: Flow<Long> = dataStore.data.map { it[LAST_SYNC_TIME] ?: 0L }
-
-    suspend fun setLastSyncTime(timestamp: Long) {
-        dataStore.edit { prefs ->
-            prefs[LAST_SYNC_TIME] = timestamp
-        }
-    }
-
     // Is Logged In
     val isLoggedIn: Flow<Boolean> = dataStore.data.map { it[IS_LOGGED_IN] ?: false }
-
-    suspend fun setIsLoggedIn(loggedIn: Boolean) {
-        dataStore.edit { prefs ->
-            prefs[IS_LOGGED_IN] = loggedIn
-        }
-    }
 
     /**
      * Save authentication data after login.
@@ -133,13 +81,16 @@ class UserPreferences @Inject constructor(
         accessToken: String,
         refreshToken: String,
         userId: String,
-        email: String
+        email: String,
+        expiresIn: Long // expiration time in seconds
     ) {
+        val expirationTimestamp = System.currentTimeMillis() + (expiresIn * 1000)
         dataStore.edit { prefs ->
             prefs[ACCESS_TOKEN] = accessToken
             prefs[REFRESH_TOKEN] = refreshToken
             prefs[USER_ID] = userId
             prefs[USER_EMAIL] = email
+            prefs[TOKEN_EXPIRATION_TIMESTAMP] = expirationTimestamp
             prefs[IS_LOGGED_IN] = true
         }
     }
@@ -153,6 +104,7 @@ class UserPreferences @Inject constructor(
             prefs.remove(REFRESH_TOKEN)
             prefs.remove(USER_ID)
             prefs.remove(USER_EMAIL)
+            prefs.remove(TOKEN_EXPIRATION_TIMESTAMP)
             prefs[IS_LOGGED_IN] = false
         }
     }

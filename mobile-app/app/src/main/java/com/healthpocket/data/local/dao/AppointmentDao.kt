@@ -20,6 +20,9 @@ interface AppointmentDao {
     @Query("SELECT * FROM appointments ORDER BY appointment_date ASC")
     fun getAllAppointments(): Flow<List<AppointmentEntity>>
     
+    @Query("SELECT * FROM appointments ORDER BY appointment_date ASC")
+    suspend fun getAllAppointmentsAsync(): List<AppointmentEntity>
+    
     @Query("SELECT * FROM appointments WHERE appointment_date >= :fromDate AND status = 'SCHEDULED' ORDER BY appointment_date ASC")
     fun getUpcomingAppointments(fromDate: Long): Flow<List<AppointmentEntity>>
     
@@ -31,6 +34,9 @@ interface AppointmentDao {
     
     @Query("SELECT * FROM appointments WHERE id = :id")
     suspend fun getAppointmentByIdSync(id: String): AppointmentEntity?
+    
+    @Query("SELECT * FROM appointments WHERE server_id = :serverId")
+    suspend fun getAppointmentByServerId(serverId: String): AppointmentEntity?
     
     @Query("SELECT * FROM appointments WHERE sync_status = :status")
     suspend fun getAppointmentsBySyncStatus(status: SyncStatus): List<AppointmentEntity>
@@ -55,5 +61,8 @@ interface AppointmentDao {
     
     @Query("UPDATE appointments SET sync_status = :status WHERE id = :id")
     suspend fun updateSyncStatus(id: String, status: SyncStatus)
+    
+    @Query("UPDATE appointments SET server_id = :serverId, sync_status = :status WHERE id = :localId")
+    suspend fun updateServerIdAndStatus(localId: String, serverId: String, status: SyncStatus)
 }
 

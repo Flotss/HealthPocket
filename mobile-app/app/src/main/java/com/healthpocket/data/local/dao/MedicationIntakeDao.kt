@@ -17,6 +17,9 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface MedicationIntakeDao {
     
+    @Query("SELECT * FROM medication_intakes ORDER BY scheduled_time DESC")
+    suspend fun getAllIntakesAsync(): List<MedicationIntakeEntity>
+    
     @Query("SELECT * FROM medication_intakes WHERE medication_id = :medicationId ORDER BY scheduled_time DESC")
     fun getIntakesForMedication(medicationId: String): Flow<List<MedicationIntakeEntity>>
     
@@ -25,6 +28,9 @@ interface MedicationIntakeDao {
     
     @Query("SELECT * FROM medication_intakes WHERE id = :id")
     suspend fun getIntakeById(id: String): MedicationIntakeEntity?
+    
+    @Query("SELECT * FROM medication_intakes WHERE server_id = :serverId")
+    suspend fun getIntakeByServerId(serverId: String): MedicationIntakeEntity?
     
     @Query("SELECT * FROM medication_intakes WHERE status = :status")
     fun getIntakesByStatus(status: IntakeStatus): Flow<List<MedicationIntakeEntity>>
@@ -54,5 +60,8 @@ interface MedicationIntakeDao {
     
     @Query("UPDATE medication_intakes SET status = :status, taken_time = :takenTime, sync_status = :syncStatus WHERE id = :id")
     suspend fun updateIntakeStatus(id: String, status: IntakeStatus, takenTime: Long?, syncStatus: SyncStatus)
+    
+    @Query("UPDATE medication_intakes SET server_id = :serverId, sync_status = :status WHERE id = :localId")
+    suspend fun updateServerIdAndStatus(localId: String, serverId: String, status: SyncStatus)
 }
 

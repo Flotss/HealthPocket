@@ -1,5 +1,6 @@
 package com.healthpocket.data.repository
 
+import android.content.Context
 import com.healthpocket.data.local.dao.MedicationDao
 import com.healthpocket.data.local.dao.MedicationIntakeDao
 import com.healthpocket.data.local.entity.MedicationEntity
@@ -25,13 +26,15 @@ class MedicationRepositoryTest {
     private lateinit var medicationDao: MedicationDao
     private lateinit var intakeDao: MedicationIntakeDao
     private lateinit var api: HealthPocketApi
+    private lateinit var context: Context
 
     @Before
     fun setUp() {
         medicationDao = mock()
         intakeDao = mock()
         api = mock()
-        repository = MedicationRepository(medicationDao, intakeDao, api)
+        context = mock()
+        repository = MedicationRepository(medicationDao, intakeDao, api, context)
     }
 
     @Test

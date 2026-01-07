@@ -19,6 +19,9 @@ interface MedicationDao {
     @Query("SELECT * FROM medications ORDER BY name ASC")
     fun getAllMedications(): Flow<List<MedicationEntity>>
     
+    @Query("SELECT * FROM medications ORDER BY name ASC")
+    suspend fun getAllMedicationsAsync(): List<MedicationEntity>
+    
     @Query("SELECT * FROM medications WHERE is_active = 1 ORDER BY name ASC")
     fun getActiveMedications(): Flow<List<MedicationEntity>>
     

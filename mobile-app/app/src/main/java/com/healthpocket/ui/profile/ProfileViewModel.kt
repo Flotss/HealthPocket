@@ -33,6 +33,10 @@ class ProfileViewModel @Inject constructor(
 
     private fun loadProfile() {
         viewModelScope.launch {
+            if (!authRepository.isAuthenticated()) {
+                return@launch
+            }
+            
             authRepository.getCurrentUser().collect { user ->
                 user?.let {
                     _uiState.value = ProfileUiState(
