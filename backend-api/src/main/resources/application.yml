@@ -3,11 +3,11 @@ spring:
     name: healthpocket-api
 
   # Database Configuration
-  datasource:
+  datasource: 
     url: ${DATABASE_URL:jdbc:postgresql://exemple.com:5432/exemple}
     username: ${DATABASE_USERNAME:exemple}
     password: ${DATABASE_PASSWORD:exemple}
-    driver-class-name: org.postgresql.Driver
+    driver-class-name: org.postgresql. Driver
     hikari:
       maximum-pool-size: 10
       minimum-idle: 2
@@ -17,26 +17,27 @@ spring:
   # JPA Configuration
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto:  update
     show-sql: false
     properties:
-      hibernate:
+      hibernate: 
         format_sql: true
         dialect: org.hibernate.dialect.PostgreSQLDialect
         jdbc:
-          time_zone: UTC
+          time_zone:  UTC
 
   # Jackson Configuration
   jackson:
-    serialization:
+    serialization: 
       write-dates-as-timestamps: false
     default-property-inclusion: non_null
 
 # Server Configuration
 server:
-  port: ${PORT:8080}
+  port:  ${PORT:8080}
+  use-forward-headers: true
   error:
-    include-message: always
+    include-message:  always
     include-binding-errors: always
 
 # JWT Configuration
@@ -49,14 +50,14 @@ jwt:
 springdoc:
   api-docs:
     path: /api-docs
-  swagger-ui:
+  swagger-ui: 
     path: /swagger-ui.html
     operations-sorter: method
     tags-sorter: alpha
   info:
     title: HealthPocket API
     description: REST API for HealthPocket mobile application
-    version: 1.0.0
+    version:  1.0.0
 
 management:
   endpoints:
@@ -70,9 +71,9 @@ management:
 
 # Logging
 logging:
-  level:
+  level: 
     root: INFO
-    com.healthpocket: DEBUG
+    com. healthpocket: DEBUG
     org.hibernate.SQL: WARN
     org.hibernate.type.descriptor.sql.BasicBinder: WARN
   pattern:
@@ -80,22 +81,21 @@ logging:
 
 ---
 # Test Profile
-spring:
+spring: 
   config:
-    activate:
+    activate: 
       on-profile: test
   datasource:
     url: jdbc:h2:mem:testdb
-    driver-class-name: org.h2.Driver
+    driver-class-name:  org.h2.Driver
     username: sa
     password: 
   jpa:
     hibernate:
-      ddl-auto: create-drop
-    properties:
+      ddl-auto:  create-drop
+    properties: 
       hibernate:
         dialect: org.hibernate.dialect.H2Dialect
   h2:
     console:
       enabled: true
-
