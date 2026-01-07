@@ -7,7 +7,7 @@ spring:
     url: ${DATABASE_URL:jdbc:postgresql://exemple.com:5432/exemple}
     username: ${DATABASE_USERNAME:exemple}
     password: ${DATABASE_PASSWORD:exemple}
-    driver-class-name: org.postgresql. Driver
+    driver-class-name: org.postgresql.Driver
     hikari:
       maximum-pool-size: 10
       minimum-idle: 2
