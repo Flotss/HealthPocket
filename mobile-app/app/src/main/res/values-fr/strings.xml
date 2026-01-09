@@ -119,6 +119,30 @@
     <string name="emergency_contact">Contact d\'urgence</string>
     <string name="logout">Déconnexion</string>
     <string name="logout_confirm">Voulez-vous vraiment vous déconnecter ?</string>
+    <string name="vital_metrics">Signes vitaux</string>
+    <string name="no_vital_metrics">Aucun signe vital enregistré pour le moment.</string>
+    <string name="log_vitals">Enregistrer les signes vitaux</string>
+    <string name="add_vital_metric">Enregistrer un signe vital</string>
+    <string name="add_vital_metric_subtitle">Suivez vos mesures de santé les plus récentes.</string>
+    <string name="metric_type_label">Type de mesure</string>
+    <string name="metric_type_weight">Poids</string>
+    <string name="metric_type_blood_pressure">Tension artérielle</string>
+    <string name="metric_type_blood_glucose">Glycémie</string>
+    <string name="metric_type_heart_rate">Fréquence cardiaque</string>
+    <string name="metric_type_temperature">Température</string>
+    <string name="metric_value_with_unit">Valeur (%1$s)</string>
+    <string name="metric_secondary_value_with_unit">Diastolique (%1$s)</string>
+    <string name="metric_value_required">Veuillez saisir une valeur.</string>
+    <string name="metric_value_invalid">Veuillez saisir un nombre valide.</string>
+    <string name="metric_secondary_value_invalid">Veuillez saisir une valeur diastolique valide.</string>
+    <string name="metric_save_failed">Impossible d&quot;enregistrer la mesure. Veuillez réessayer.</string>
+    <string name="metric_no_values">Veuillez saisir au moins une mesure.</string>
+    <string name="metric_notes_label">Notes : %1$s</string>
+    <string name="save_metric">Enregistrer la mesure</string>
+    <string name="latest_measurement">%1$s • %2$s</string>
+    <string name="vitals_history">Historique des signes vitaux</string>
+    <string name="view_history">Voir l&quot;historique</string>
+    <string name="no_vital_history">Aucune mesure enregistrée pour le moment.</string>
 
     <!-- Settings -->
     <string name="settings">Paramètres</string>
@@ -145,4 +169,3 @@
     <string name="notification_channel_sync">Synchronisation</string>
     <string name="notification_channel_sync_desc">Notifications de synchronisation des données</string>
 </resources>
-

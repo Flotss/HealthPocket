@@ -28,6 +28,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.healthpocket.data.local.entity.MetricType
 import com.healthpocket.ui.appointments.AddAppointmentScreen
 import com.healthpocket.ui.appointments.AppointmentsScreen
 import com.healthpocket.ui.auth.LoginScreen
@@ -41,8 +42,10 @@ import com.healthpocket.ui.medications.MedicationsScreen
 import com.healthpocket.ui.navigation.BottomNavItem
 import com.healthpocket.ui.navigation.NavRoutes
 import com.healthpocket.ui.profile.ProfileScreen
-import com.healthpocket.ui.settings.SettingsScreen
 import com.healthpocket.ui.settings.SettingsViewModel
+import com.healthpocket.ui.settings.SettingsScreen
+import com.healthpocket.ui.vitals.AddVitalMetricScreen
+import com.healthpocket.ui.vitals.VitalMetricsHistoryScreen
 
 /**
  * Main composable for the HealthPocket application.
@@ -105,7 +108,7 @@ fun HealthPocketApp() {
                                 val currentRoute = currentDestination?.route
                                 if (currentRoute != item.route) {
                                     navController.navigate(item.route) {
-                                        popUpTo(navController.graph.findStartDestination().id) {
+                                        popUpTo(NavRoutes.Home.route) {
                                             saveState = true
                                         }
                                         launchSingleTop = true
@@ -156,7 +159,13 @@ fun HealthPocketApp() {
                 HomeScreen(
                     onNavigateToMedications = { navController.navigate(NavRoutes.Medications.route) },
                     onNavigateToAppointments = { navController.navigate(NavRoutes.Appointments.route) },
-                    onNavigateToJournal = { navController.navigate(NavRoutes.Journal.route) }
+                    onNavigateToJournal = { navController.navigate(NavRoutes.Journal.route) },
+                    onAddVitalMetric = {
+                        navController.navigate(NavRoutes.AddVitalMetric.createRoute(MetricType.WEIGHT.name))
+                    },
+                    onViewVitalHistory = {
+                        navController.navigate(NavRoutes.VitalsHistory.route)
+                    }
                 )
             }
 
@@ -218,6 +227,12 @@ fun HealthPocketApp() {
             composable(NavRoutes.Profile.route) {
                 ProfileScreen(
                     onNavigateToSettings = { navController.navigate(NavRoutes.Settings.route) },
+                    onAddVitalMetric = {
+                        navController.navigate(NavRoutes.AddVitalMetric.createRoute(MetricType.WEIGHT.name))
+                    },
+                    onViewVitalsHistory = {
+                        navController.navigate(NavRoutes.VitalsHistory.route)
+                    },
                     onLogout = {
                         navController.navigate(NavRoutes.Login.route) {
                             popUpTo(0) { inclusive = true }
@@ -231,7 +246,27 @@ fun HealthPocketApp() {
                     onNavigateBack = { navController.popBackStack() }
                 )
             }
+
+            composable(
+                route = NavRoutes.AddVitalMetric.route,
+                arguments = listOf(navArgument("type") { type = NavType.StringType })
+            ) { backStackEntry ->
+                val typeArg = backStackEntry.arguments?.getString("type")
+                val metricType = typeArg?.let {
+                    runCatching { MetricType.valueOf(it) }.getOrDefault(MetricType.WEIGHT)
+                } ?: MetricType.WEIGHT
+
+                AddVitalMetricScreen(
+                    initialType = metricType,
+                    onNavigateBack = { navController.popBackStack() }
+                )
+            }
+
+            composable(NavRoutes.VitalsHistory.route) {
+                VitalMetricsHistoryScreen(
+                    onNavigateBack = { navController.popBackStack() }
+                )
+            }
         }
     }
 }
-

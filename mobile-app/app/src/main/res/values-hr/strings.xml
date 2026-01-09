@@ -119,6 +119,30 @@
     <string name="emergency_contact">Kontakt za hitne slučajeve</string>
     <string name="logout">Odjava</string>
     <string name="logout_confirm">Želite li se stvarno odjaviti?</string>
+    <string name="vital_metrics">Vitalni znakovi</string>
+    <string name="no_vital_metrics">Još nema zabilježenih vitalnih znakova.</string>
+    <string name="log_vitals">Zabilježi vitale</string>
+    <string name="add_vital_metric">Zabilježi vitalni znak</string>
+    <string name="add_vital_metric_subtitle">Prati svoje najnovije zdravstvene mjere.</string>
+    <string name="metric_type_label">Vrsta metrike</string>
+    <string name="metric_type_weight">Težina</string>
+    <string name="metric_type_blood_pressure">Krvni tlak</string>
+    <string name="metric_type_blood_glucose">Glukoza u krvi</string>
+    <string name="metric_type_heart_rate">Puls</string>
+    <string name="metric_type_temperature">Temperatura</string>
+    <string name="metric_value_with_unit">Vrijednost (%1$s)</string>
+    <string name="metric_secondary_value_with_unit">Dijastolički (%1$s)</string>
+    <string name="metric_value_required">Unesite vrijednost.</string>
+    <string name="metric_value_invalid">Unesite valjan broj.</string>
+    <string name="metric_secondary_value_invalid">Unesite valjanu dijastoličku vrijednost.</string>
+    <string name="metric_save_failed">Metriku nije moguće spremiti. Pokušajte ponovno.</string>
+    <string name="metric_no_values">Unesite barem jedno mjerenje.</string>
+    <string name="metric_notes_label">Bilješke: %1$s</string>
+    <string name="save_metric">Spremi metriku</string>
+    <string name="latest_measurement">%1$s • %2$s</string>
+    <string name="vitals_history">Povijest vitalnih znakova</string>
+    <string name="view_history">Prikaži povijest</string>
+    <string name="no_vital_history">Još nema zabilježenih mjerenja.</string>
 
     <!-- Settings -->
     <string name="settings">Postavke</string>
