@@ -120,6 +120,30 @@
     <string name="emergency_contact">Emergency contact</string>
     <string name="logout">Logout</string>
     <string name="logout_confirm">Do you really want to logout?</string>
+    <string name="vital_metrics">Vital metrics</string>
+    <string name="no_vital_metrics">No vital metrics recorded yet.</string>
+    <string name="log_vitals">Log vitals</string>
+    <string name="add_vital_metric">Log vital metric</string>
+    <string name="add_vital_metric_subtitle">Track your most recent health measurements.</string>
+    <string name="metric_type_label">Metric type</string>
+    <string name="metric_type_weight">Weight</string>
+    <string name="metric_type_blood_pressure">Blood pressure</string>
+    <string name="metric_type_blood_glucose">Blood glucose</string>
+    <string name="metric_type_heart_rate">Heart rate</string>
+    <string name="metric_type_temperature">Temperature</string>
+    <string name="metric_value_with_unit">Value (%1$s)</string>
+    <string name="metric_secondary_value_with_unit">Diastolic (%1$s)</string>
+    <string name="metric_value_required">Please enter a value.</string>
+    <string name="metric_value_invalid">Enter a valid number.</string>
+    <string name="metric_secondary_value_invalid">Enter a valid diastolic value.</string>
+    <string name="metric_save_failed">Could not save the metric. Please try again.</string>
+    <string name="metric_no_values">Please enter at least one measurement.</string>
+    <string name="metric_notes_label">Notes: %1$s</string>
+    <string name="save_metric">Save metric</string>
+    <string name="latest_measurement">%1$s • %2$s</string>
+    <string name="vitals_history">Vitals history</string>
+    <string name="view_history">View history</string>
+    <string name="no_vital_history">No vital measurements recorded yet.</string>
 
     <!-- Settings -->
     <string name="settings">Settings</string>

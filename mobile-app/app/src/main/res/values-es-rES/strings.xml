@@ -119,6 +119,30 @@
     <string name="emergency_contact">Contacto de emergencia</string>
     <string name="logout">Cerrar sesión</string>
     <string name="logout_confirm">¿Realmente quieres cerrar sesión?</string>
+    <string name="vital_metrics">Signos vitales</string>
+    <string name="no_vital_metrics">Aún no hay signos vitales registrados.</string>
+    <string name="log_vitals">Registrar signos vitales</string>
+    <string name="add_vital_metric">Registrar signo vital</string>
+    <string name="add_vital_metric_subtitle">Controla tus mediciones de salud más recientes.</string>
+    <string name="metric_type_label">Tipo de métrica</string>
+    <string name="metric_type_weight">Peso</string>
+    <string name="metric_type_blood_pressure">Presión arterial</string>
+    <string name="metric_type_blood_glucose">Glucosa en sangre</string>
+    <string name="metric_type_heart_rate">Frecuencia cardiaca</string>
+    <string name="metric_type_temperature">Temperatura</string>
+    <string name="metric_value_with_unit">Valor (%1$s)</string>
+    <string name="metric_secondary_value_with_unit">Diastólica (%1$s)</string>
+    <string name="metric_value_required">Introduce un valor.</string>
+    <string name="metric_value_invalid">Introduce un número válido.</string>
+    <string name="metric_secondary_value_invalid">Introduce un valor diastólico válido.</string>
+    <string name="metric_save_failed">No se pudo guardar la métrica. Vuelve a intentarlo.</string>
+    <string name="metric_no_values">Introduce al menos una medición.</string>
+    <string name="metric_notes_label">Notas: %1$s</string>
+    <string name="save_metric">Guardar métrica</string>
+    <string name="latest_measurement">%1$s • %2$s</string>
+    <string name="vitals_history">Historial de signos vitales</string>
+    <string name="view_history">Ver historial</string>
+    <string name="no_vital_history">Aún no hay mediciones registradas.</string>
 
     <!-- Settings -->
     <string name="settings">Ajustes</string>

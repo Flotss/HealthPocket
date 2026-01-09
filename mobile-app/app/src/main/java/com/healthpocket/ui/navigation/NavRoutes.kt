@@ -36,6 +36,8 @@ sealed class NavRoutes(val route: String) {
     object AddVitalMetric : NavRoutes("vitals/add/{type}") {
         fun createRoute(type: String) = "vitals/add/$type"
     }
+
+    object VitalsHistory : NavRoutes("vitals/history")
     
     object Settings : NavRoutes("settings")
 }
@@ -54,4 +56,3 @@ enum class BottomNavItem(
     JOURNAL(NavRoutes.Journal.route, com.healthpocket.R.string.nav_journal, "edit_note"),
     PROFILE(NavRoutes.Profile.route, com.healthpocket.R.string.nav_profile, "person")
 }
-

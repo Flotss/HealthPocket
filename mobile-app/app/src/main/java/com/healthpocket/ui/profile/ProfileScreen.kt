@@ -24,6 +24,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -46,12 +47,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.healthpocket.R
+import com.healthpocket.data.local.entity.MetricType
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen(
     onNavigateToSettings: () -> Unit,
     onLogout: () -> Unit,
+    onViewVitalsHistory: () -> Unit = {},
+    onAddVitalMetric: () -> Unit = {},
     viewModel: ProfileViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -114,6 +118,14 @@ fun ProfileScreen(
             }
 
             Spacer(modifier = Modifier.height(24.dp))
+
+            VitalMetricsSection(
+                metrics = uiState.vitalMetrics,
+                onAddVitalMetric = onAddVitalMetric,
+                onViewVitalsHistory = onViewVitalsHistory
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
 
             // Health info section
             if (uiState.bloodType != null || uiState.allergies.isNotEmpty()) {
@@ -248,3 +260,100 @@ fun ProfileScreen(
     }
 }
 
+@Composable
+private fun VitalMetricsSection(
+    metrics: List<VitalMetricSummary>,
+    onAddVitalMetric: () -> Unit,
+    onViewVitalsHistory: () -> Unit
+) {
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = stringResource(R.string.vital_metrics),
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.SemiBold
+                )
+                Spacer(modifier = Modifier.weight(1f))
+                TextButton(onClick = onViewVitalsHistory) {
+                    Text(stringResource(R.string.view_history))
+                }
+                TextButton(onClick = onAddVitalMetric) {
+                    Text(stringResource(R.string.log_vitals))
+                }
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            if (metrics.isEmpty()) {
+                Text(
+                    text = stringResource(R.string.no_vital_metrics),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            } else {
+                metrics.forEachIndexed { index, summary ->
+                    VitalMetricRow(summary)
+                    if (index != metrics.lastIndex) {
+                        Divider(modifier = Modifier.padding(vertical = 12.dp))
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun VitalMetricRow(summary: VitalMetricSummary) {
+    val typeLabel = stringResource(metricTypeLabelRes(summary.type))
+    val measurementDisplay = if (summary.secondaryValue != null) {
+        "${formatMetricValue(summary.value)} / ${formatMetricValue(summary.secondaryValue)} ${summary.unit}"
+    } else {
+        "${formatMetricValue(summary.value)} ${summary.unit}"
+    }
+
+    val formattedDate = remember(summary.measuredAt) {
+        java.text.SimpleDateFormat("MMM d, yyyy h:mm a", java.util.Locale.getDefault())
+            .format(java.util.Date(summary.measuredAt))
+    }
+
+    Text(
+        text = typeLabel,
+        style = MaterialTheme.typography.titleSmall,
+        fontWeight = FontWeight.SemiBold
+    )
+    Text(
+        text = stringResource(R.string.latest_measurement, measurementDisplay, formattedDate),
+        style = MaterialTheme.typography.bodyMedium,
+        color = MaterialTheme.colorScheme.onSurfaceVariant
+    )
+    summary.notes?.takeIf { it.isNotBlank() }?.let { noteText ->
+        Text(
+            text = stringResource(R.string.metric_notes_label, noteText),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+    }
+}
+
+private fun metricTypeLabelRes(type: MetricType): Int {
+    return when (type) {
+        MetricType.WEIGHT -> R.string.metric_type_weight
+        MetricType.BLOOD_PRESSURE -> R.string.metric_type_blood_pressure
+        MetricType.BLOOD_GLUCOSE -> R.string.metric_type_blood_glucose
+        MetricType.HEART_RATE -> R.string.metric_type_heart_rate
+        MetricType.TEMPERATURE -> R.string.metric_type_temperature
+    }
+}
+
+private fun formatMetricValue(value: Float): String {
+    val intValue = value.toInt()
+    return if (value == intValue.toFloat()) {
+        intValue.toString()
+    } else {
+        String.format(java.util.Locale.getDefault(), "%.1f", value)
+    }
+}
