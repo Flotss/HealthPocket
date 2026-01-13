@@ -97,6 +97,20 @@
     <string name="enable_reminder">Activer le rappel</string>
     <string name="no_appointments">Aucun rendez-vous</string>
     <string name="add_first_appointment">Planifier votre premier rendez-vous</string>
+    <string name="no_upcoming_appointments">Aucun rendez-vous à venir</string>
+    <string name="past_and_completed_appointments">Rendez-vous passés et terminés</string>
+    <string name="past_and_completed_count">%1$d au total</string>
+    <string name="no_past_appointments">Aucun rendez-vous passé pour le moment</string>
+    <string name="appointment_details">Détails du rendez-vous</string>
+    <string name="back">Retour</string>
+    <string name="not_available">Non disponible</string>
+    <string name="duration">Durée</string>
+    <string name="duration_minutes">%1$d min</string>
+    <string name="reminder_enabled_with_time">Rappel activé %1$d min avant</string>
+    <string name="reminder_disabled">Rappel désactivé</string>
+    <string name="mark_as_completed">Marquer comme terminé</string>
+    <string name="delete_appointment">Supprimer le rendez-vous</string>
+    <string name="scheduled">Planifié</string>
     <string name="completed">Terminé</string>
     <string name="cancelled">Annulé</string>
 

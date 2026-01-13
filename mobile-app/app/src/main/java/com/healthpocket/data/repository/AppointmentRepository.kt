@@ -32,6 +32,10 @@ class AppointmentRepository @Inject constructor(
         return appointmentDao.getUpcomingAppointments(System.currentTimeMillis()).distinctUntilChanged()
     }
 
+    fun getPastAppointments(): Flow<List<AppointmentEntity>> {
+        return appointmentDao.getPastAppointments(System.currentTimeMillis()).distinctUntilChanged()
+    }
+
     fun getAppointmentsInRange(startDate: Long, endDate: Long): Flow<List<AppointmentEntity>> {
         return appointmentDao.getAppointmentsInRange(startDate, endDate).distinctUntilChanged()
     }
@@ -313,4 +317,3 @@ class AppointmentRepository @Inject constructor(
         )
     }
 }
-

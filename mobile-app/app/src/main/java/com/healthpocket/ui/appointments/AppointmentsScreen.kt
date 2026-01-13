@@ -19,6 +19,9 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.History
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Schedule
@@ -38,10 +41,14 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.healthpocket.R
@@ -61,7 +68,9 @@ fun AppointmentsScreen(
     onNavigateToAppointmentDetail: (String) -> Unit,
     viewModel: AppointmentsViewModel = hiltViewModel()
 ) {
-    val appointments by viewModel.upcomingAppointments.collectAsState(initial = emptyList())
+    val upcomingAppointments by viewModel.upcomingAppointments.collectAsState(initial = emptyList())
+    val pastAppointments by viewModel.pastAppointments.collectAsState(initial = emptyList())
+    var showPastAppointments by rememberSaveable { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -78,48 +87,91 @@ fun AppointmentsScreen(
             }
         }
     ) { paddingValues ->
-        if (appointments.isEmpty()) {
-            Box(
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+        ) {
+            PastAppointmentsButton(
+                count = pastAppointments.size,
+                expanded = showPastAppointments,
+                onToggle = { showPastAppointments = !showPastAppointments },
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues),
-                contentAlignment = Alignment.Center
-            ) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Icon(
-                        imageVector = Icons.Filled.CalendarMonth,
-                        contentDescription = null,
-                        modifier = Modifier.size(64.dp),
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Text(
-                        text = stringResource(R.string.no_appointments),
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    TextButton(onClick = onNavigateToAddAppointment) {
-                        Text(stringResource(R.string.add_first_appointment))
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 16.dp)
+            )
+
+            val shouldShowList = upcomingAppointments.isNotEmpty() || showPastAppointments
+            if (!shouldShowList) {
+                EmptyAppointmentsState(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                        .padding(horizontal = 16.dp),
+                    onAddAppointment = onNavigateToAddAppointment
+                )
+            } else {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                        .padding(horizontal = 16.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                    contentPadding = PaddingValues(bottom = 16.dp)
+                ) {
+                    if (upcomingAppointments.isNotEmpty()) {
+                        items(upcomingAppointments, key = { it.id }) { appointment ->
+                            AppointmentCard(
+                                appointment = appointment,
+                                onClick = { onNavigateToAppointmentDetail(appointment.id) },
+                                onMarkCompleted = { viewModel.markAsCompleted(appointment.id) },
+                                onDelete = { viewModel.deleteAppointment(appointment) }
+                            )
+                        }
+                    } else if (showPastAppointments) {
+                        item {
+                            Text(
+                                text = stringResource(R.string.no_upcoming_appointments),
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                modifier = Modifier.padding(vertical = 8.dp)
+                            )
+                        }
                     }
-                }
-            }
-        } else {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-                    .padding(horizontal = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-                contentPadding = PaddingValues(vertical = 16.dp)
-            ) {
-                items(appointments) { appointment ->
-                    AppointmentCard(
-                        appointment = appointment,
-                        onClick = { onNavigateToAppointmentDetail(appointment.id) },
-                        onMarkCompleted = { viewModel.markAsCompleted(appointment.id) },
-                        onDelete = { viewModel.deleteAppointment(appointment) }
-                    )
+
+                    if (showPastAppointments) {
+                        item {
+                            Text(
+                                text = stringResource(R.string.past_and_completed_appointments),
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.SemiBold,
+                                modifier = Modifier.padding(top = 8.dp)
+                            )
+                        }
+
+                        if (pastAppointments.isEmpty()) {
+                            item {
+                                Text(
+                                    text = stringResource(R.string.no_past_appointments),
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    textAlign = TextAlign.Center,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(vertical = 24.dp)
+                                )
+                            }
+                        } else {
+                            items(pastAppointments, key = { it.id }) { appointment ->
+                                AppointmentCard(
+                                    appointment = appointment,
+                                    onClick = { onNavigateToAppointmentDetail(appointment.id) },
+                                    onMarkCompleted = { viewModel.markAsCompleted(appointment.id) },
+                                    onDelete = { viewModel.deleteAppointment(appointment) }
+                                )
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -279,3 +331,83 @@ fun AppointmentCard(
     }
 }
 
+@Composable
+private fun EmptyAppointmentsState(
+    modifier: Modifier = Modifier,
+    onAddAppointment: () -> Unit
+) {
+    Box(
+        modifier = modifier,
+        contentAlignment = Alignment.Center
+    ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Icon(
+                imageVector = Icons.Filled.CalendarMonth,
+                contentDescription = null,
+                modifier = Modifier.size(64.dp),
+                tint = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(
+                text = stringResource(R.string.no_upcoming_appointments),
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            TextButton(onClick = onAddAppointment) {
+                Text(stringResource(R.string.add_first_appointment))
+            }
+        }
+    }
+}
+
+@Composable
+private fun PastAppointmentsButton(
+    count: Int,
+    expanded: Boolean,
+    modifier: Modifier = Modifier,
+    onToggle: () -> Unit
+) {
+    Card(
+        modifier = modifier,
+        onClick = onToggle,
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.secondaryContainer
+        )
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    imageVector = Icons.Filled.History,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSecondaryContainer
+                )
+                Spacer(modifier = Modifier.width(12.dp))
+                Column {
+                    Text(
+                        text = stringResource(R.string.past_and_completed_appointments),
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onSecondaryContainer
+                    )
+                    Text(
+                        text = stringResource(R.string.past_and_completed_count, count),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSecondaryContainer
+                    )
+                }
+            }
+
+            Icon(
+                imageVector = if (expanded) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSecondaryContainer
+            )
+        }
+    }
+}

@@ -25,6 +25,9 @@ interface AppointmentDao {
     
     @Query("SELECT * FROM appointments WHERE appointment_date >= :fromDate AND status = 'SCHEDULED' ORDER BY appointment_date ASC")
     fun getUpcomingAppointments(fromDate: Long): Flow<List<AppointmentEntity>>
+
+    @Query("SELECT * FROM appointments WHERE appointment_date < :beforeDate OR status != 'SCHEDULED' ORDER BY appointment_date DESC")
+    fun getPastAppointments(beforeDate: Long): Flow<List<AppointmentEntity>>
     
     @Query("SELECT * FROM appointments WHERE appointment_date BETWEEN :startDate AND :endDate ORDER BY appointment_date ASC")
     fun getAppointmentsInRange(startDate: Long, endDate: Long): Flow<List<AppointmentEntity>>
@@ -65,4 +68,3 @@ interface AppointmentDao {
     @Query("UPDATE appointments SET server_id = :serverId, sync_status = :status WHERE id = :localId")
     suspend fun updateServerIdAndStatus(localId: String, serverId: String, status: SyncStatus)
 }
-

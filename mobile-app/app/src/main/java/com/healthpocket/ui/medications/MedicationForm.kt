@@ -1,6 +1,7 @@
 package com.healthpocket.ui.medications
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -37,6 +38,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.healthpocket.R
@@ -163,14 +165,16 @@ fun MedicationForm(
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             MedicationColors.forEachIndexed { index, color ->
+                val isSelected = selectedColorIndex == index
                 FilterChip(
-                    selected = selectedColorIndex == index,
+                    selected = isSelected,
                     onClick = { onColorIndexChange(index) },
                     label = { Text("") },
                     colors = FilterChipDefaults.filterChipColors(
                         containerColor = color,
                         selectedContainerColor = color
                     ),
+                    border = if (isSelected) BorderStroke(2.dp, Color.Black) else null,
                     modifier = Modifier.size(40.dp),
                     enabled = !isLoading
                 )
@@ -374,21 +378,20 @@ fun WeekPicker(
     enabled: Boolean = true,
     @SuppressLint("ModifierParameter") modifier: Modifier = Modifier
 ) {
-    val dayLabels = mapOf(
-        DayOfWeek.MONDAY to stringResource(R.string.monday_short),
-        DayOfWeek.TUESDAY to stringResource(R.string.tuesday_short),
-        DayOfWeek.WEDNESDAY to stringResource(R.string.wednesday_short),
-        DayOfWeek.THURSDAY to stringResource(R.string.thursday_short),
-        DayOfWeek.FRIDAY to stringResource(R.string.friday_short),
-        DayOfWeek.SATURDAY to stringResource(R.string.saturday_short),
-        DayOfWeek.SUNDAY to stringResource(R.string.sunday_short)
-    )
-
     Row(
         modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         DayOfWeek.entries.forEach { day ->
+            val label = when (day) {
+                DayOfWeek.MONDAY -> stringResource(R.string.monday_short)
+                DayOfWeek.TUESDAY -> stringResource(R.string.tuesday_short)
+                DayOfWeek.WEDNESDAY -> stringResource(R.string.wednesday_short)
+                DayOfWeek.THURSDAY -> stringResource(R.string.thursday_short)
+                DayOfWeek.FRIDAY -> stringResource(R.string.friday_short)
+                DayOfWeek.SATURDAY -> stringResource(R.string.saturday_short)
+                DayOfWeek.SUNDAY -> stringResource(R.string.sunday_short)
+            }
             FilterChip(
                 selected = selectedDays.contains(day),
                 onClick = {
@@ -401,7 +404,8 @@ fun WeekPicker(
                     onDaysChange(updatedDays)
                 },
                 label = {
-                    Text(dayLabels[day]?.take(1) ?: "")},
+                    Text(label.take(1))
+                },
                 enabled = enabled,
                 modifier = Modifier.weight(1f)
             )

@@ -1,6 +1,11 @@
 package com.healthpocket.ui.appointments
 
+import android.app.DatePickerDialog
+import android.app.TimePickerDialog
+import android.text.format.DateFormat
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -41,6 +46,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -48,6 +55,8 @@ import com.healthpocket.R
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -56,6 +65,10 @@ fun AddAppointmentScreen(
     viewModel: AddAppointmentViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val context = LocalContext.current
+    val focusManager = LocalFocusManager.current
+    val dateFormatter = remember { DateTimeFormatter.ofPattern("MMM dd, yyyy", Locale.getDefault()) }
+    val timeFormatter = remember { DateTimeFormatter.ofPattern("HH:mm", Locale.getDefault()) }
 
     var title by remember { mutableStateOf("") }
     var doctorName by remember { mutableStateOf("") }
@@ -124,25 +137,42 @@ fun AddAppointmentScreen(
                 modifier = Modifier.fillMaxWidth()
             )
 
-            // Date display (simplified - in production, use DatePicker)
-            OutlinedTextField(
-                value = selectedDate.toString(),
-                onValueChange = { },
-                label = { Text(stringResource(R.string.date)) },
-                leadingIcon = { Icon(Icons.Filled.CalendarToday, contentDescription = null) },
-                readOnly = true,
+            PickerTextField(
+                value = selectedDate.format(dateFormatter),
+                label = stringResource(R.string.date),
+                icon = Icons.Filled.CalendarToday,
                 modifier = Modifier.fillMaxWidth()
-            )
+            ) {
+                focusManager.clearFocus()
+                DatePickerDialog(
+                    context,
+                    { _, year, month, dayOfMonth ->
+                        selectedDate = LocalDate.of(year, month + 1, dayOfMonth)
+                    },
+                    selectedDate.year,
+                    selectedDate.monthValue - 1,
+                    selectedDate.dayOfMonth
+                ).show()
+            }
 
             // Time display (simplified - in production, use TimePicker)
-            OutlinedTextField(
-                value = selectedTime.toString(),
-                onValueChange = { },
-                label = { Text(stringResource(R.string.time)) },
-                leadingIcon = { Icon(Icons.Filled.Schedule, contentDescription = null) },
-                readOnly = true,
+            PickerTextField(
+                value = selectedTime.format(timeFormatter),
+                label = stringResource(R.string.time),
+                icon = Icons.Filled.Schedule,
                 modifier = Modifier.fillMaxWidth()
-            )
+            ) {
+                focusManager.clearFocus()
+                TimePickerDialog(
+                    context,
+                    { _, hour: Int, minute: Int ->
+                        selectedTime = LocalTime.of(hour, minute)
+                    },
+                    selectedTime.hour,
+                    selectedTime.minute,
+                    DateFormat.is24HourFormat(context)
+                ).show()
+            }
 
             // Description
             OutlinedTextField(
@@ -220,3 +250,28 @@ fun AddAppointmentScreen(
     }
 }
 
+@Composable
+private fun PickerTextField(
+    value: String,
+    label: String,
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+
+    OutlinedTextField(
+        value = value,
+        onValueChange = { },
+        label = { Text(label) },
+        leadingIcon = { Icon(icon, contentDescription = null) },
+        readOnly = true,
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable(
+                interactionSource = interactionSource,
+                indication = null,
+                onClick = onClick
+            )
+    )
+}

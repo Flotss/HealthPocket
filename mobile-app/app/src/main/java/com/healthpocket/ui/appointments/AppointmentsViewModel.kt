@@ -15,8 +15,11 @@ class AppointmentsViewModel @Inject constructor(
     private val appointmentRepository: AppointmentRepository
 ) : ViewModel() {
 
-    val upcomingAppointments: Flow<List<AppointmentEntity>> = 
+    val upcomingAppointments: Flow<List<AppointmentEntity>> =
         appointmentRepository.getUpcomingAppointments()
+
+    val pastAppointments: Flow<List<AppointmentEntity>> =
+        appointmentRepository.getPastAppointments()
 
     fun markAsCompleted(appointmentId: String) {
         viewModelScope.launch {
@@ -30,4 +33,3 @@ class AppointmentsViewModel @Inject constructor(
         }
     }
 }
-
