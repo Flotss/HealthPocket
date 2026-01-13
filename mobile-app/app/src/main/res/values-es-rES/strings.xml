@@ -97,6 +97,20 @@
     <string name="enable_reminder">Activar recordatorio</string>
     <string name="no_appointments">No hay citas</string>
     <string name="add_first_appointment">Programa tu primera cita</string>
+    <string name="no_upcoming_appointments">No hay citas próximas</string>
+    <string name="past_and_completed_appointments">Citas pasadas y completadas</string>
+    <string name="past_and_completed_count">%1$d en total</string>
+    <string name="no_past_appointments">Aún no hay citas pasadas</string>
+    <string name="appointment_details">Detalles de la cita</string>
+    <string name="back">Atrás</string>
+    <string name="not_available">No disponible</string>
+    <string name="duration">Duración</string>
+    <string name="duration_minutes">%1$d min</string>
+    <string name="reminder_enabled_with_time">Recordatorio activado %1$d min antes</string>
+    <string name="reminder_disabled">Recordatorio desactivado</string>
+    <string name="mark_as_completed">Marcar como completada</string>
+    <string name="delete_appointment">Eliminar cita</string>
+    <string name="scheduled">Programada</string>
     <string name="completed">Completado</string>
     <string name="cancelled">Cancelado</string>
 

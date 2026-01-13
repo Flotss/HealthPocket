@@ -30,6 +30,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.healthpocket.data.local.entity.MetricType
 import com.healthpocket.ui.appointments.AddAppointmentScreen
+import com.healthpocket.ui.appointments.AppointmentDetailScreen
 import com.healthpocket.ui.appointments.AppointmentsScreen
 import com.healthpocket.ui.auth.LoginScreen
 import com.healthpocket.ui.auth.RegisterScreen
@@ -217,6 +218,16 @@ fun HealthPocketApp() {
             composable(NavRoutes.AddAppointment.route) {
                 AddAppointmentScreen(
                     onNavigateBack = { navController.popBackStack() }
+                )
+            }
+
+            composable(
+                route = NavRoutes.AppointmentDetail.route,
+                arguments = listOf(navArgument("appointmentId") { type = NavType.StringType })
+            ) {
+                AppointmentDetailScreen(
+                    onNavigateBack = { navController.popBackStack() },
+                    onAppointmentDeleted = { navController.popBackStack() }
                 )
             }
 

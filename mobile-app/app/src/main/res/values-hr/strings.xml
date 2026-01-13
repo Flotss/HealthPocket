@@ -97,6 +97,20 @@
     <string name="enable_reminder">Omogući podsjetnik</string>
     <string name="no_appointments">Nema termina</string>
     <string name="add_first_appointment">Zakazite svoj prvi termin</string>
+    <string name="no_upcoming_appointments">Nema nadolazećih termina</string>
+    <string name="past_and_completed_appointments">Prošli i završeni termini</string>
+    <string name="past_and_completed_count">%1$d ukupno</string>
+    <string name="no_past_appointments">Još nema prošlih termina</string>
+    <string name="appointment_details">Detalji termina</string>
+    <string name="back">Natrag</string>
+    <string name="not_available">Nije dostupno</string>
+    <string name="duration">Trajanje</string>
+    <string name="duration_minutes">%1$d min</string>
+    <string name="reminder_enabled_with_time">Podsjetnik uključen %1$d min ranije</string>
+    <string name="reminder_disabled">Podsjetnik isključen</string>
+    <string name="mark_as_completed">Označi kao završeno</string>
+    <string name="delete_appointment">Izbriši termin</string>
+    <string name="scheduled">Zakazano</string>
     <string name="completed">Završeno</string>
     <string name="cancelled">Otkazano</string>
 

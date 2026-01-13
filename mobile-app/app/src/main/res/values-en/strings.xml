@@ -97,6 +97,20 @@
     <string name="enable_reminder">Enable reminder</string>
     <string name="no_appointments">No appointments</string>
     <string name="add_first_appointment">Schedule your first appointment</string>
+    <string name="no_upcoming_appointments">No upcoming appointments</string>
+    <string name="past_and_completed_appointments">Past &amp; completed appointments</string>
+    <string name="past_and_completed_count">%1$d total</string>
+    <string name="no_past_appointments">No past appointments yet</string>
+    <string name="appointment_details">Appointment details</string>
+    <string name="back">Back</string>
+    <string name="not_available">Not available</string>
+    <string name="duration">Duration</string>
+    <string name="duration_minutes">%1$d min</string>
+    <string name="reminder_enabled_with_time">Reminder enabled %1$d min before</string>
+    <string name="reminder_disabled">Reminder disabled</string>
+    <string name="mark_as_completed">Mark as completed</string>
+    <string name="delete_appointment">Delete appointment</string>
+    <string name="scheduled">Scheduled</string>
     <string name="completed">Completed</string>
     <string name="cancelled">Cancelled</string>
 
