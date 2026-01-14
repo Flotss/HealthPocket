@@ -4,8 +4,9 @@ import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.text.format.DateFormat
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -28,6 +29,8 @@ import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -50,6 +53,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.PopupProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.healthpocket.R
 import java.time.LocalDate
@@ -57,6 +61,7 @@ import java.time.LocalTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Locale
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -73,6 +78,7 @@ fun AddAppointmentScreen(
     var title by remember { mutableStateOf("") }
     var doctorName by remember { mutableStateOf("") }
     var location by remember { mutableStateOf("") }
+    var isLocationDropdownExpanded by remember { mutableStateOf(false) }
     var description by remember { mutableStateOf("") }
     var notes by remember { mutableStateOf("") }
     var reminderEnabled by remember { mutableStateOf(true) }
@@ -128,14 +134,92 @@ fun AddAppointmentScreen(
             )
 
             // Location
-            OutlinedTextField(
-                value = location,
-                onValueChange = { location = it },
-                label = { Text(stringResource(R.string.location)) },
-                leadingIcon = { Icon(Icons.Filled.LocationOn, contentDescription = null) },
-                singleLine = true,
-                modifier = Modifier.fillMaxWidth()
-            )
+            val locationSuggestions = uiState.locationSuggestions
+            val isLocationLookupLoading = uiState.isLocationLookupInProgress
+            val locationLookupError = uiState.locationLookupError
+            val showNoLocationResults = uiState.showNoLocationResults
+            val shouldShowLocationMenu = isLocationDropdownExpanded &&
+                (isLocationLookupLoading || locationSuggestions.isNotEmpty() || locationLookupError != null || showNoLocationResults)
+
+            Box(modifier = Modifier.fillMaxWidth()) {
+                OutlinedTextField(
+                    value = location,
+                    onValueChange = {
+                        location = it
+                        isLocationDropdownExpanded = it.length >= 3
+                        viewModel.searchLocationSuggestions(it)
+                    },
+                    label = { Text(stringResource(R.string.location)) },
+                    leadingIcon = { Icon(Icons.Filled.LocationOn, contentDescription = null) },
+                    singleLine = true,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                )
+
+                DropdownMenu(
+                    expanded = shouldShowLocationMenu,
+                    onDismissRequest = {
+                        isLocationDropdownExpanded = false
+                        viewModel.clearLocationSuggestions()
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    properties = PopupProperties(focusable = false)
+                ) {
+                    when {
+                        isLocationLookupLoading -> {
+                            DropdownMenuItem(
+                                text = {
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                                    ) {
+                                        CircularProgressIndicator(
+                                            modifier = Modifier.size(16.dp),
+                                            strokeWidth = 2.dp
+                                        )
+                                        Text(text = stringResource(R.string.searching_locations))
+                                    }
+                                },
+                                onClick = {},
+                                enabled = false
+                            )
+                        }
+
+                        locationLookupError != null -> {
+                            val displayedError = locationLookupError.takeIf { it.isNotBlank() }
+                                ?: stringResource(R.string.locations_load_failed)
+                            DropdownMenuItem(
+                                text = { Text(displayedError) },
+                                onClick = {},
+                                enabled = false
+                            )
+                        }
+
+                        showNoLocationResults -> {
+                            DropdownMenuItem(
+                                text = { Text(stringResource(R.string.no_locations_found)) },
+                                onClick = {},
+                                enabled = false
+                            )
+                        }
+
+                        else -> {
+                            locationSuggestions.forEach { suggestion ->
+                                DropdownMenuItem(
+                                    text = { Text(suggestion) },
+                                    onClick = {
+                                        location = suggestion
+                                        isLocationDropdownExpanded = false
+                                        viewModel.clearLocationSuggestions()
+                                        focusManager.clearFocus()
+                                    }
+                                )
+                            }
+                        }
+                    }
+                }
+            }
 
             PickerTextField(
                 value = selectedDate.format(dateFormatter),

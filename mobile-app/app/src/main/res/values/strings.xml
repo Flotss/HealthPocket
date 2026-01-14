@@ -92,6 +92,9 @@
     <string name="appointment_title">Title</string>
     <string name="doctor_name">Doctor name</string>
     <string name="location">Location</string>
+    <string name="searching_locations">Searching addresses…</string>
+    <string name="no_locations_found">No matching addresses</string>
+    <string name="locations_load_failed">Could not load suggestions</string>
     <string name="date">Date</string>
     <string name="time">Time</string>
     <string name="description">Description</string>

@@ -21,6 +21,12 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+        buildConfigField(
+            "String",
+            "GEOAPIFY_API_KEY",
+            "\"SECRET_KEY\""
+        )
+        android.buildFeatures.buildConfig = true
     }
 
     buildTypes {
