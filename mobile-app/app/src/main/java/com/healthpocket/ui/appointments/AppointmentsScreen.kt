@@ -186,7 +186,7 @@ fun AppointmentCard(
     onMarkCompleted: () -> Unit,
     onDelete: () -> Unit
 ) {
-    val dateFormat = SimpleDateFormat("EEE, dd MMM yyyy", Locale.getDefault())
+    SimpleDateFormat("EEE, dd MMM yyyy", Locale.getDefault())
     val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
 
     Card(
@@ -224,16 +224,16 @@ fun AppointmentCard(
                     )
                 }
             }
-            
+
             Spacer(modifier = Modifier.width(16.dp))
-            
+
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = appointment.title,
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.SemiBold
                 )
-                
+
                 if (!appointment.doctorName.isNullOrBlank()) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(
@@ -250,7 +250,7 @@ fun AppointmentCard(
                         )
                     }
                 }
-                
+
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
                         imageVector = Icons.Filled.Schedule,
@@ -265,7 +265,7 @@ fun AppointmentCard(
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
-                
+
                 if (!appointment.location.isNullOrBlank()) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(
@@ -282,7 +282,7 @@ fun AppointmentCard(
                         )
                     }
                 }
-                
+
                 // Status chip
                 if (appointment.status != AppointmentStatus.SCHEDULED) {
                     Spacer(modifier = Modifier.height(8.dp))
@@ -307,7 +307,7 @@ fun AppointmentCard(
                     )
                 }
             }
-            
+
             // Action buttons
             if (appointment.status == AppointmentStatus.SCHEDULED) {
                 Column {

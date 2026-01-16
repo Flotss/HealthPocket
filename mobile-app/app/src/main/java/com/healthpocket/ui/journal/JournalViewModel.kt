@@ -35,7 +35,7 @@ class JournalViewModel @Inject constructor(
 
     fun saveTodayLog() {
         val mood = _uiState.value.selectedMood ?: return
-        
+
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true)
             try {

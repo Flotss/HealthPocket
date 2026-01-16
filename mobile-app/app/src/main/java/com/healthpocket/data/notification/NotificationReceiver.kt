@@ -23,7 +23,7 @@ class NotificationReceiver : BroadcastReceiver() {
         const val EXTRA_NOTIFICATION_TYPE = "notification_type"
         const val EXTRA_TITLE = "title"
         const val EXTRA_MESSAGE = "message"
-        
+
         const val TYPE_MEDICATION = "medication"
         const val TYPE_APPOINTMENT = "appointment"
     }
@@ -40,7 +40,6 @@ class NotificationReceiver : BroadcastReceiver() {
             else -> HealthPocketApplication.MEDICATION_CHANNEL_ID
         }
 
-        // Create intent to open app
         val openAppIntent = Intent(context, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
@@ -51,9 +50,7 @@ class NotificationReceiver : BroadcastReceiver() {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
-        // Build notification
         val notification = NotificationCompat.Builder(context, channelId)
-            //.setSmallIcon(R.drawable.ic_notification) TODO: Add appropriate icon
             .setContentTitle(title)
             .setContentText(message)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
@@ -61,7 +58,6 @@ class NotificationReceiver : BroadcastReceiver() {
             .setContentIntent(pendingIntent)
             .build()
 
-        // Show notification
         with(NotificationManagerCompat.from(context)) {
             if (ActivityCompat.checkSelfPermission(
                     context,

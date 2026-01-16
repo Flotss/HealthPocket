@@ -32,7 +32,10 @@ class AppointmentDetailViewModel @Inject constructor(
 
     fun markAsCompleted() {
         viewModelScope.launch {
-            appointmentRepository.updateAppointmentStatus(appointmentId, AppointmentStatus.COMPLETED)
+            appointmentRepository.updateAppointmentStatus(
+                appointmentId,
+                AppointmentStatus.COMPLETED
+            )
         }
     }
 

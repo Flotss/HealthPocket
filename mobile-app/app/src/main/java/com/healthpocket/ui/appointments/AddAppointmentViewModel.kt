@@ -133,29 +133,30 @@ class AddAppointmentViewModel @Inject constructor(
         }
     }
 
-    private suspend fun fetchLocationSuggestions(query: String): List<String> = withContext(Dispatchers.IO) {
-        val encodedQuery = URLEncoder.encode(query, StandardCharsets.UTF_8.name())
-        val url = URL(
-            "$GEOAPIFY_AUTOCOMPLETE_URL?text=$encodedQuery&limit=$AUTOCOMPLETE_LIMIT&apiKey=${BuildConfig.GEOAPIFY_API_KEY}"
-        )
-        val connection = (url.openConnection() as HttpURLConnection).apply {
-            requestMethod = "GET"
-            setRequestProperty("Accept", "application/json")
-            connectTimeout = REQUEST_TIMEOUT_MS
-            readTimeout = REQUEST_TIMEOUT_MS
-        }
-
-        try {
-            if (connection.responseCode != HttpURLConnection.HTTP_OK) {
-                return@withContext emptyList()
+    private suspend fun fetchLocationSuggestions(query: String): List<String> =
+        withContext(Dispatchers.IO) {
+            val encodedQuery = URLEncoder.encode(query, StandardCharsets.UTF_8.name())
+            val url = URL(
+                "$GEOAPIFY_AUTOCOMPLETE_URL?text=$encodedQuery&limit=$AUTOCOMPLETE_LIMIT&apiKey=${BuildConfig.GEOAPIFY_API_KEY}"
+            )
+            val connection = (url.openConnection() as HttpURLConnection).apply {
+                requestMethod = "GET"
+                setRequestProperty("Accept", "application/json")
+                connectTimeout = REQUEST_TIMEOUT_MS
+                readTimeout = REQUEST_TIMEOUT_MS
             }
 
-            val payload = connection.inputStream.bufferedReader().use { it.readText() }
-            return@withContext parseLocationSuggestions(payload)
-        } finally {
-            connection.disconnect()
+            try {
+                if (connection.responseCode != HttpURLConnection.HTTP_OK) {
+                    return@withContext emptyList()
+                }
+
+                val payload = connection.inputStream.bufferedReader().use { it.readText() }
+                return@withContext parseLocationSuggestions(payload)
+            } finally {
+                connection.disconnect()
+            }
         }
-    }
 
     private fun parseLocationSuggestions(payload: String): List<String> {
         val root = JSONObject(payload)
@@ -187,7 +188,8 @@ class AddAppointmentViewModel @Inject constructor(
     }
 
     companion object {
-        private const val GEOAPIFY_AUTOCOMPLETE_URL = "https://api.geoapify.com/v1/geocode/autocomplete"
+        private const val GEOAPIFY_AUTOCOMPLETE_URL =
+            "https://api.geoapify.com/v1/geocode/autocomplete"
         private const val AUTOCOMPLETE_LIMIT = 5
         private const val MIN_QUERY_LENGTH = 3
         private const val REQUEST_TIMEOUT_MS = 5000

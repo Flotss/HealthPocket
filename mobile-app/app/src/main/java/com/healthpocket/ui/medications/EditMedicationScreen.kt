@@ -29,7 +29,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.healthpocket.R
 import com.healthpocket.data.local.entity.MedicationEntity
-import com.healthpocket.data.model.MedicationReminder
 import com.healthpocket.ui.theme.MedicationColors
 import com.healthpocket.util.ColorUtils
 import com.healthpocket.util.remindersToScheduleTimes
@@ -86,7 +85,9 @@ fun EditMedicationScreen(
                 ) {
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(8.dp)
+                        verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(
+                            8.dp
+                        )
                     ) {
                         Text(
                             text = stringResource(R.string.error),
@@ -145,7 +146,7 @@ fun EditMedicationForm(
     var name by remember { mutableStateOf(medication.name) }
     var dosage by remember { mutableStateOf(medication.dosage) }
     var frequency by remember { mutableStateOf(medication.frequency) }
-    
+
     // Convert existing scheduleTimes to reminders
     val initialScheduleTimes = medication.scheduleTimes.split(",").filter { it.isNotBlank() }
     val initialReminders = remember(medication.id) {
@@ -153,7 +154,7 @@ fun EditMedicationForm(
             scheduleTimesToReminders(initialScheduleTimes)
         } else emptyList()
     }
-    
+
     var reminders by remember { mutableStateOf(initialReminders) }
     var notes by remember { mutableStateOf(medication.notes ?: "") }
     var selectedColorIndex by remember {
@@ -187,7 +188,7 @@ fun EditMedicationForm(
         onSave = {
             // Convert reminders to scheduleTimes format with days
             val scheduleTimes = remindersToScheduleTimes(reminders)
-            
+
             onSave(
                 name,
                 dosage,

@@ -55,7 +55,7 @@ fun RegisterScreen(
     viewModel: AuthViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    
+
     var firstName by remember { mutableStateOf("") }
     var lastName by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
@@ -79,7 +79,7 @@ fun RegisterScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(modifier = Modifier.height(32.dp))
-        
+
         // Title
         Icon(
             imageVector = Icons.Filled.HealthAndSafety,
@@ -87,15 +87,15 @@ fun RegisterScreen(
             modifier = Modifier.size(64.dp),
             tint = MaterialTheme.colorScheme.primary
         )
-        
+
         Spacer(modifier = Modifier.height(16.dp))
-        
+
         Text(
             text = stringResource(R.string.create_account),
             style = MaterialTheme.typography.headlineMedium,
             color = MaterialTheme.colorScheme.primary
         )
-        
+
         Spacer(modifier = Modifier.height(32.dp))
 
         // First name
@@ -108,7 +108,7 @@ fun RegisterScreen(
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
             modifier = Modifier.fillMaxWidth()
         )
-        
+
         Spacer(modifier = Modifier.height(12.dp))
 
         // Last name
@@ -121,7 +121,7 @@ fun RegisterScreen(
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
             modifier = Modifier.fillMaxWidth()
         )
-        
+
         Spacer(modifier = Modifier.height(12.dp))
 
         // Email
@@ -137,7 +137,7 @@ fun RegisterScreen(
             ),
             modifier = Modifier.fillMaxWidth()
         )
-        
+
         Spacer(modifier = Modifier.height(12.dp))
 
         // Password
@@ -162,7 +162,7 @@ fun RegisterScreen(
             ),
             modifier = Modifier.fillMaxWidth()
         )
-        
+
         Spacer(modifier = Modifier.height(12.dp))
 
         // Confirm Password
@@ -180,7 +180,7 @@ fun RegisterScreen(
             isError = confirmPassword.isNotEmpty() && password != confirmPassword,
             modifier = Modifier.fillMaxWidth()
         )
-        
+
         if (confirmPassword.isNotEmpty() && password != confirmPassword) {
             Text(
                 text = stringResource(R.string.passwords_dont_match),
@@ -189,7 +189,7 @@ fun RegisterScreen(
                 modifier = Modifier.padding(start = 16.dp, top = 4.dp)
             )
         }
-        
+
         // Error message
         if (uiState.error != null) {
             Spacer(modifier = Modifier.height(8.dp))
@@ -199,12 +199,12 @@ fun RegisterScreen(
                 style = MaterialTheme.typography.bodySmall
             )
         }
-        
+
         Spacer(modifier = Modifier.height(32.dp))
 
         // Register button
         Button(
-            onClick = { 
+            onClick = {
                 if (password == confirmPassword) {
                     viewModel.register(email, password, firstName, lastName)
                 }
@@ -221,14 +221,14 @@ fun RegisterScreen(
                 Text(stringResource(R.string.register))
             }
         }
-        
+
         Spacer(modifier = Modifier.height(16.dp))
 
         // Login link
         TextButton(onClick = onNavigateToLogin) {
             Text(stringResource(R.string.already_have_account))
         }
-        
+
         Spacer(modifier = Modifier.height(32.dp))
     }
 }

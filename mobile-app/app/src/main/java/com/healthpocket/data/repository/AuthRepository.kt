@@ -79,7 +79,7 @@ class AuthRepository @Inject constructor(
         } catch (e: Exception) {
             // Ignore network errors on logout
         }
-        
+
         userPreferences.clearAuthData()
         userDao.deleteAll()
     }
@@ -89,7 +89,7 @@ class AuthRepository @Inject constructor(
         if (!checkTokenExpiration()) {
             return Result.failure(Exception("Token expired"))
         }
-        
+
         return try {
             val response = api.getProfile()
             if (response.isSuccessful) {
@@ -99,8 +99,8 @@ class AuthRepository @Inject constructor(
                         email = userResponse.email,
                         firstName = userResponse.firstName,
                         lastName = userResponse.lastName,
-                        birthDate = userResponse.birthDate?.let { 
-                            com.healthpocket.util.DateTimeUtils.parseDateString(it) 
+                        birthDate = userResponse.birthDate?.let {
+                            com.healthpocket.util.DateTimeUtils.parseDateString(it)
                         },
                         gender = userResponse.gender,
                         bloodType = userResponse.bloodType,
@@ -127,7 +127,7 @@ class AuthRepository @Inject constructor(
         if (token.isNullOrBlank()) {
             return false
         }
-        
+
         // Check if token is expired
         val expirationTimestamp = userPreferences.tokenExpirationTimestamp.first()
         if (expirationTimestamp != null && System.currentTimeMillis() >= expirationTimestamp) {
@@ -135,7 +135,7 @@ class AuthRepository @Inject constructor(
             logout()
             return false
         }
-        
+
         return true
     }
 
@@ -168,8 +168,8 @@ class AuthRepository @Inject constructor(
             email = authResponse.user.email,
             firstName = authResponse.user.firstName,
             lastName = authResponse.user.lastName,
-            birthDate = authResponse.user.birthDate?.let { 
-                com.healthpocket.util.DateTimeUtils.parseDateString(it) 
+            birthDate = authResponse.user.birthDate?.let {
+                com.healthpocket.util.DateTimeUtils.parseDateString(it)
             },
             gender = authResponse.user.gender,
             bloodType = authResponse.user.bloodType,

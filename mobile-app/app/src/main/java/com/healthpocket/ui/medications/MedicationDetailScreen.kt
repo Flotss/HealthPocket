@@ -96,9 +96,9 @@ fun MedicationDetailScreen(
                 },
                 actions = {
                     IconButton(
-                        onClick = { 
-                            uiState.medication?.let { 
-                                onNavigateToEdit(it.id) 
+                        onClick = {
+                            uiState.medication?.let {
+                                onNavigateToEdit(it.id)
                             }
                         }
                     ) {
@@ -129,6 +129,7 @@ fun MedicationDetailScreen(
                     CircularProgressIndicator()
                 }
             }
+
             uiState.error != null -> {
                 Box(
                     modifier = Modifier
@@ -152,6 +153,7 @@ fun MedicationDetailScreen(
                     }
                 }
             }
+
             uiState.medication != null -> {
                 MedicationDetailContent(
                     medication = uiState.medication!!,
@@ -168,13 +170,13 @@ fun MedicationDetailScreen(
         AlertDialog(
             onDismissRequest = { showDeleteDialog = false },
             title = { Text(stringResource(R.string.delete_medication)) },
-            text = { 
+            text = {
                 Text(
                     stringResource(
-                        R.string.delete_medication_confirm, 
+                        R.string.delete_medication_confirm,
                         uiState.medication?.name ?: ""
                     )
-                ) 
+                )
             },
             confirmButton = {
                 TextButton(
@@ -207,7 +209,6 @@ fun MedicationDetailContent(
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(24.dp)
     ) {
-        // Header with color indicator
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(16.dp),
@@ -248,21 +249,21 @@ fun MedicationDetailContent(
                     Icon(
                         imageVector = if (medication.isActive) Icons.Filled.CheckCircle else Icons.Filled.Cancel,
                         contentDescription = null,
-                        tint = if (medication.isActive) 
-                            MaterialTheme.colorScheme.primary 
-                        else 
+                        tint = if (medication.isActive)
+                            MaterialTheme.colorScheme.primary
+                        else
                             MaterialTheme.colorScheme.error,
                         modifier = Modifier.size(20.dp)
                     )
                     Text(
-                        text = if (medication.isActive) 
-                            stringResource(R.string.active) 
-                        else 
+                        text = if (medication.isActive)
+                            stringResource(R.string.active)
+                        else
                             stringResource(R.string.inactive),
                         style = MaterialTheme.typography.bodyLarge,
-                        color = if (medication.isActive) 
-                            MaterialTheme.colorScheme.primary 
-                        else 
+                        color = if (medication.isActive)
+                            MaterialTheme.colorScheme.primary
+                        else
                             MaterialTheme.colorScheme.error
                     )
                 }
@@ -271,7 +272,6 @@ fun MedicationDetailContent(
 
         HorizontalDivider()
 
-        // Dosage information
         DetailSection(
             title = stringResource(R.string.dosage_information),
             content = {
@@ -290,7 +290,6 @@ fun MedicationDetailContent(
 
         HorizontalDivider()
 
-        // Schedule
         DetailSection(
             title = stringResource(R.string.schedule),
             content = {
@@ -316,7 +315,6 @@ fun MedicationDetailContent(
 
         HorizontalDivider()
 
-        // Reminders
         DetailSection(
             title = stringResource(R.string.reminders),
             content = {
@@ -340,9 +338,9 @@ fun MedicationDetailContent(
                         )
                     }
                     Text(
-                        text = if (medication.reminderEnabled) 
-                            stringResource(R.string.enabled) 
-                        else 
+                        text = if (medication.reminderEnabled)
+                            stringResource(R.string.enabled)
+                        else
                             stringResource(R.string.disabled),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -351,7 +349,6 @@ fun MedicationDetailContent(
             }
         )
 
-        // Notes
         if (!medication.notes.isNullOrBlank()) {
             HorizontalDivider()
             DetailSection(
@@ -375,7 +372,6 @@ fun MedicationDetailContent(
 
         HorizontalDivider()
 
-        // Actions
         Column(
             modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(12.dp)
@@ -384,9 +380,9 @@ fun MedicationDetailContent(
                 onClick = onToggleStatus,
                 modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = if (medication.isActive) 
-                        MaterialTheme.colorScheme.error 
-                    else 
+                    containerColor = if (medication.isActive)
+                        MaterialTheme.colorScheme.error
+                    else
                         MaterialTheme.colorScheme.primary
                 )
             ) {
@@ -396,9 +392,9 @@ fun MedicationDetailContent(
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = if (medication.isActive) 
-                        stringResource(R.string.deactivate) 
-                    else 
+                    text = if (medication.isActive)
+                        stringResource(R.string.deactivate)
+                    else
                         stringResource(R.string.activate)
                 )
             }

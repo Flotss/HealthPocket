@@ -27,7 +27,7 @@ class AuthInterceptor @Inject constructor(
         // Check token expiration synchronously (blocking is acceptable in interceptors)
         val expirationTimestamp = runBlocking { userPreferences.tokenExpirationTimestamp.first() }
         val currentTime = System.currentTimeMillis()
-        
+
         if (expirationTimestamp != null && currentTime >= expirationTimestamp) {
             // Token expired, logout automatically by clearing auth data
             Log.w("AuthInterceptor", "Token expired, logging out user")
@@ -53,7 +53,10 @@ class AuthInterceptor @Inject constructor(
 
         // Check response status - if 401 (Unauthorized) or 403 (Forbidden), token is invalid
         if (response.code == 401 || response.code == 403) {
-            Log.w("AuthInterceptor", "Received ${response.code} response, token invalid. Logging out user")
+            Log.w(
+                "AuthInterceptor",
+                "Received ${response.code} response, token invalid. Logging out user"
+            )
             // Clear auth data asynchronously (don't block the response)
             runBlocking {
                 userPreferences.clearAuthData()

@@ -45,10 +45,6 @@ class MedicationRepository @Inject constructor(
         private const val SCHEDULE_TIMES_SEPARATOR = ","
     }
 
-    // ============================================================================
-    // Public API - Medication Queries
-    // ============================================================================
-
     fun getAllMedications(): Flow<List<MedicationEntity>> {
         return medicationDao.getAllMedications()
             .distinctUntilChanged()
@@ -64,10 +60,6 @@ class MedicationRepository @Inject constructor(
             .distinctUntilChanged()
     }
 
-    // ============================================================================
-    // Public API - Medication Intake Queries
-    // ============================================================================
-
     fun getIntakesForMedication(medicationId: String): Flow<List<MedicationIntakeEntity>> {
         return intakeDao.getIntakesForMedication(medicationId)
     }
@@ -76,13 +68,12 @@ class MedicationRepository @Inject constructor(
         return intakeDao.getIntakesInRange(startTime, endTime)
     }
 
-    fun getTodaysPendingIntakes(startTime: Long, endTime: Long): Flow<List<MedicationIntakeEntity>> {
+    fun getTodaysPendingIntakes(
+        startTime: Long,
+        endTime: Long
+    ): Flow<List<MedicationIntakeEntity>> {
         return intakeDao.getTodaysPendingIntakes(startTime, endTime)
     }
-
-    // ============================================================================
-    // Public API - Medication Mutations
-    // ============================================================================
 
     suspend fun createMedication(
         name: String,
@@ -108,20 +99,26 @@ class MedicationRepository @Inject constructor(
         )
 
         medicationDao.insert(medication)
-        
-        // Create intakes - wrap in try-catch to ensure medication is saved even if intake creation fails
+
         try {
-            Log.d("MedicationRepository", "Creating intakes for medication ${medication.id} with ${scheduleTimes.size} schedule times")
+            Log.d(
+                "MedicationRepository",
+                "Creating intakes for medication ${medication.id} with ${scheduleTimes.size} schedule times"
+            )
             createIntakesForMedication(medication, scheduleTimes, startDate, endDate)
-            Log.d("MedicationRepository", "Successfully created intakes for medication ${medication.id}")
-            
-            // Sync intakes to server
+            Log.d(
+                "MedicationRepository",
+                "Successfully created intakes for medication ${medication.id}"
+            )
             syncIntakesForMedication(medication.id)
         } catch (e: Exception) {
-            Log.e("MedicationRepository", "Failed to create intakes for medication ${medication.id}", e)
-            // Medication is already saved, intakes can be created later if needed
+            Log.e(
+                "MedicationRepository",
+                "Failed to create intakes for medication ${medication.id}",
+                e
+            )
         }
-        
+
         syncMedicationToServer(medication)
 
         return medication
@@ -150,10 +147,6 @@ class MedicationRepository @Inject constructor(
             deleteMedicationFromServer(serverId)
         }
     }
-
-    // ============================================================================
-    // Public API - Medication Intake Mutations
-    // ============================================================================
 
     suspend fun createIntake(
         medicationId: String,
@@ -188,8 +181,7 @@ class MedicationRepository @Inject constructor(
             takenTime = takenTime,
             syncStatus = SyncStatus.PENDING
         )
-        
-        // Sync status change to server
+
         val updatedIntake = intake.copy(
             status = IntakeStatus.TAKEN,
             takenTime = takenTime,
@@ -206,8 +198,7 @@ class MedicationRepository @Inject constructor(
             syncStatus = SyncStatus.PENDING
         )
         notificationScheduler.cancelIntakeReminder(intake.id)
-        
-        // Sync status change to server
+
         val updatedIntake = intake.copy(
             status = IntakeStatus.SKIPPED,
             takenTime = null,
@@ -216,36 +207,25 @@ class MedicationRepository @Inject constructor(
         syncIntakeStatusToServer(updatedIntake)
     }
 
-    // ============================================================================
-    // Public API - Sync Operations
-    // ============================================================================
-
     suspend fun syncAll() {
         Log.d("MedicationRepository", "Starting bidirectional sync of medications and intakes")
         try {
-            // Sync medications
             val serverMedications = api.getAllMedications().body() ?: emptyList()
             val localMedications = medicationDao.getAllMedicationsAsync()
-            
+
             mergeAndSync(serverMedications, localMedications)
-            
-            // Sync all pending intakes
             syncAllPendingIntakes()
-            
+
             Log.d("MedicationRepository", "Bidirectional sync completed successfully")
         } catch (e: Exception) {
             Log.e("MedicationRepository", "Bidirectional sync failed", e)
         }
     }
-    
+
     @Deprecated("Use syncAll() for bidirectional sync", ReplaceWith("syncAll()"))
     suspend fun syncMedications() {
         syncAll()
     }
-
-    // ============================================================================
-    // Private Helpers - Medication Entity Building
-    // ============================================================================
 
     private fun buildMedicationEntity(
         name: String,
@@ -274,86 +254,92 @@ class MedicationRepository @Inject constructor(
         )
     }
 
-    // ============================================================================
-    // Private Helpers - Medication Sync
-    // ============================================================================
-
     private suspend fun mergeAndSync(
         serverMedications: List<MedicationResponse>,
         localMedications: List<MedicationEntity>
     ) {
-        val serverById = serverMedications.associateBy { it.id }
+        serverMedications.associateBy { it.id }
         val localByServerId = localMedications
             .filter { it.serverId != null }
             .associateBy { it.serverId!! }
-        
-        // Process server medications
+
         serverMedications.forEach { serverMedication ->
             val localMatch = localByServerId[serverMedication.id]
-            
+
             when {
                 localMatch == null -> {
                     handleNewServerMedication(serverMedication)
                 }
+
                 isServerNewer(serverMedication.updatedAt, localMatch.updatedAt) -> {
                     handleServerNewerMedication(serverMedication, localMatch)
                 }
+
                 isLocalNewer(serverMedication.updatedAt, localMatch.updatedAt) -> {
                     handleLocalNewerMedication(serverMedication, localMatch)
                 }
-                // If timestamps equal, no action needed
             }
         }
-        
-        // Process unsynchronized local medications
+
         val unsyncedLocalMedications = localMedications.filter { it.serverId == null }
         unsyncedLocalMedications.forEach { localMedication ->
             pushLocalMedicationToServer(localMedication)
         }
     }
-    
+
     private suspend fun handleNewServerMedication(serverMedication: MedicationResponse) {
         Log.d("MedicationRepository", "Adding new medication from server: ${serverMedication.id}")
         val entity = serverMedication.toEntity()
         medicationDao.insert(entity)
     }
-    
+
     private suspend fun handleServerNewerMedication(
         serverMedication: MedicationResponse,
         localMedication: MedicationEntity
     ) {
-        Log.d("MedicationRepository", "Updating local medication from server: ${serverMedication.id}")
+        Log.d(
+            "MedicationRepository",
+            "Updating local medication from server: ${serverMedication.id}"
+        )
         val updatedEntity = serverMedication.toEntity(localId = localMedication.id)
         medicationDao.update(updatedEntity)
     }
-    
+
     private suspend fun handleLocalNewerMedication(
         serverMedication: MedicationResponse,
         localMedication: MedicationEntity
     ) {
-        Log.d("MedicationRepository", "Updating server with local medication: ${localMedication.id}")
+        Log.d(
+            "MedicationRepository",
+            "Updating server with local medication: ${localMedication.id}"
+        )
         try {
             val request = localMedication.toRequest()
             val response = api.updateMedication(serverMedication.id, request)
-            
+
             if (response.isSuccessful) {
                 medicationDao.updateSyncStatus(localMedication.id, SyncStatus.SYNCED)
             } else {
-                Log.e("MedicationRepository", "Failed to update server medication: ${response.code()}")
+                Log.e(
+                    "MedicationRepository",
+                    "Failed to update server medication: ${response.code()}"
+                )
                 medicationDao.updateSyncStatus(localMedication.id, SyncStatus.ERROR)
             }
         } catch (e: Exception) {
-            Log.w("MedicationRepository", "Network error updating medication to server: ${e.message}")
-            // Keep PENDING status for retry when network returns
+            Log.w(
+                "MedicationRepository",
+                "Network error updating medication to server: ${e.message}"
+            )
         }
     }
-    
+
     private suspend fun pushLocalMedicationToServer(localMedication: MedicationEntity) {
         Log.d("MedicationRepository", "Pushing local medication to server: ${localMedication.id}")
         try {
             val request = localMedication.toRequest()
             val response = api.createMedication(request)
-            
+
             if (response.isSuccessful) {
                 response.body()?.let { serverMedication ->
                     medicationDao.updateServerIdAndStatus(
@@ -363,20 +349,25 @@ class MedicationRepository @Inject constructor(
                     )
                 }
             } else {
-                Log.e("MedicationRepository", "Failed to create medication on server: ${response.code()}")
+                Log.e(
+                    "MedicationRepository",
+                    "Failed to create medication on server: ${response.code()}"
+                )
                 medicationDao.updateSyncStatus(localMedication.id, SyncStatus.ERROR)
             }
         } catch (e: Exception) {
-            Log.w("MedicationRepository", "Network error pushing medication to server: ${e.message}")
-            // Keep PENDING status for retry when network returns
+            Log.w(
+                "MedicationRepository",
+                "Network error pushing medication to server: ${e.message}"
+            )
         }
     }
-    
+
     private fun isServerNewer(serverUpdatedAt: String, localUpdatedAt: Long): Boolean {
         val serverMillis = DateTimeUtils.offsetDateTimeStringToMillis(serverUpdatedAt)
         return serverMillis > localUpdatedAt
     }
-    
+
     private fun isLocalNewer(serverUpdatedAt: String, localUpdatedAt: Long): Boolean {
         val serverMillis = DateTimeUtils.offsetDateTimeStringToMillis(serverUpdatedAt)
         return localUpdatedAt > serverMillis
@@ -402,7 +393,10 @@ class MedicationRepository @Inject constructor(
                     )
                 }
             } else {
-                Log.e("MedicationRepository", "Sync failed for medication ${medication.id}: ${response.code()}")
+                Log.e(
+                    "MedicationRepository",
+                    "Sync failed for medication ${medication.id}: ${response.code()}"
+                )
                 medicationDao.updateSyncStatus(medication.id, SyncStatus.ERROR)
             }
         } catch (e: Exception) {
@@ -418,7 +412,6 @@ class MedicationRepository @Inject constructor(
             Log.d("MedicationRepository", "Deletion synced for medication $serverId")
         } catch (e: Exception) {
             Log.e("MedicationRepository", "Deletion sync failed for medication $serverId", e)
-            // Ignore network errors for deletion - offline-first pattern
         }
     }
 
@@ -446,20 +439,26 @@ class MedicationRepository @Inject constructor(
                     )
                 }
             } else {
-                Log.e("MedicationRepository", "Sync failed for intake ${intake.id}: ${response.code()}")
-                intakeDao.updateIntakeStatus(intake.id, intake.status, intake.takenTime, SyncStatus.ERROR)
+                Log.e(
+                    "MedicationRepository",
+                    "Sync failed for intake ${intake.id}: ${response.code()}"
+                )
+                intakeDao.updateIntakeStatus(
+                    intake.id,
+                    intake.status,
+                    intake.takenTime,
+                    SyncStatus.ERROR
+                )
             }
         } catch (e: Exception) {
             Log.w("MedicationRepository", "Network error syncing intake to server: ${e.message}")
-            // Keep PENDING status for retry when network returns
         }
     }
 
     private suspend fun syncIntakeStatusToServer(intake: MedicationIntakeEntity) {
         Log.d("MedicationRepository", "Starting sync for intake status ${intake.id}")
-        
+
         if (intake.serverId == null) {
-            // If not synced yet, sync the entire intake
             syncIntakeToServer(intake)
             return
         }
@@ -475,14 +474,29 @@ class MedicationRepository @Inject constructor(
 
             if (response.isSuccessful) {
                 Log.d("MedicationRepository", "Status sync successful for intake ${intake.id}")
-                intakeDao.updateIntakeStatus(intake.id, intake.status, intake.takenTime, SyncStatus.SYNCED)
+                intakeDao.updateIntakeStatus(
+                    intake.id,
+                    intake.status,
+                    intake.takenTime,
+                    SyncStatus.SYNCED
+                )
             } else {
-                Log.e("MedicationRepository", "Status sync failed for intake ${intake.id}: ${response.code()}")
-                intakeDao.updateIntakeStatus(intake.id, intake.status, intake.takenTime, SyncStatus.ERROR)
+                Log.e(
+                    "MedicationRepository",
+                    "Status sync failed for intake ${intake.id}: ${response.code()}"
+                )
+                intakeDao.updateIntakeStatus(
+                    intake.id,
+                    intake.status,
+                    intake.takenTime,
+                    SyncStatus.ERROR
+                )
             }
         } catch (e: Exception) {
-            Log.w("MedicationRepository", "Network error syncing intake status to server: ${e.message}")
-            // Keep PENDING status for retry when network returns
+            Log.w(
+                "MedicationRepository",
+                "Network error syncing intake status to server: ${e.message}"
+            )
         }
     }
 
@@ -491,23 +505,33 @@ class MedicationRepository @Inject constructor(
         try {
             val pendingIntakes = intakeDao.getIntakesForMedication(medicationId).first()
                 .filter { it.syncStatus == SyncStatus.PENDING && it.serverId == null }
-            
+
             if (pendingIntakes.isEmpty()) {
-                Log.d("MedicationRepository", "No pending intakes to sync for medication $medicationId")
+                Log.d(
+                    "MedicationRepository",
+                    "No pending intakes to sync for medication $medicationId"
+                )
                 return
             }
 
-            Log.d("MedicationRepository", "Syncing ${pendingIntakes.size} intakes for medication $medicationId")
-            
+            Log.d(
+                "MedicationRepository",
+                "Syncing ${pendingIntakes.size} intakes for medication $medicationId"
+            )
+
             var syncedCount = 0
             var errorCount = 0
-            
+
             pendingIntakes.forEach { intake ->
                 try {
                     val request = MedicationIntakeRequest(
                         medicationId = intake.medicationId,
                         scheduledTime = DateTimeUtils.millisToOffsetDateTimeString(intake.scheduledTime),
-                        takenTime = intake.takenTime?.let { DateTimeUtils.millisToOffsetDateTimeString(it) },
+                        takenTime = intake.takenTime?.let {
+                            DateTimeUtils.millisToOffsetDateTimeString(
+                                it
+                            )
+                        },
                         status = intake.status.name,
                         notes = intake.notes,
                         localId = intake.id
@@ -526,15 +550,26 @@ class MedicationRepository @Inject constructor(
                         }
                     } else {
                         errorCount++
-                        intakeDao.updateIntakeStatus(intake.id, intake.status, intake.takenTime, SyncStatus.ERROR)
+                        intakeDao.updateIntakeStatus(
+                            intake.id,
+                            intake.status,
+                            intake.takenTime,
+                            SyncStatus.ERROR
+                        )
                     }
                 } catch (e: Exception) {
                     errorCount++
-                    Log.w("MedicationRepository", "Failed to sync intake ${intake.id}: ${e.message}")
+                    Log.w(
+                        "MedicationRepository",
+                        "Failed to sync intake ${intake.id}: ${e.message}"
+                    )
                 }
             }
 
-            Log.d("MedicationRepository", "Synced $syncedCount intakes ($errorCount errors) for medication $medicationId")
+            Log.d(
+                "MedicationRepository",
+                "Synced $syncedCount intakes ($errorCount errors) for medication $medicationId"
+            )
         } catch (e: Exception) {
             Log.e("MedicationRepository", "Failed to sync intakes for medication $medicationId", e)
         }
@@ -545,23 +580,27 @@ class MedicationRepository @Inject constructor(
         try {
             val pendingIntakes = intakeDao.getIntakesBySyncStatus(SyncStatus.PENDING)
                 .filter { it.serverId == null }
-            
+
             if (pendingIntakes.isEmpty()) {
                 Log.d("MedicationRepository", "No pending intakes to sync")
                 return
             }
 
             Log.d("MedicationRepository", "Syncing ${pendingIntakes.size} pending intakes")
-            
+
             var syncedCount = 0
             var errorCount = 0
-            
+
             pendingIntakes.forEach { intake ->
                 try {
                     val request = MedicationIntakeRequest(
                         medicationId = intake.medicationId,
                         scheduledTime = DateTimeUtils.millisToOffsetDateTimeString(intake.scheduledTime),
-                        takenTime = intake.takenTime?.let { DateTimeUtils.millisToOffsetDateTimeString(it) },
+                        takenTime = intake.takenTime?.let {
+                            DateTimeUtils.millisToOffsetDateTimeString(
+                                it
+                            )
+                        },
                         status = intake.status.name,
                         notes = intake.notes,
                         localId = intake.id
@@ -580,15 +619,22 @@ class MedicationRepository @Inject constructor(
                         }
                     } else {
                         errorCount++
-                        intakeDao.updateIntakeStatus(intake.id, intake.status, intake.takenTime, SyncStatus.ERROR)
+                        intakeDao.updateIntakeStatus(
+                            intake.id,
+                            intake.status,
+                            intake.takenTime,
+                            SyncStatus.ERROR
+                        )
                     }
                 } catch (e: Exception) {
                     errorCount++
-                    // Keep PENDING status for retry when network returns
                 }
             }
 
-            Log.d("MedicationRepository", "Synced $syncedCount pending intakes ($errorCount errors)")
+            Log.d(
+                "MedicationRepository",
+                "Synced $syncedCount pending intakes ($errorCount errors)"
+            )
         } catch (e: Exception) {
             Log.e("MedicationRepository", "Failed to sync pending intakes", e)
         }
@@ -605,6 +651,7 @@ class MedicationRepository @Inject constructor(
             existingByServerId != null -> {
                 updateExistingMedicationFromServer(existingByServerId, serverMedication)
             }
+
             else -> {
                 linkOrCreateLocalMedication(serverMedication)
             }
@@ -661,10 +708,6 @@ class MedicationRepository @Inject constructor(
         medicationDao.insert(entity)
     }
 
-    // ============================================================================
-    // Private Helpers - Medication Mappers
-    // ============================================================================
-
     private fun MedicationResponse.toEntity(
         localId: String = UUID.randomUUID().toString()
     ): MedicationEntity {
@@ -685,7 +728,7 @@ class MedicationRepository @Inject constructor(
             updatedAt = DateTimeUtils.offsetDateTimeStringToMillis(this.updatedAt)
         )
     }
-    
+
     private fun MedicationEntity.toRequest(): MedicationRequest {
         return MedicationRequest(
             name = this.name,
@@ -720,14 +763,10 @@ class MedicationRepository @Inject constructor(
     ): MedicationEntity? {
         return allMedications.find {
             it.name == serverMedication.name &&
-            it.dosage == serverMedication.dosage &&
-            it.serverId == null
+                    it.dosage == serverMedication.dosage &&
+                    it.serverId == null
         }
     }
-
-    // ============================================================================
-    // Private Helpers - Intake Creation
-    // ============================================================================
 
     private suspend fun createIntakesForMedication(
         medication: MedicationEntity,
@@ -739,22 +778,22 @@ class MedicationRepository @Inject constructor(
         var currentDate = startDate
         var intakeCount = 0
 
-        Log.d("MedicationRepository", "Creating intakes from $startDate to $finalEndDate for medication ${medication.id}")
+        Log.d(
+            "MedicationRepository",
+            "Creating intakes from $startDate to $finalEndDate for medication ${medication.id}"
+        )
 
         while (currentDate <= finalEndDate) {
             val currentDayOfWeek = currentDate.dayOfWeek
             scheduleTimes.forEach { scheduleTimeString ->
-                // Parse schedule time format: "MONDAY,THURSDAY:08:00" or legacy "08:00"
                 val parsed = parseScheduleTime(scheduleTimeString)
                 if (parsed != null) {
                     val (days, time) = parsed
-                    // Only create intake if current day matches the scheduled days
                     if (days.contains(currentDayOfWeek)) {
                         createIntakeForTime(medication, currentDate, time)
                         intakeCount++
                     }
                 } else {
-                    // Legacy format: just time (e.g., "08:00") - create for all days
                     DateTimeUtils.parseTimeString(scheduleTimeString)?.let { time ->
                         createIntakeForTime(medication, currentDate, time)
                         intakeCount++
@@ -764,7 +803,10 @@ class MedicationRepository @Inject constructor(
             currentDate = currentDate.plusDays(1)
         }
 
-        Log.d("MedicationRepository", "Created $intakeCount intakes for medication ${medication.id}")
+        Log.d(
+            "MedicationRepository",
+            "Created $intakeCount intakes for medication ${medication.id}"
+        )
     }
 
     private suspend fun createIntakeForTime(
@@ -787,7 +829,10 @@ class MedicationRepository @Inject constructor(
                 notificationScheduler.scheduleIntakeReminder(intake.id, scheduledMillis)
             }
         } catch (e: Exception) {
-            Log.w("MedicationRepository", "Failed to create intake for $date at $time: ${e.message}")
+            Log.w(
+                "MedicationRepository",
+                "Failed to create intake for $date at $time: ${e.message}"
+            )
         }
     }
 
@@ -801,13 +846,8 @@ class MedicationRepository @Inject constructor(
                 createIntakeForTime(medication, date, time)
             }
         } catch (e: Exception) {
-            // Skip invalid time format
         }
     }
-
-    // ============================================================================
-    // Private Helpers - Intake Updates
-    // ============================================================================
 
     private fun hasScheduleTimesChanged(
         existing: MedicationEntity,
@@ -816,8 +856,8 @@ class MedicationRepository @Inject constructor(
         val existingTimes = existing.scheduleTimes.split(SCHEDULE_TIMES_SEPARATOR).sorted()
         val updatedTimes = updated.scheduleTimes.split(SCHEDULE_TIMES_SEPARATOR).sorted()
         return existingTimes != updatedTimes ||
-            existing.startDate != updated.startDate ||
-            existing.endDate != updated.endDate
+                existing.startDate != updated.startDate ||
+                existing.endDate != updated.endDate
     }
 
     private suspend fun updateIntakesForScheduleChange(
@@ -830,22 +870,22 @@ class MedicationRepository @Inject constructor(
         val endDate = updatedMedication.endDate
 
         val existingIntakes = intakeDao.getIntakesForMedication(updatedMedication.id).first()
-        val futureIntakes = existingIntakes.filter { 
-            it.scheduledTime > now && it.status == IntakeStatus.PENDING 
+        val futureIntakes = existingIntakes.filter {
+            it.scheduledTime > now && it.status == IntakeStatus.PENDING
         }
 
-        // Delete future intakes (both locally and from server)
         futureIntakes.forEach { intake ->
             intakeDao.delete(intake)
             notificationScheduler.cancelIntakeReminder(intake.id)
-            
-            // Delete from server if it was synced
+
             intake.serverId?.let { serverId ->
                 try {
-                    // Note: Assuming there's a delete intake endpoint
                     Log.d("MedicationRepository", "Deleting intake ${intake.id} from server")
                 } catch (e: Exception) {
-                    Log.w("MedicationRepository", "Failed to delete intake from server: ${e.message}")
+                    Log.w(
+                        "MedicationRepository",
+                        "Failed to delete intake from server: ${e.message}"
+                    )
                 }
             }
         }
@@ -853,18 +893,13 @@ class MedicationRepository @Inject constructor(
         val today = LocalDate.now()
         val effectiveStartDate = if (startDate.isBefore(today)) today else startDate
         createIntakesForMedication(updatedMedication, scheduleTimes, effectiveStartDate, endDate)
-        
-        // Sync new intakes to server
+
         try {
             syncIntakesForMedication(updatedMedication.id)
         } catch (e: Exception) {
             Log.e("MedicationRepository", "Failed to sync new intakes after schedule change", e)
         }
     }
-
-    // ============================================================================
-    // Private Helpers - Duplicate Removal
-    // ============================================================================
 
     private fun groupMedicationsByUniqueKey(
         medications: List<MedicationEntity>
@@ -880,7 +915,7 @@ class MedicationRepository @Inject constructor(
 
     private suspend fun removeDuplicateMedications(duplicates: List<MedicationEntity>) {
         val sortedByRecency = duplicates.sortedByDescending { it.updatedAt }
-        val medicationToKeep = sortedByRecency.first()
+        sortedByRecency.first()
         val medicationsToDelete = sortedByRecency.drop(1)
 
         medicationsToDelete.forEach { duplicate ->

@@ -33,14 +33,14 @@ import com.healthpocket.data.local.entity.VitalMetricEntity
 )
 @TypeConverters(Converters::class)
 abstract class HealthPocketDatabase : RoomDatabase() {
-    
+
     abstract fun userDao(): UserDao
     abstract fun medicationDao(): MedicationDao
     abstract fun medicationIntakeDao(): MedicationIntakeDao
     abstract fun appointmentDao(): AppointmentDao
     abstract fun healthLogDao(): HealthLogDao
     abstract fun vitalMetricDao(): VitalMetricDao
-    
+
     companion object {
         const val DATABASE_NAME = "healthpocket_db"
     }

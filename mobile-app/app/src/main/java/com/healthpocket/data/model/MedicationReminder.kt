@@ -11,6 +11,6 @@ data class MedicationReminder(
     val times: List<LocalTime> = emptyList()
 ) {
     fun isEmpty(): Boolean = days.isEmpty() || times.isEmpty()
-    
+
     fun isValid(): Boolean = days.isNotEmpty() && times.isNotEmpty()
 }

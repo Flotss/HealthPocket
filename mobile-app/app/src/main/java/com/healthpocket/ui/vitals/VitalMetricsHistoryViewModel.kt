@@ -5,11 +5,11 @@ import androidx.lifecycle.viewModelScope
 import com.healthpocket.data.local.entity.VitalMetricEntity
 import com.healthpocket.data.repository.VitalMetricRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 data class VitalHistoryUiState(
     val entries: List<VitalMetricEntity> = emptyList()

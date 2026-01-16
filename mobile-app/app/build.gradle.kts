@@ -17,7 +17,7 @@ android {
         versionCode = 1
         versionName = "1.0.0"
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "com.healthpocket.HiltTestRunner"
         vectorDrawables {
             useSupportLibrary = true
         }
@@ -137,6 +137,29 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
+    androidTestImplementation(libs.androidx.compose.ui.test)
+    androidTestImplementation(libs.androidx.test.runner)
+    androidTestImplementation(libs.androidx.test.rules)
+    androidTestImplementation(libs.hilt.android.testing)
+    androidTestImplementation(libs.androidx.navigation.testing)
+    androidTestImplementation(libs.mockito.core)
+    androidTestImplementation(libs.mockito.kotlin)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 }
+
+// Configure Mockito agent for unit tests
+afterEvaluate {
+    tasks.withType<Test> {
+        doFirst {
+            val byteBuddyAgent = classpath.files.find { it.name.contains("byte-buddy-agent") }?.absolutePath
+
+            if (byteBuddyAgent != null) {
+                jvmArgs("-javaagent:$byteBuddyAgent")
+            }
+        }
+    }
+}
+
+
+

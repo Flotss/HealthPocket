@@ -50,14 +50,15 @@ class ProfileViewModel @Inject constructor(
             if (!authRepository.isAuthenticated()) {
                 return@launch
             }
-            
+
             authRepository.getCurrentUser().collect { user ->
                 user?.let {
                     _uiState.value = _uiState.value.copy(
                         userName = "${it.firstName} ${it.lastName}",
                         email = it.email,
                         bloodType = it.bloodType,
-                        allergies = it.allergies?.split(",")?.filter { a -> a.isNotBlank() } ?: emptyList(),
+                        allergies = it.allergies?.split(",")?.filter { a -> a.isNotBlank() }
+                            ?: emptyList(),
                         emergencyContactName = it.emergencyContactName,
                         emergencyContactPhone = it.emergencyContactPhone
                     )

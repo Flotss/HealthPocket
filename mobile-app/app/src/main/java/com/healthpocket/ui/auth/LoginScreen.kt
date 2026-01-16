@@ -54,7 +54,7 @@ fun LoginScreen(
     viewModel: AuthViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    
+
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
@@ -81,22 +81,22 @@ fun LoginScreen(
             modifier = Modifier.size(80.dp),
             tint = MaterialTheme.colorScheme.primary
         )
-        
+
         Spacer(modifier = Modifier.height(16.dp))
-        
+
         Text(
             text = stringResource(R.string.app_name),
             style = MaterialTheme.typography.headlineLarge,
             color = MaterialTheme.colorScheme.primary
         )
-        
+
         Text(
             text = stringResource(R.string.login_subtitle),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center
         )
-        
+
         Spacer(modifier = Modifier.height(48.dp))
 
         // Email field
@@ -112,7 +112,7 @@ fun LoginScreen(
             ),
             modifier = Modifier.fillMaxWidth()
         )
-        
+
         Spacer(modifier = Modifier.height(16.dp))
 
         // Password field
@@ -137,7 +137,7 @@ fun LoginScreen(
             ),
             modifier = Modifier.fillMaxWidth()
         )
-        
+
         // Error message
         if (uiState.error != null) {
             Spacer(modifier = Modifier.height(8.dp))
@@ -147,7 +147,7 @@ fun LoginScreen(
                 style = MaterialTheme.typography.bodySmall
             )
         }
-        
+
         Spacer(modifier = Modifier.height(32.dp))
 
         // Login button
@@ -165,7 +165,7 @@ fun LoginScreen(
                 Text(stringResource(R.string.login))
             }
         }
-        
+
         Spacer(modifier = Modifier.height(16.dp))
 
         // Register link

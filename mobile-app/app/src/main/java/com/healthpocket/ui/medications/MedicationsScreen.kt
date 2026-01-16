@@ -177,9 +177,9 @@ fun MedicationCard(
                     tint = Color.White
                 )
             }
-            
+
             Spacer(modifier = Modifier.width(16.dp))
-            
+
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = medication.name,
@@ -191,7 +191,7 @@ fun MedicationCard(
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
-                
+
                 if (!medication.isActive) {
                     Text(
                         text = stringResource(R.string.inactive),
@@ -200,7 +200,7 @@ fun MedicationCard(
                     )
                 }
             }
-            
+
             IconButton(onClick = { showDeleteDialog = true }) {
                 Icon(
                     imageVector = Icons.Filled.Delete,

@@ -7,8 +7,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
@@ -147,14 +147,18 @@ private fun MetricInputSection(
 ) {
     val unit = MetricUtils.getUnitForType(type)
     val typeLabel = stringResource(metricTypeLabelRes(type))
-    val primaryError = error == AddVitalMetricError.INVALID_PRIMARY_VALUE || error == AddVitalMetricError.PRIMARY_VALUE_REQUIRED
+    val primaryError =
+        error == AddVitalMetricError.INVALID_PRIMARY_VALUE || error == AddVitalMetricError.PRIMARY_VALUE_REQUIRED
     val secondaryError = error == AddVitalMetricError.INVALID_SECONDARY_VALUE
 
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
     ) {
-        Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
             Text(
                 text = typeLabel,
                 style = MaterialTheme.typography.titleMedium,
@@ -200,7 +204,14 @@ private fun MetricInputSection(
                 OutlinedTextField(
                     value = fields.secondaryValue,
                     onValueChange = onSecondaryValueChange,
-                    label = { Text(stringResource(R.string.metric_secondary_value_with_unit, unit)) },
+                    label = {
+                        Text(
+                            stringResource(
+                                R.string.metric_secondary_value_with_unit,
+                                unit
+                            )
+                        )
+                    },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     modifier = Modifier.fillMaxWidth(),
                     isError = secondaryError
