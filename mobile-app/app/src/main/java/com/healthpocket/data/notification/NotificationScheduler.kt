@@ -27,9 +27,15 @@ class NotificationScheduler(private val context: Context) {
         val intent = Intent(context, NotificationReceiver::class.java).apply {
             action = "com.healthpocket.INTAKE_REMINDER"
             putExtra(NotificationReceiver.EXTRA_NOTIFICATION_ID, intakeId.hashCode())
-            putExtra(NotificationReceiver.EXTRA_NOTIFICATION_TYPE, NotificationReceiver.TYPE_MEDICATION)
+            putExtra(
+                NotificationReceiver.EXTRA_NOTIFICATION_TYPE,
+                NotificationReceiver.TYPE_MEDICATION
+            )
             putExtra(NotificationReceiver.EXTRA_TITLE, "Medicament à prendre")
-            putExtra(NotificationReceiver.EXTRA_MESSAGE, "N'oubliez pas de prendre votre médicament")
+            putExtra(
+                NotificationReceiver.EXTRA_MESSAGE,
+                "N'oubliez pas de prendre votre médicament"
+            )
             putExtra(EXTRA_INTAKE_ID, intakeId)
             putExtra(EXTRA_INTAKE_TIME, scheduledTimeMillis)
         }

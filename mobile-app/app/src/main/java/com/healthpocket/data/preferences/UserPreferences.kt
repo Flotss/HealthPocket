@@ -51,7 +51,8 @@ class UserPreferences @Inject constructor(
     val userEmail: Flow<String?> = dataStore.data.map { it[USER_EMAIL] }
 
     // Token Expiration Timestamp
-    val tokenExpirationTimestamp: Flow<Long?> = dataStore.data.map { it[TOKEN_EXPIRATION_TIMESTAMP] }
+    val tokenExpirationTimestamp: Flow<Long?> =
+        dataStore.data.map { it[TOKEN_EXPIRATION_TIMESTAMP] }
 
     // Dark Mode
     val darkMode: Flow<Boolean> = dataStore.data.map { it[DARK_MODE] ?: false }

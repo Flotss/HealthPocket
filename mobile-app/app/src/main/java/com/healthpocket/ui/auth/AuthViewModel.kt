@@ -38,7 +38,7 @@ class AuthViewModel @Inject constructor(
 
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true, error = null)
-            
+
             authRepository.login(email, password)
                 .onSuccess {
                     _uiState.value = _uiState.value.copy(isLoading = false, isSuccess = true)
@@ -65,7 +65,7 @@ class AuthViewModel @Inject constructor(
 
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true, error = null)
-            
+
             authRepository.register(email, password, firstName, lastName)
                 .onSuccess {
                     _uiState.value = _uiState.value.copy(isLoading = false, isSuccess = true)

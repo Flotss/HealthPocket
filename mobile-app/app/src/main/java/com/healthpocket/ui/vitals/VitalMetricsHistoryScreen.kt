@@ -55,9 +55,11 @@ fun VitalMetricsHistoryScreen(
         }
     ) { paddingValues ->
         if (uiState.entries.isEmpty()) {
-            HistoryEmptyState(modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues))
+            HistoryEmptyState(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+            )
         } else {
             LazyColumn(
                 modifier = Modifier
@@ -109,7 +111,10 @@ private fun VitalHistoryCard(entry: VitalMetricEntity) {
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
     ) {
-        Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(6.dp)
+        ) {
             Text(
                 text = stringResource(metricTypeLabelRes(entry.metricType)),
                 style = MaterialTheme.typography.titleMedium,
@@ -141,7 +146,11 @@ private fun formatTimestamp(timeMillis: Long): String {
 }
 
 private fun formatValue(value: Float): String {
-    return if (value % 1f == 0f) value.toInt().toString() else String.format(Locale.getDefault(), "%.1f", value)
+    return if (value % 1f == 0f) value.toInt().toString() else String.format(
+        Locale.getDefault(),
+        "%.1f",
+        value
+    )
 }
 
 private fun metricTypeLabelRes(type: com.healthpocket.data.local.entity.MetricType): Int {

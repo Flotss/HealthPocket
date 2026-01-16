@@ -17,7 +17,6 @@ import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Bloodtype
 import androidx.compose.material.icons.filled.ContactPhone
-import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.AlertDialog
@@ -81,7 +80,6 @@ fun ProfileScreen(
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Profile header
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 colors = CardDefaults.cardColors(
@@ -100,15 +98,15 @@ fun ProfileScreen(
                         modifier = Modifier.size(80.dp),
                         tint = MaterialTheme.colorScheme.onPrimaryContainer
                     )
-                    
+
                     Spacer(modifier = Modifier.height(12.dp))
-                    
+
                     Text(
                         text = uiState.userName,
                         style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.Bold
                     )
-                    
+
                     Text(
                         text = uiState.email,
                         style = MaterialTheme.typography.bodyMedium,
@@ -127,7 +125,6 @@ fun ProfileScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Health info section
             if (uiState.bloodType != null || uiState.allergies.isNotEmpty()) {
                 Card(modifier = Modifier.fillMaxWidth()) {
                     Column(modifier = Modifier.padding(16.dp)) {
@@ -136,9 +133,9 @@ fun ProfileScreen(
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.SemiBold
                         )
-                        
+
                         Spacer(modifier = Modifier.height(12.dp))
-                        
+
                         uiState.bloodType?.let { bloodType ->
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Icon(
@@ -152,7 +149,7 @@ fun ProfileScreen(
                                 )
                             }
                         }
-                        
+
                         if (uiState.allergies.isNotEmpty()) {
                             Spacer(modifier = Modifier.height(8.dp))
                             Row(verticalAlignment = Alignment.Top) {
@@ -175,11 +172,10 @@ fun ProfileScreen(
                         }
                     }
                 }
-                
+
                 Spacer(modifier = Modifier.height(16.dp))
             }
 
-            // Emergency contact
             if (uiState.emergencyContactName != null) {
                 Card(modifier = Modifier.fillMaxWidth()) {
                     Row(
@@ -214,13 +210,12 @@ fun ProfileScreen(
                         }
                     }
                 }
-                
+
                 Spacer(modifier = Modifier.height(16.dp))
             }
 
             Spacer(modifier = Modifier.weight(1f))
 
-            // Logout button
             OutlinedButton(
                 onClick = { showLogoutDialog = true },
                 modifier = Modifier.fillMaxWidth(),

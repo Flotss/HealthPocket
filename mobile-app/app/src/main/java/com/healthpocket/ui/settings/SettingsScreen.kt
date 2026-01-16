@@ -60,7 +60,6 @@ fun SettingsScreen(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // Appearance section
             Text(
                 text = stringResource(R.string.appearance),
                 style = MaterialTheme.typography.titleMedium,
@@ -91,7 +90,6 @@ fun SettingsScreen(
                 }
             }
 
-            // Language section
             Text(
                 text = stringResource(R.string.language),
                 style = MaterialTheme.typography.titleMedium,
@@ -121,7 +119,6 @@ fun SettingsScreen(
                 }
             }
 
-            // About section
             Text(
                 text = stringResource(R.string.about),
                 style = MaterialTheme.typography.titleMedium,

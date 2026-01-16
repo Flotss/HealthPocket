@@ -6,12 +6,12 @@ import com.healthpocket.data.local.entity.MetricType
 import com.healthpocket.data.repository.VitalMetricRepository
 import com.healthpocket.util.MetricUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 data class AddVitalMetricUiState(
     val metricFields: Map<MetricType, MetricInputFields> = createEmptyMetricFields(),
@@ -74,7 +74,8 @@ class AddVitalMetricViewModel @Inject constructor(
 
     fun updatePrimaryValue(type: MetricType, value: String) {
         _uiState.update { current ->
-            val updatedFields = current.metricFields + (type to (current.metricFields[type] ?: MetricInputFields()).copy(primaryValue = value))
+            val updatedFields = current.metricFields + (type to (current.metricFields[type]
+                ?: MetricInputFields()).copy(primaryValue = value))
             current.copy(
                 metricFields = updatedFields,
                 fieldErrors = current.fieldErrors - type,
@@ -86,7 +87,8 @@ class AddVitalMetricViewModel @Inject constructor(
 
     fun updateSecondaryValue(type: MetricType, value: String) {
         _uiState.update { current ->
-            val updatedFields = current.metricFields + (type to (current.metricFields[type] ?: MetricInputFields()).copy(secondaryValue = value))
+            val updatedFields = current.metricFields + (type to (current.metricFields[type]
+                ?: MetricInputFields()).copy(secondaryValue = value))
             current.copy(
                 metricFields = updatedFields,
                 fieldErrors = current.fieldErrors - type,
@@ -98,7 +100,9 @@ class AddVitalMetricViewModel @Inject constructor(
 
     fun updateMetricNotes(type: MetricType, value: String) {
         _uiState.update { currentState ->
-            val updatedFields = currentState.metricFields + (type to (currentState.metricFields[type] ?: MetricInputFields()).copy(notes = value))
+            val updatedFields =
+                currentState.metricFields + (type to (currentState.metricFields[type]
+                    ?: MetricInputFields()).copy(notes = value))
             currentState.copy(
                 metricFields = updatedFields,
                 fieldErrors = currentState.fieldErrors - type,
@@ -165,7 +169,13 @@ class AddVitalMetricViewModel @Inject constructor(
         }
 
         viewModelScope.launch {
-            _uiState.update { it.copy(isSaving = true, fieldErrors = emptyMap(), generalError = null) }
+            _uiState.update {
+                it.copy(
+                    isSaving = true,
+                    fieldErrors = emptyMap(),
+                    generalError = null
+                )
+            }
             try {
                 pendingMetrics.forEach { metric ->
                     vitalMetricRepository.createVitalMetric(
@@ -185,7 +195,12 @@ class AddVitalMetricViewModel @Inject constructor(
                     )
                 }
             } catch (e: Exception) {
-                _uiState.update { it.copy(isSaving = false, generalError = AddVitalMetricError.SAVE_FAILED) }
+                _uiState.update {
+                    it.copy(
+                        isSaving = false,
+                        generalError = AddVitalMetricError.SAVE_FAILED
+                    )
+                }
             }
         }
     }
@@ -235,7 +250,8 @@ class AddVitalMetricViewModel @Inject constructor(
         currentDirty: Set<MetricType>
     ): Set<MetricType> {
         val field = fields[type] ?: return currentDirty
-        val shouldBeDirty = field.primaryValue.isNotBlank() || field.secondaryValue.isNotBlank() || field.notes.isNotBlank()
+        val shouldBeDirty =
+            field.primaryValue.isNotBlank() || field.secondaryValue.isNotBlank() || field.notes.isNotBlank()
         return if (shouldBeDirty) {
             currentDirty + type
         } else {

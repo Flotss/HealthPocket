@@ -3,8 +3,7 @@ package com.healthpocket.ui.appointments
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.text.format.DateFormat
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -36,10 +35,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -50,8 +49,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
@@ -76,7 +73,8 @@ fun AddAppointmentScreen(
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
     val focusManager = LocalFocusManager.current
-    val dateFormatter = remember { DateTimeFormatter.ofPattern("MMM dd, yyyy", Locale.getDefault()) }
+    val dateFormatter =
+        remember { DateTimeFormatter.ofPattern("MMM dd, yyyy", Locale.getDefault()) }
     val timeFormatter = remember { DateTimeFormatter.ofPattern("HH:mm", Locale.getDefault()) }
 
     var title by remember { mutableStateOf("") }
@@ -86,8 +84,7 @@ fun AddAppointmentScreen(
     var description by remember { mutableStateOf("") }
     var notes by remember { mutableStateOf("") }
     var reminderEnabled by remember { mutableStateOf(true) }
-    
-    // Date/Time state
+
     var selectedDate by remember { mutableStateOf(LocalDate.now()) }
     var selectedTime by remember { mutableStateOf(LocalTime.of(9, 0)) }
 
@@ -117,7 +114,6 @@ fun AddAppointmentScreen(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // Title
             OutlinedTextField(
                 value = title,
                 onValueChange = { title = it },
@@ -127,7 +123,6 @@ fun AddAppointmentScreen(
                 modifier = Modifier.fillMaxWidth()
             )
 
-            // Doctor name
             OutlinedTextField(
                 value = doctorName,
                 onValueChange = { doctorName = it },
@@ -137,13 +132,12 @@ fun AddAppointmentScreen(
                 modifier = Modifier.fillMaxWidth()
             )
 
-            // Location
             val locationSuggestions = uiState.locationSuggestions
             val isLocationLookupLoading = uiState.isLocationLookupInProgress
             val locationLookupError = uiState.locationLookupError
             val showNoLocationResults = uiState.showNoLocationResults
             val shouldShowLocationMenu = isLocationDropdownExpanded &&
-                (isLocationLookupLoading || locationSuggestions.isNotEmpty() || locationLookupError != null || showNoLocationResults)
+                    (isLocationLookupLoading || locationSuggestions.isNotEmpty() || locationLookupError != null || showNoLocationResults)
 
             Box(modifier = Modifier.fillMaxWidth()) {
                 OutlinedTextField(
@@ -243,7 +237,6 @@ fun AddAppointmentScreen(
                 ).show()
             }
 
-            // Time display (simplified - in production, use TimePicker)
             PickerTextField(
                 value = selectedTime.format(timeFormatter),
                 label = stringResource(R.string.time),
@@ -262,7 +255,6 @@ fun AddAppointmentScreen(
                 ).show()
             }
 
-            // Description
             OutlinedTextField(
                 value = description,
                 onValueChange = { description = it },
@@ -273,7 +265,6 @@ fun AddAppointmentScreen(
                 maxLines = 3
             )
 
-            // Reminder toggle
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -289,7 +280,6 @@ fun AddAppointmentScreen(
                 )
             }
 
-            // Notes
             OutlinedTextField(
                 value = notes,
                 onValueChange = { notes = it },
@@ -302,7 +292,6 @@ fun AddAppointmentScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Save button
             Button(
                 onClick = {
                     val appointmentDateTime = selectedDate.atTime(selectedTime)

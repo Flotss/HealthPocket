@@ -60,7 +60,6 @@ fun AddMedicationScreen(
         }
     }
 
-    // Show error dialog if there's an error
     if (showErrorDialog && uiState.error != null) {
         AlertDialog(
             onDismissRequest = { showErrorDialog = false },
@@ -103,9 +102,8 @@ fun AddMedicationScreen(
             onColorIndexChange = { selectedColorIndex = it },
             isLoading = uiState.isLoading,
             onSave = {
-                // Convert reminders to scheduleTimes format with days
                 val scheduleTimes = remindersToScheduleTimes(reminders)
-                
+
                 viewModel.saveMedication(
                     name = name,
                     dosage = dosage,

@@ -75,7 +75,6 @@ fun MedicationForm(
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        // Medication name
         OutlinedTextField(
             value = name,
             onValueChange = onNameChange,
@@ -86,7 +85,6 @@ fun MedicationForm(
             enabled = !isLoading
         )
 
-        // Dosage
         OutlinedTextField(
             value = dosage,
             onValueChange = onDosageChange,
@@ -97,7 +95,6 @@ fun MedicationForm(
             enabled = !isLoading
         )
 
-        // Frequency
         OutlinedTextField(
             value = frequency,
             onValueChange = onFrequencyChange,
@@ -108,7 +105,6 @@ fun MedicationForm(
             enabled = !isLoading
         )
 
-        // Reminders section
         Text(
             text = stringResource(R.string.reminders),
             style = MaterialTheme.typography.titleMedium
@@ -139,7 +135,6 @@ fun MedicationForm(
             )
         }
 
-        // Add reminder button
         OutlinedButton(
             onClick = {
                 val newReminder = MedicationReminder(
@@ -156,7 +151,6 @@ fun MedicationForm(
             Text(stringResource(R.string.add_reminder))
         }
 
-        // Color picker
         Text(
             text = stringResource(R.string.color),
             style = MaterialTheme.typography.labelLarge
@@ -181,7 +175,6 @@ fun MedicationForm(
             }
         }
 
-        // Notes
         OutlinedTextField(
             value = notes,
             onValueChange = onNotesChange,
@@ -195,16 +188,15 @@ fun MedicationForm(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Save button
         Button(
             onClick = onSave,
             modifier = Modifier.fillMaxWidth(),
-            enabled = name.isNotBlank() 
-                && dosage.isNotBlank() 
-                && frequency.isNotBlank() 
-                && reminders.isNotEmpty()
-                && reminders.all { it.isValid() }
-                && !isLoading
+            enabled = name.isNotBlank()
+                    && dosage.isNotBlank()
+                    && frequency.isNotBlank()
+                    && reminders.isNotEmpty()
+                    && reminders.all { it.isValid() }
+                    && !isLoading
         ) {
             if (isLoading) {
                 CircularProgressIndicator(
@@ -262,7 +254,6 @@ fun ReminderCard(
                 }
             }
 
-            // Week picker
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -302,12 +293,11 @@ fun ReminderCard(
                 enabled = enabled
             )
 
-            // Times
             Text(
                 text = stringResource(R.string.times),
                 style = MaterialTheme.typography.labelMedium
             )
-            
+
             reminder.times.forEachIndexed { timeIndex, time ->
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -340,7 +330,6 @@ fun ReminderCard(
                 }
             }
 
-            // Add time button
             OutlinedButton(
                 onClick = {
                     val newTime = LocalTime.of(7, 0) // Default 7h
@@ -354,7 +343,6 @@ fun ReminderCard(
                 Text(stringResource(R.string.add_time))
             }
 
-            // Time picker dialog
             showTimePicker?.let { timeIndex ->
                 TimePickerDialog(
                     initialTime = reminder.times[timeIndex],
@@ -434,7 +422,6 @@ fun TimePickerDialog(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    // Hour picker
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.spacedBy(4.dp)
@@ -476,7 +463,6 @@ fun TimePickerDialog(
 
                     Text(":", style = MaterialTheme.typography.headlineMedium)
 
-                    // Minute picker
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.spacedBy(4.dp)

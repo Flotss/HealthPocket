@@ -58,7 +58,11 @@ fun AppointmentDetailScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(appointment?.title ?: stringResource(R.string.appointment_details)) },
+                title = {
+                    Text(
+                        appointment?.title ?: stringResource(R.string.appointment_details)
+                    )
+                },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(Filled.ArrowBack, contentDescription = stringResource(R.string.back))
@@ -251,11 +255,13 @@ private fun StatusBadge(status: AppointmentStatus) {
             MaterialTheme.colorScheme.tertiaryContainer,
             MaterialTheme.colorScheme.onTertiaryContainer
         )
+
         AppointmentStatus.COMPLETED -> Triple(
             R.string.completed,
             MaterialTheme.colorScheme.primaryContainer,
             MaterialTheme.colorScheme.onPrimaryContainer
         )
+
         AppointmentStatus.CANCELLED -> Triple(
             R.string.cancelled,
             MaterialTheme.colorScheme.errorContainer,

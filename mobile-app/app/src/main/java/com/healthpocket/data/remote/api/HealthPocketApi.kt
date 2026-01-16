@@ -69,7 +69,10 @@ interface HealthPocketApi {
     suspend fun createMedication(@Body request: MedicationRequest): Response<MedicationResponse>
 
     @PUT("api/medications/{id}")
-    suspend fun updateMedication(@Path("id") id: String, @Body request: MedicationRequest): Response<MedicationResponse>
+    suspend fun updateMedication(
+        @Path("id") id: String,
+        @Body request: MedicationRequest
+    ): Response<MedicationResponse>
 
     @DELETE("api/medications/{id}")
     suspend fun deleteMedication(@Path("id") id: String): Response<Unit>
@@ -107,7 +110,10 @@ interface HealthPocketApi {
     suspend fun createAppointment(@Body request: AppointmentRequest): Response<AppointmentResponse>
 
     @PUT("api/appointments/{id}")
-    suspend fun updateAppointment(@Path("id") id: String, @Body request: AppointmentRequest): Response<AppointmentResponse>
+    suspend fun updateAppointment(
+        @Path("id") id: String,
+        @Body request: AppointmentRequest
+    ): Response<AppointmentResponse>
 
     @DELETE("api/appointments/{id}")
     suspend fun deleteAppointment(@Path("id") id: String): Response<Unit>

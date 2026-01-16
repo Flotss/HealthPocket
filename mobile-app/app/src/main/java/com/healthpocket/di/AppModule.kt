@@ -52,19 +52,23 @@ object AppModule {
     fun provideUserDao(database: HealthPocketDatabase): UserDao = database.userDao()
 
     @Provides
-    fun provideMedicationDao(database: HealthPocketDatabase): MedicationDao = database.medicationDao()
+    fun provideMedicationDao(database: HealthPocketDatabase): MedicationDao =
+        database.medicationDao()
 
     @Provides
-    fun provideMedicationIntakeDao(database: HealthPocketDatabase): MedicationIntakeDao = database.medicationIntakeDao()
+    fun provideMedicationIntakeDao(database: HealthPocketDatabase): MedicationIntakeDao =
+        database.medicationIntakeDao()
 
     @Provides
-    fun provideAppointmentDao(database: HealthPocketDatabase): AppointmentDao = database.appointmentDao()
+    fun provideAppointmentDao(database: HealthPocketDatabase): AppointmentDao =
+        database.appointmentDao()
 
     @Provides
     fun provideHealthLogDao(database: HealthPocketDatabase): HealthLogDao = database.healthLogDao()
 
     @Provides
-    fun provideVitalMetricDao(database: HealthPocketDatabase): VitalMetricDao = database.vitalMetricDao()
+    fun provideVitalMetricDao(database: HealthPocketDatabase): VitalMetricDao =
+        database.vitalMetricDao()
 
     // Network
     @Provides

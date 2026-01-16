@@ -83,7 +83,8 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             val today = LocalDate.now()
             val startOfDay = today.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
-            val endOfDay = today.plusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
+            val endOfDay =
+                today.plusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
 
             medicationRepository.getTodaysPendingIntakes(startOfDay, endOfDay).collect { intakes ->
                 _uiState.value = _uiState.value.copy(

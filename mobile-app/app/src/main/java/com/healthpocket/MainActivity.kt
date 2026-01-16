@@ -25,11 +25,11 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        
+
         setContent {
             val settingsViewModel: SettingsViewModel = hiltViewModel()
             val isDarkMode by settingsViewModel.isDarkMode.collectAsState(initial = false)
-            
+
             HealthPocketTheme(darkTheme = isDarkMode) {
                 Surface(
                     modifier = Modifier.fillMaxSize(),

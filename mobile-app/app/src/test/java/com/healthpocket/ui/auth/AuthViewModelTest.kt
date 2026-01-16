@@ -92,5 +92,14 @@ class AuthViewModelTest {
         assertNull(state.error)
         assertFalse(state.isSuccess)
     }
+
+    @Test
+    fun `initial state is correct`() = runTest {
+        val state = viewModel.uiState.value
+        
+        assertFalse(state.isLoading)
+        assertNull(state.error)
+        assertFalse(state.isSuccess)
+    }
 }
 

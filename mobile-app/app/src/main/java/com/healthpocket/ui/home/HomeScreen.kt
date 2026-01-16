@@ -6,8 +6,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -67,7 +67,7 @@ fun HomeScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { 
+                title = {
                     Column {
                         Text(
                             text = stringResource(R.string.welcome_back),
@@ -122,7 +122,10 @@ fun HomeScreen(
                     title = stringResource(R.string.todays_medications),
                     icon = Icons.Filled.Medication,
                     count = uiState.pendingMedicationsCount,
-                    subtitle = stringResource(R.string.pending_intakes, uiState.pendingMedicationsCount),
+                    subtitle = stringResource(
+                        R.string.pending_intakes,
+                        uiState.pendingMedicationsCount
+                    ),
                     onClick = onNavigateToMedications,
                     containerColor = MaterialTheme.colorScheme.primaryContainer
                 )
@@ -146,9 +149,9 @@ fun HomeScreen(
                     title = stringResource(R.string.health_journal),
                     icon = Icons.Filled.EditNote,
                     count = null,
-                    subtitle = if (uiState.todayLogExists) 
-                        stringResource(R.string.today_logged) 
-                    else 
+                    subtitle = if (uiState.todayLogExists)
+                        stringResource(R.string.today_logged)
+                    else
                         stringResource(R.string.log_today),
                     onClick = onNavigateToJournal,
                     containerColor = MaterialTheme.colorScheme.tertiaryContainer
@@ -205,9 +208,9 @@ fun QuickAccessCard(
                 modifier = Modifier.size(48.dp),
                 tint = MaterialTheme.colorScheme.onPrimaryContainer
             )
-            
+
             Spacer(modifier = Modifier.width(16.dp))
-            
+
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = title,
@@ -220,7 +223,7 @@ fun QuickAccessCard(
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
-            
+
             if (count != null && count > 0) {
                 Badge(
                     containerColor = MaterialTheme.colorScheme.primary
@@ -264,7 +267,7 @@ fun MedicationIntakeCard(
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
-            
+
             if (intake.status == IntakeStatus.PENDING) {
                 IconButton(onClick = onMarkSkipped) {
                     Icon(
@@ -273,7 +276,7 @@ fun MedicationIntakeCard(
                         tint = MaterialTheme.colorScheme.error
                     )
                 }
-                
+
                 FilledIconButton(onClick = onMarkTaken) {
                     Icon(
                         imageVector = Icons.Filled.Check,

@@ -25,7 +25,8 @@ class MedicationReminderWorker @AssistedInject constructor(
         return try {
             val today = LocalDate.now()
             val startOfDay = today.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
-            val endOfDay = today.plusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
+            val endOfDay =
+                today.plusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
 
             // Get all pending intakes for today
             val intakes = medicationRepository.getTodaysPendingIntakes(startOfDay, endOfDay).first()

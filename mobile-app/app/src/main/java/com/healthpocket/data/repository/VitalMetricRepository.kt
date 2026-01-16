@@ -31,7 +31,10 @@ class VitalMetricRepository @Inject constructor(
         return vitalMetricDao.getVitalMetricsByType(type)
     }
 
-    fun getRecentVitalMetricsByType(type: MetricType, limit: Int = 10): Flow<List<VitalMetricEntity>> {
+    fun getRecentVitalMetricsByType(
+        type: MetricType,
+        limit: Int = 10
+    ): Flow<List<VitalMetricEntity>> {
         return vitalMetricDao.getRecentVitalMetricsByType(type, limit)
     }
 
@@ -64,7 +67,7 @@ class VitalMetricRepository @Inject constructor(
 
         vitalMetricDao.insert(metric)
         trySync(metric)
-        
+
         return metric
     }
 
@@ -106,7 +109,10 @@ class VitalMetricRepository @Inject constructor(
                     vitalMetricDao.update(synced)
                 }
             } else {
-                Log.e("VitalMetricRepository", "Sync failed for metric ${metric.id}: ${response.code()}")
+                Log.e(
+                    "VitalMetricRepository",
+                    "Sync failed for metric ${metric.id}: ${response.code()}"
+                )
                 vitalMetricDao.updateSyncStatus(metric.id, SyncStatus.ERROR)
             }
         } catch (e: Exception) {
@@ -118,21 +124,21 @@ class VitalMetricRepository @Inject constructor(
     suspend fun getPendingVitalMetrics(): List<VitalMetricEntity> {
         return vitalMetricDao.getVitalMetricsBySyncStatus(SyncStatus.PENDING)
     }
-    
+
     suspend fun syncAll() {
         Log.d("VitalMetricRepository", "Starting bidirectional sync of vital metrics")
         try {
             val serverMetrics = api.getAllVitalMetrics().body() ?: emptyList()
             val localMetrics = vitalMetricDao.getAllVitalMetricsAsync()
-            
+
             mergeAndSync(serverMetrics, localMetrics)
-            
+
             Log.d("VitalMetricRepository", "Bidirectional sync completed successfully")
         } catch (e: Exception) {
             Log.e("VitalMetricRepository", "Bidirectional sync failed", e)
         }
     }
-    
+
     private suspend fun mergeAndSync(
         serverMetrics: List<VitalMetricResponse>,
         localMetrics: List<VitalMetricEntity>
@@ -140,37 +146,37 @@ class VitalMetricRepository @Inject constructor(
         val localByServerId = localMetrics
             .filter { it.serverId != null }
             .associateBy { it.serverId!! }
-        
-        // Process server metrics
+
         serverMetrics.forEach { serverMetric ->
             val localMatch = localByServerId[serverMetric.id]
-            
+
             when {
                 localMatch == null -> {
                     handleNewServerMetric(serverMetric)
                 }
+
                 isServerNewer(serverMetric.updatedAt, localMatch.updatedAt) -> {
                     handleServerNewerMetric(serverMetric, localMatch)
                 }
+
                 isLocalNewer(serverMetric.updatedAt, localMatch.updatedAt) -> {
                     handleLocalNewerMetric(serverMetric, localMatch)
                 }
             }
         }
-        
-        // Process unsynchronized local metrics
+
         val unsyncedLocalMetrics = localMetrics.filter { it.serverId == null }
         unsyncedLocalMetrics.forEach { localMetric ->
             pushLocalMetricToServer(localMetric)
         }
     }
-    
+
     private suspend fun handleNewServerMetric(serverMetric: VitalMetricResponse) {
         Log.d("VitalMetricRepository", "Adding new metric from server: ${serverMetric.id}")
         val entity = serverMetric.toEntity()
         vitalMetricDao.insert(entity)
     }
-    
+
     private suspend fun handleServerNewerMetric(
         serverMetric: VitalMetricResponse,
         localMetric: VitalMetricEntity
@@ -179,22 +185,21 @@ class VitalMetricRepository @Inject constructor(
         val updatedEntity = serverMetric.toEntity(localId = localMetric.id)
         vitalMetricDao.update(updatedEntity)
     }
-    
+
     private suspend fun handleLocalNewerMetric(
         serverMetric: VitalMetricResponse,
         localMetric: VitalMetricEntity
     ) {
         Log.d("VitalMetricRepository", "Updating server with local metric: ${localMetric.id}")
-        // VitalMetric API doesn't support update, so we skip this case
         Log.w("VitalMetricRepository", "Cannot update server metric - API doesn't support updates")
     }
-    
+
     private suspend fun pushLocalMetricToServer(localMetric: VitalMetricEntity) {
         Log.d("VitalMetricRepository", "Pushing local metric to server: ${localMetric.id}")
         try {
             val request = localMetric.toRequest()
             val response = api.createVitalMetric(request)
-            
+
             if (response.isSuccessful) {
                 response.body()?.let { serverMetric ->
                     vitalMetricDao.updateServerIdAndStatus(
@@ -204,25 +209,27 @@ class VitalMetricRepository @Inject constructor(
                     )
                 }
             } else {
-                Log.e("VitalMetricRepository", "Failed to create metric on server: ${response.code()}")
+                Log.e(
+                    "VitalMetricRepository",
+                    "Failed to create metric on server: ${response.code()}"
+                )
                 vitalMetricDao.updateSyncStatus(localMetric.id, SyncStatus.ERROR)
             }
         } catch (e: Exception) {
             Log.w("VitalMetricRepository", "Network error pushing metric to server: ${e.message}")
-            // Keep PENDING status for retry when network returns
         }
     }
-    
+
     private fun isServerNewer(serverUpdatedAt: String, localUpdatedAt: Long): Boolean {
         val serverMillis = DateTimeUtils.offsetDateTimeStringToMillis(serverUpdatedAt)
         return serverMillis > localUpdatedAt
     }
-    
+
     private fun isLocalNewer(serverUpdatedAt: String, localUpdatedAt: Long): Boolean {
         val serverMillis = DateTimeUtils.offsetDateTimeStringToMillis(serverUpdatedAt)
         return localUpdatedAt > serverMillis
     }
-    
+
     private fun VitalMetricResponse.toEntity(
         localId: String = UUID.randomUUID().toString()
     ): VitalMetricEntity {
@@ -239,7 +246,7 @@ class VitalMetricRepository @Inject constructor(
             updatedAt = DateTimeUtils.offsetDateTimeStringToMillis(this.updatedAt)
         )
     }
-    
+
     private fun VitalMetricEntity.toRequest(): VitalMetricRequest {
         return VitalMetricRequest(
             metricType = this.metricType.name,

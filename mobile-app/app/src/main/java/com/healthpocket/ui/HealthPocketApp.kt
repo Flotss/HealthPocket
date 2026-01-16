@@ -21,7 +21,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavDestination.Companion.hierarchy
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -43,8 +42,8 @@ import com.healthpocket.ui.medications.MedicationsScreen
 import com.healthpocket.ui.navigation.BottomNavItem
 import com.healthpocket.ui.navigation.NavRoutes
 import com.healthpocket.ui.profile.ProfileScreen
-import com.healthpocket.ui.settings.SettingsViewModel
 import com.healthpocket.ui.settings.SettingsScreen
+import com.healthpocket.ui.settings.SettingsViewModel
 import com.healthpocket.ui.vitals.AddVitalMetricScreen
 import com.healthpocket.ui.vitals.VitalMetricsHistoryScreen
 
@@ -57,13 +56,14 @@ fun HealthPocketApp() {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
-    
+
     val settingsViewModel: SettingsViewModel = hiltViewModel()
     val isLoggedIn by settingsViewModel.isLoggedIn.collectAsState(initial = false)
 
     // Redirect to login if user becomes logged out (e.g., token expired or invalid)
-    LaunchedEffect(isLoggedIn) {
-        if (!isLoggedIn && currentDestination?.route != NavRoutes.Login.route && currentDestination?.route != NavRoutes.Register.route) {
+    // Only navigate if the graph is set (currentDestination != null) to avoid navigation before NavHost is ready
+    LaunchedEffect(isLoggedIn, currentDestination) {
+        if (!isLoggedIn && currentDestination != null && currentDestination?.route != NavRoutes.Login.route && currentDestination?.route != NavRoutes.Register.route) {
             navController.navigate(NavRoutes.Login.route) {
                 popUpTo(0) { inclusive = true }
             }
@@ -81,7 +81,7 @@ fun HealthPocketApp() {
 
     // Check if current route should show bottom nav
     val showBottomNav = currentDestination?.let { dest ->
-        bottomNavItems.any { item -> 
+        bottomNavItems.any { item ->
             dest.hierarchy.any { it.route == item.route } || dest.route == item.route
         }
     } == true
@@ -94,11 +94,30 @@ fun HealthPocketApp() {
                         NavigationBarItem(
                             icon = {
                                 when (item) {
-                                    BottomNavItem.HOME -> Icon(Icons.Filled.Home, contentDescription = null)
-                                    BottomNavItem.MEDICATIONS -> Icon(Icons.Filled.Medication, contentDescription = null)
-                                    BottomNavItem.APPOINTMENTS -> Icon(Icons.Filled.CalendarMonth, contentDescription = null)
-                                    BottomNavItem.JOURNAL -> Icon(Icons.Filled.EditNote, contentDescription = null)
-                                    BottomNavItem.PROFILE -> Icon(Icons.Filled.Person, contentDescription = null)
+                                    BottomNavItem.HOME -> Icon(
+                                        Icons.Filled.Home,
+                                        contentDescription = null
+                                    )
+
+                                    BottomNavItem.MEDICATIONS -> Icon(
+                                        Icons.Filled.Medication,
+                                        contentDescription = null
+                                    )
+
+                                    BottomNavItem.APPOINTMENTS -> Icon(
+                                        Icons.Filled.CalendarMonth,
+                                        contentDescription = null
+                                    )
+
+                                    BottomNavItem.JOURNAL -> Icon(
+                                        Icons.Filled.EditNote,
+                                        contentDescription = null
+                                    )
+
+                                    BottomNavItem.PROFILE -> Icon(
+                                        Icons.Filled.Person,
+                                        contentDescription = null
+                                    )
                                 }
                             },
                             label = { Text(stringResource(item.titleResId)) },

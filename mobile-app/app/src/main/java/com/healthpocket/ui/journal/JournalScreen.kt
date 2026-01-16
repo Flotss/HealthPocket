@@ -88,7 +88,6 @@ fun JournalScreen(
                 .padding(paddingValues)
                 .padding(16.dp)
         ) {
-            // Today's quick log
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 colors = CardDefaults.cardColors(
@@ -103,10 +102,9 @@ fun JournalScreen(
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.SemiBold
                     )
-                    
+
                     Spacer(modifier = Modifier.height(12.dp))
-                    
-                    // Mood selector
+
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceEvenly
@@ -142,10 +140,10 @@ fun JournalScreen(
                             onClick = { viewModel.setMood(5) }
                         )
                     }
-                    
+
                     if (uiState.selectedMood != null) {
                         Spacer(modifier = Modifier.height(12.dp))
-                        
+
                         Button(
                             onClick = { viewModel.saveTodayLog() },
                             modifier = Modifier.fillMaxWidth()
@@ -155,18 +153,17 @@ fun JournalScreen(
                     }
                 }
             }
-            
+
             Spacer(modifier = Modifier.height(24.dp))
-            
-            // Recent entries
+
             Text(
                 text = stringResource(R.string.recent_entries),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold
             )
-            
+
             Spacer(modifier = Modifier.height(12.dp))
-            
+
             if (recentLogs.isEmpty()) {
                 Box(
                     modifier = Modifier
@@ -243,7 +240,6 @@ fun JournalEntryCard(log: HealthLogEntity) {
                 .padding(12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Date
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -258,10 +254,9 @@ fun JournalEntryCard(log: HealthLogEntity) {
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
-            
+
             Spacer(modifier = Modifier.width(16.dp))
-            
-            // Content
+
             Column(modifier = Modifier.weight(1f)) {
                 log.mood?.let { mood ->
                     Row(verticalAlignment = Alignment.CenterVertically) {
@@ -284,7 +279,7 @@ fun JournalEntryCard(log: HealthLogEntity) {
                         )
                     }
                 }
-                
+
                 log.notes?.let { notes ->
                     Text(
                         text = notes,
@@ -314,7 +309,6 @@ fun AddJournalEntryDialog(
         title = { Text(stringResource(R.string.add_journal_entry)) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                // Mood
                 Text(stringResource(R.string.mood_label))
                 Slider(
                     value = mood.toFloat(),
@@ -322,8 +316,7 @@ fun AddJournalEntryDialog(
                     valueRange = 1f..5f,
                     steps = 3
                 )
-                
-                // Energy
+
                 Text(stringResource(R.string.energy_level))
                 Slider(
                     value = energyLevel.toFloat(),
@@ -331,8 +324,7 @@ fun AddJournalEntryDialog(
                     valueRange = 1f..5f,
                     steps = 3
                 )
-                
-                // Sleep
+
                 Text(stringResource(R.string.sleep_quality))
                 Slider(
                     value = sleepQuality.toFloat(),
@@ -340,7 +332,7 @@ fun AddJournalEntryDialog(
                     valueRange = 1f..5f,
                     steps = 3
                 )
-                
+
                 OutlinedTextField(
                     value = sleepHours,
                     onValueChange = { sleepHours = it },
@@ -348,7 +340,7 @@ fun AddJournalEntryDialog(
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth()
                 )
-                
+
                 OutlinedTextField(
                     value = notes,
                     onValueChange = { notes = it },
@@ -360,7 +352,12 @@ fun AddJournalEntryDialog(
         },
         confirmButton = {
             TextButton(onClick = {
-                onSave(mood, energyLevel, sleepQuality, sleepHours.toFloatOrNull(), notes.ifBlank { null })
+                onSave(
+                    mood,
+                    energyLevel,
+                    sleepQuality,
+                    sleepHours.toFloatOrNull(),
+                    notes.ifBlank { null })
             }) {
                 Text(stringResource(R.string.save))
             }

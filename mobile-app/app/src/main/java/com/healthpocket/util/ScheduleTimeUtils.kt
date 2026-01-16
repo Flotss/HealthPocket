@@ -4,7 +4,6 @@ import com.healthpocket.data.model.MedicationReminder
 import java.time.DayOfWeek
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
-import kotlin.collections.flatMap
 
 /**
  * Utility functions for converting between MedicationReminder and scheduleTimes format.
@@ -39,10 +38,10 @@ fun parseScheduleTime(scheduleTime: String): Pair<Set<DayOfWeek>, LocalTime>? {
         // Split at first colon to separate days from time
         val parts = scheduleTime.split(":", limit = 2)
         if (parts.size != 2) return null
-        
+
         val daysString = parts[0]
         val timeString = parts[1]
-        
+
         val days = daysString.split(",").mapNotNull { dayName ->
             try {
                 DayOfWeek.valueOf(dayName.trim())
@@ -50,17 +49,17 @@ fun parseScheduleTime(scheduleTime: String): Pair<Set<DayOfWeek>, LocalTime>? {
                 null
             }
         }.toSet()
-        
+
         // Handle HH:mm or HH:mm:ss
         val timeParts = timeString.split(":")
         if (timeParts.size < 2) return null
-        
+
         val hour = timeParts[0].toInt()
         val minute = timeParts[1].toInt()
         val time = LocalTime.of(hour, minute)
-        
+
         if (days.isEmpty()) return null
-        
+
         Pair(days, time)
     } catch (e: Exception) {
         null
@@ -73,7 +72,7 @@ fun parseScheduleTime(scheduleTime: String): Pair<Set<DayOfWeek>, LocalTime>? {
  */
 fun scheduleTimesToReminders(scheduleTimes: List<String>): List<MedicationReminder> {
     val reminders = mutableListOf<MedicationReminder>()
-    
+
     scheduleTimes.forEach { scheduleTime ->
         val parsed = parseScheduleTime(scheduleTime)
         if (parsed != null) {
@@ -96,17 +95,20 @@ fun scheduleTimesToReminders(scheduleTimes: List<String>): List<MedicationRemind
                     val hour = timeParts[0].toInt()
                     val minute = timeParts[1].toInt()
                     val time = LocalTime.of(hour, minute)
-                    val existingIndex = reminders.indexOfFirst { it.days == DayOfWeek.values().toSet() }
+                    val existingIndex =
+                        reminders.indexOfFirst { it.days == DayOfWeek.values().toSet() }
                     if (existingIndex >= 0) {
                         val existing = reminders[existingIndex]
                         if (!existing.times.contains(time)) {
                             reminders[existingIndex] = existing.copy(times = existing.times + time)
                         }
                     } else {
-                        reminders.add(MedicationReminder(
-                            days = DayOfWeek.values().toSet(),
-                            times = listOf(time)
-                        ))
+                        reminders.add(
+                            MedicationReminder(
+                                days = DayOfWeek.values().toSet(),
+                                times = listOf(time)
+                            )
+                        )
                     }
                 }
             } catch (e: Exception) {
@@ -114,6 +116,6 @@ fun scheduleTimesToReminders(scheduleTimes: List<String>): List<MedicationRemind
             }
         }
     }
-    
+
     return reminders
 }
