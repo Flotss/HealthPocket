@@ -1,5 +1,7 @@
 package com.healthpocket.ui.appointments
 
+import android.widget.DatePicker
+import android.widget.TimePicker
 import androidx.activity.compose.setContent
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
@@ -7,6 +9,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.contrib.PickerActions
+import androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom
+import androidx.test.espresso.matcher.ViewMatchers.withId
+import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.healthpocket.MainActivity
 import com.healthpocket.data.local.dao.AppointmentDao
@@ -23,7 +31,9 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import java.util.Date
 import javax.inject.Inject
+import kotlin.jvm.java
 
 @HiltAndroidTest
 @RunWith(AndroidJUnit4::class)
@@ -77,14 +87,13 @@ class AppointmentUITest {
 
     @Test
     fun addNewAppointmentSuccessfully() {
-        runBlocking {
-            appointmentDao.deleteAll()
-        }
-        
         composeTestRule.activity.setContent {
             HealthPocketTheme {
                 val navController = rememberNavController()
-                NavHost(navController = navController, startDestination = NavRoutes.Appointments.route) {
+                NavHost(
+                    navController = navController,
+                    startDestination = NavRoutes.Appointments.route
+                ) {
                     composable(NavRoutes.Appointments.route) {
                         AppointmentsScreen(
                             viewModel = hiltViewModel(),
@@ -92,7 +101,11 @@ class AppointmentUITest {
                                 navController.navigate(NavRoutes.AddAppointment.route)
                             },
                             onNavigateToAppointmentDetail = { appointmentId ->
-                                navController.navigate(NavRoutes.AppointmentDetail.createRoute(appointmentId))
+                                navController.navigate(
+                                    NavRoutes.AppointmentDetail.createRoute(
+                                        appointmentId
+                                    )
+                                )
                             }
                         )
                     }
@@ -119,11 +132,34 @@ class AppointmentUITest {
         composeTestRule.onNodeWithText("Doctor name").performTextInput("Dr. Dupont")
         composeTestRule.onNodeWithText("Location").performTextInput("Hôpital Central")
         composeTestRule.onNodeWithText("Description").performTextInput("Consultation de routine")
-        composeTestRule.onNodeWithText("Date").performTextInput("15/12/2024")
-        composeTestRule.onNodeWithText("Time").performTextInput("14:30")
-        composeTestRule.onNodeWithText("Duration").performTextInput("30")
+        composeTestRule
+            .onNodeWithText("Date")
+            .assertIsDisplayed()
+            .performClick()
+
+        onView(isAssignableFrom(DatePicker::class.java))
+            .perform(PickerActions.setDate(Date().year + 1900 + 1, 12, 15))
+
+        onView(withText("OK")).perform(click())
+
+        composeTestRule
+            .onNodeWithText("Time")
+            .assertIsDisplayed()
+            .performClick();
+        onView(isAssignableFrom(TimePicker::class.java))
+            .perform(PickerActions.setTime(14, 30))
+        onView(withId(android.R.id.button1)).perform(click())
+        composeTestRule
+            .onNodeWithText("14:30")
+            .assertIsDisplayed()
+
+
         composeTestRule.onNodeWithText("Enable reminder").performClick()
-        composeTestRule.onNodeWithText("Notes").performTextInput("Apporter les derniers examens")
+        composeTestRule.onNodeWithText("Notes")
+            .assertExists()
+            .assertIsDisplayed()
+            .performTextInput("Apporter les derniers examens");
+        composeTestRule.waitForIdle();
         composeTestRule.onNodeWithText("Save").performClick()
         composeTestRule.waitForIdle()
         composeTestRule.onNodeWithText("Appointments").assertIsDisplayed()
@@ -142,11 +178,14 @@ class AppointmentUITest {
                 location = "Test Location"
             )
         }
-        
+
         composeTestRule.activity.setContent {
             HealthPocketTheme {
                 val navController = rememberNavController()
-                NavHost(navController = navController, startDestination = NavRoutes.AppointmentDetail.createRoute(testAppointmentId)) {
+                NavHost(
+                    navController = navController,
+                    startDestination = NavRoutes.AppointmentDetail.createRoute(testAppointmentId)
+                ) {
                     composable(NavRoutes.AppointmentDetail.route) {
                         AppointmentDetailScreen(
                             viewModel = hiltViewModel(),
@@ -184,7 +223,12 @@ class AppointmentUITest {
         composeTestRule.activity.setContent {
             HealthPocketTheme {
                 val navController = rememberNavController()
-                NavHost(navController = navController, startDestination = NavRoutes.AppointmentDetail.createRoute(testAppointmentIdForCompletion)) {
+                NavHost(
+                    navController = navController,
+                    startDestination = NavRoutes.AppointmentDetail.createRoute(
+                        testAppointmentIdForCompletion
+                    )
+                ) {
                     composable(NavRoutes.AppointmentDetail.route) {
                         AppointmentDetailScreen(
                             viewModel = hiltViewModel(),
@@ -212,7 +256,10 @@ class AppointmentUITest {
         composeTestRule.activity.setContent {
             HealthPocketTheme {
                 val navController = rememberNavController()
-                NavHost(navController = navController, startDestination = NavRoutes.Appointments.route) {
+                NavHost(
+                    navController = navController,
+                    startDestination = NavRoutes.Appointments.route
+                ) {
                     composable(NavRoutes.Appointments.route) {
                         AppointmentsScreen(
                             viewModel = hiltViewModel(),
@@ -220,7 +267,11 @@ class AppointmentUITest {
                                 navController.navigate(NavRoutes.AddAppointment.route)
                             },
                             onNavigateToAppointmentDetail = { appointmentId ->
-                                navController.navigate(NavRoutes.AppointmentDetail.createRoute(appointmentId))
+                                navController.navigate(
+                                    NavRoutes.AppointmentDetail.createRoute(
+                                        appointmentId
+                                    )
+                                )
                             }
                         )
                     }

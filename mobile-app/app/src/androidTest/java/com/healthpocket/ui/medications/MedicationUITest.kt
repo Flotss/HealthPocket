@@ -91,12 +91,22 @@ class MedicationUITest {
         composeTestRule.onNodeWithText("Frequency").performTextInput("1 fois par jour")
         composeTestRule.onNodeWithText("Add reminder").performClick()
         composeTestRule.waitForIdle()
+        composeTestRule.onNodeWithText("M").performClick()
         composeTestRule.waitForIdle()
+        composeTestRule.onNodeWithText("Save").performScrollTo()
         composeTestRule.onNodeWithText("Save").performClick()
         composeTestRule.waitForIdle()
+
+        composeTestRule.waitUntil(
+            condition = {
+                composeTestRule.onAllNodesWithText("Medications").fetchSemanticsNodes().size == 1
+            },
+            timeoutMillis = 10_000
+        )
+
         composeTestRule.onNodeWithText("Medications").assertIsDisplayed()
         composeTestRule.onNodeWithText("Aspirine").assertIsDisplayed()
-        composeTestRule.onNodeWithText("500mg").assertIsDisplayed()
+        composeTestRule.onNodeWithText("500mg • 1 fois par jour").assertIsDisplayed()
     }
 
     @Test

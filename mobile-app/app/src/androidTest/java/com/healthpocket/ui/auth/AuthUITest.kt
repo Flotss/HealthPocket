@@ -1,6 +1,7 @@
 package com.healthpocket.ui.auth
 
 import androidx.activity.compose.setContent
+import androidx.compose.ui.ExperimentalIndirectTouchTypeApi
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -253,7 +254,7 @@ class AuthUITest {
                             viewModel = hiltViewModel(),
                             onRegisterSuccess = {},
                             onNavigateToLogin = {
-                                navController.popBackStack()
+                                navController.navigate(NavRoutes.Login.route)
                             }
                         )
                     }
@@ -262,7 +263,11 @@ class AuthUITest {
         }
 
         composeTestRule.waitForIdle()
-        composeTestRule.onNodeWithText("Already have an account? Sign in").performClick()
+
+        composeTestRule.onNodeWithText("Already have an account? Sign in")
+            .assertExists()
+            .performClick();
+
         composeTestRule.waitForIdle()
         composeTestRule.waitForIdle()
         composeTestRule.onNodeWithText("HealthPocket", useUnmergedTree = true).assertExists()

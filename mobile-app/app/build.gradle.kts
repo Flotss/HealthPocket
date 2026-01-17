@@ -95,6 +95,7 @@ dependencies {
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
     implementation(libs.identity.jvm)
+    implementation(libs.androidx.espresso.contrib)
     ksp(libs.androidx.room.compiler)
 
     // Retrofit + OkHttp
