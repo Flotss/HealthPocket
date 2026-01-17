@@ -229,16 +229,13 @@ class ProfileUITest {
 
         composeTestRule.waitForIdle()
 
-        // Cliquer sur le bouton de déconnexion - utiliser onFirst() car il peut y avoir plusieurs nœuds
         composeTestRule.onAllNodes(hasText("Logout"))
             .onFirst()
             .performClick()
         composeTestRule.waitForIdle()
 
-        // Vérifier que la boîte de dialogue de confirmation s'affiche
-        // Utiliser useUnmergedTree pour éviter les conflits avec les nœuds parents
-        composeTestRule.onNodeWithText("Logout", useUnmergedTree = true).assertExists()
-        composeTestRule.onNodeWithText("Do you really want to logout?", useUnmergedTree = true).assertExists()
+        composeTestRule.onNodeWithTag("confirm_logout_button").assertExists()
+        composeTestRule.onNodeWithText("Do you really want to logout?").assertExists()
         composeTestRule.onNodeWithText("Cancel", useUnmergedTree = true).assertExists()
     }
 
