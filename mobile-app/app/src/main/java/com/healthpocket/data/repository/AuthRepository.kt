@@ -7,6 +7,9 @@ import com.healthpocket.data.remote.api.HealthPocketApi
 import com.healthpocket.data.remote.dto.AuthResponse
 import com.healthpocket.data.remote.dto.LoginRequest
 import com.healthpocket.data.remote.dto.RegisterRequest
+import com.healthpocket.data.remote.dto.UpdateProfileRequest
+import com.healthpocket.data.remote.dto.UserResponse
+import com.healthpocket.util.DateTimeUtils
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import javax.inject.Inject
@@ -94,28 +97,53 @@ class AuthRepository @Inject constructor(
             val response = api.getProfile()
             if (response.isSuccessful) {
                 response.body()?.let { userResponse ->
-                    val userEntity = UserEntity(
-                        id = userResponse.id,
-                        email = userResponse.email,
-                        firstName = userResponse.firstName,
-                        lastName = userResponse.lastName,
-                        birthDate = userResponse.birthDate?.let {
-                            com.healthpocket.util.DateTimeUtils.parseDateString(it)
-                        },
-                        gender = userResponse.gender,
-                        bloodType = userResponse.bloodType,
-                        allergies = userResponse.allergies.joinToString(","),
-                        emergencyContactName = userResponse.emergencyContactName,
-                        emergencyContactPhone = userResponse.emergencyContactPhone,
-                        preferredLanguage = userResponse.preferredLanguage,
-                        darkModeEnabled = userResponse.darkModeEnabled
-                    )
+                    val userEntity = userResponse.toEntity()
                     userDao.insert(userEntity)
                     userPreferences.setDarkMode(userResponse.darkModeEnabled)
                     Result.success(Unit)
                 } ?: Result.failure(Exception("Empty response"))
             } else {
                 Result.failure(Exception("Failed to fetch profile"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun updateProfile(
+        firstName: String,
+        lastName: String,
+        bloodType: String?,
+        allergies: List<String>,
+        emergencyContactName: String?,
+        emergencyContactPhone: String?
+    ): Result<UserEntity> {
+        if (!checkTokenExpiration()) {
+            return Result.failure(Exception("Token expired"))
+        }
+
+        val allergiesPayload = allergies.map { it.trim() }.filter { it.isNotEmpty() }
+
+        return try {
+            val request = UpdateProfileRequest(
+                firstName = firstName,
+                lastName = lastName,
+                bloodType = bloodType,
+                allergies = if (allergiesPayload.isEmpty()) emptyList() else allergiesPayload,
+                emergencyContactName = emergencyContactName?.takeIf { it.isNotBlank() },
+                emergencyContactPhone = emergencyContactPhone?.takeIf { it.isNotBlank() }
+            )
+
+            val response = api.updateProfile(request)
+            if (response.isSuccessful) {
+                response.body()?.let { userResponse ->
+                    val userEntity = userResponse.toEntity()
+                    userDao.insert(userEntity)
+                    userPreferences.setDarkMode(userEntity.darkModeEnabled)
+                    Result.success(userEntity)
+                } ?: Result.failure(Exception("Empty response"))
+            } else {
+                Result.failure(Exception(response.errorBody()?.string() ?: "Profile update failed"))
             }
         } catch (e: Exception) {
             Result.failure(e)
@@ -163,23 +191,24 @@ class AuthRepository @Inject constructor(
         )
 
         // Save user to local DB
-        val userEntity = UserEntity(
-            id = authResponse.user.id,
-            email = authResponse.user.email,
-            firstName = authResponse.user.firstName,
-            lastName = authResponse.user.lastName,
-            birthDate = authResponse.user.birthDate?.let {
-                com.healthpocket.util.DateTimeUtils.parseDateString(it)
-            },
-            gender = authResponse.user.gender,
-            bloodType = authResponse.user.bloodType,
-            allergies = authResponse.user.allergies.joinToString(","),
-            emergencyContactName = authResponse.user.emergencyContactName,
-            emergencyContactPhone = authResponse.user.emergencyContactPhone,
-            preferredLanguage = authResponse.user.preferredLanguage,
-            darkModeEnabled = authResponse.user.darkModeEnabled
-        )
+        val userEntity = authResponse.user.toEntity()
         userDao.insert(userEntity)
     }
-}
 
+    private fun UserResponse.toEntity(): UserEntity {
+        return UserEntity(
+            id = id,
+            email = email,
+            firstName = firstName,
+            lastName = lastName,
+            birthDate = birthDate?.let { DateTimeUtils.parseDateString(it) },
+            gender = gender,
+            bloodType = bloodType,
+            allergies = allergies.joinToString(","),
+            emergencyContactName = emergencyContactName,
+            emergencyContactPhone = emergencyContactPhone,
+            preferredLanguage = preferredLanguage,
+            darkModeEnabled = darkModeEnabled
+        )
+    }
+}
