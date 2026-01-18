@@ -161,6 +161,30 @@
     <string name="vitals_history">Vitals history</string>
     <string name="view_history">View history</string>
     <string name="no_vital_history">No vital measurements recorded yet.</string>
+    <string name="profile_edit_profile">Edit profile</string>
+    <string name="profile_editing_label">Editing profile…</string>
+    <string name="profile_edit_details">Update your personal information</string>
+    <string name="profile_allergies_placeholder">Peanuts, pollen</string>
+    <string name="profile_emergency_contact_name">Emergency contact name</string>
+    <string name="profile_emergency_contact_phone">Emergency contact phone</string>
+    <string name="profile_quick_stats">Quick stats</string>
+    <string name="profile_stat_medications">Medications tracked</string>
+    <string name="profile_stat_appointments">Appointments scheduled</string>
+    <string name="profile_stat_journal_streak">Journal streak</string>
+    <string name="profile_stat_vitals">Vital entries</string>
+    <plurals name="profile_days_count">
+        <item quantity="one">%d day</item>
+        <item quantity="other">%d days</item>
+    </plurals>
+    <string name="profile_no_blood_type">Not provided</string>
+    <string name="profile_no_allergies">No allergies recorded</string>
+    <string name="profile_add_emergency_contact">Add an emergency contact from edit mode</string>
+    <string name="profile_call_contact">Call</string>
+    <string name="profile_first_name_required">First name is required</string>
+    <string name="profile_last_name_required">Last name is required</string>
+    <string name="profile_invalid_phone">Enter a valid phone number</string>
+    <string name="profile_updated">Profile updated</string>
+    <string name="profile_update_failed">Could not update your profile</string>
 
     <!-- Settings -->
     <string name="settings">Settings</string>

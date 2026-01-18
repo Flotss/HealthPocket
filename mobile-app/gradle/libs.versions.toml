@@ -25,6 +25,7 @@ mockitoVersion = "5.14.2"
 mockitoKotlinVersion = "5.4.0"
 identityJvm = "202411.1"
 espressoContrib = "3.7.0"
+foundation = "1.10.1"
 
 [libraries]
 # Core Android
@@ -99,6 +100,7 @@ hilt-android-compiler = { group = "com.google.dagger", name = "hilt-android-comp
 androidx-navigation-testing = { group = "androidx.navigation", name = "navigation-testing", version.ref = "navigationCompose" }
 identity-jvm = { group = "com.android.identity", name = "identity-jvm", version.ref = "identityJvm" }
 androidx-espresso-contrib = { group = "androidx.test.espresso", name = "espresso-contrib", version.ref = "espressoContrib" }
+androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation", version.ref = "foundation" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

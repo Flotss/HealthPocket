@@ -116,6 +116,12 @@ fun SettingsScreen(
                         currentLanguage = language,
                         onClick = { viewModel.setLanguage("es") }
                     )
+                    LanguageOption(
+                        language = "hr",
+                        label = "Hrvatski",
+                        currentLanguage = language,
+                        onClick = { viewModel.setLanguage("hr") }
+                    )
                 }
             }
 
