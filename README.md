@@ -1,76 +1,79 @@
 # 🩺 HealthPocket
 
-> Application mobile de santé personnelle - Centralisez et suivez vos informations de santé essentielles
+> Personal health mobile application - Centralize and track your essential health information
 
-[![Kotlin](https://img.shields.io/badge/Kotlin-1.9.0-purple.svg)](https://kotlinlang.org/)
+[![Kotlin](https://img.shields.io/badge/Kotlin-1.9.21-purple.svg)](https://kotlinlang.org/)
 [![Jetpack Compose](https://img.shields.io/badge/Jetpack%20Compose-1.5.0-green.svg)](https://developer.android.com/jetpack/compose)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.2.0-brightgreen.svg)](https://spring.io/projects/spring-boot)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-blue.svg)](https://www.postgresql.org/)
+[![Test Coverage](https://img.shields.io/badge/Test%20Coverage-40%2B%20tests-success.svg)](/)
 
 ## 📋 Description
 
-**HealthPocket** est une application mobile de santé simple et utile, permettant de centraliser et suivre des informations de santé essentielles au quotidien. L'application fonctionne en mode **offline-first** avec synchronisation automatique vers un backend.
+**HealthPocket** is a simple and useful mobile health application that allows you to centralize and track essential health information in your daily life. The application works in **offline-first** mode with automatic synchronization to a backend server.
 
-### Fonctionnalités principales
+### Key Features
 
-- 👤 **Profil utilisateur** - Gérez vos informations personnelles (allergies, groupe sanguin)
-- 💊 **Suivi de médicaments** - Ajoutez vos traitements avec rappels et historique
-- 📅 **Agenda santé** - Planifiez vos rendez-vous médicaux
-- 📝 **Journal santé** - Notez vos symptômes et ressentis quotidiens
-- 📊 **Paramètres vitaux** - Suivez poids, tension, glycémie avec graphiques
-- 🌐 **Multilingue** - Français, Anglais, Espagnol
-- 🌙 **Mode sombre** - Interface adaptée jour/nuit
+- 👤 **User Profile** - Manage your personal information (allergies, blood type)
+- 💊 **Medication Tracking** - Add your treatments with reminders and history
+- 📅 **Health Calendar** - Schedule your medical appointments
+- 📝 **Health Journal** - Log your symptoms and daily feelings
+- 📊 **Vital Metrics** - Track weight, blood pressure, glucose with charts
+- 🌐 **Multilingual** - English, French, Spanish, Croatian
+- 🌙 **Dark Mode** - Day/night adaptive interface
 
-## 🏗️ Architecture du Monorepo
+## 🏗️ Monorepo Architecture
 
 ```
 healthpocket/
-├── mobile-app/              # Application Android (Kotlin + Jetpack Compose)
+├── mobile-app/              # Android Application (Kotlin + Jetpack Compose)
 │   ├── app/
 │   │   ├── src/main/
 │   │   │   ├── java/com/healthpocket/
-│   │   │   │   ├── data/           # Couche données (Room, Retrofit, Repository)
-│   │   │   │   │   ├── local/      # Base de données locale (Room)
-│   │   │   │   │   ├── remote/     # API REST (Retrofit)
+│   │   │   │   ├── data/           # Data layer (Room, Retrofit, Repository)
+│   │   │   │   │   ├── local/      # Local database (Room)
+│   │   │   │   │   ├── remote/     # REST API (Retrofit)
 │   │   │   │   │   ├── repository/ # Repositories (offline-first)
 │   │   │   │   │   └── preferences/# DataStore preferences
-│   │   │   │   ├── di/             # Injection de dépendances (Hilt)
-│   │   │   │   └── ui/             # Couche présentation (Screens, ViewModels)
-│   │   │   │       ├── auth/       # Écrans d'authentification
-│   │   │   │       ├── home/       # Dashboard principal
-│   │   │   │       ├── medications/# Gestion des médicaments
-│   │   │   │       ├── appointments/# Gestion des RDV
-│   │   │   │       ├── journal/    # Journal de santé
-│   │   │   │       ├── profile/    # Profil utilisateur
-│   │   │   │       ├── settings/   # Paramètres
-│   │   │   │       ├── theme/      # Thème Material 3
-│   │   │   │       └── navigation/ # Navigation Compose
-│   │   │   └── res/                # Ressources (strings, themes)
+│   │   │   │   ├── di/             # Dependency injection (Hilt)
+│   │   │   │   └── ui/             # Presentation layer (Screens, ViewModels)
+│   │   │   │       ├── auth/       # Authentication screens
+│   │   │   │       ├── home/       # Main dashboard
+│   │   │   │       ├── medications/# Medication management
+│   │   │   │       ├── appointments/# Appointments management
+│   │   │   │       ├── journal/    # Health journal
+│   │   │   │       ├── profile/    # User profile
+│   │   │   │       ├── settings/   # Settings
+│   │   │   │       ├── theme/      # Material 3 theme
+│   │   │   │       └── navigation/ # Compose navigation
+│   │   │   └── res/                # Resources (strings, themes)
+│   │   ├── src/test/               # Unit tests (ViewModels, Repositories, Utils)
+│   │   ├── src/androidTest/        # UI tests (Compose UI tests)
 │   │   └── build.gradle.kts
 │   ├── build.gradle.kts
 │   └── settings.gradle.kts
 │
-├── backend-api/             # API REST (Spring Boot + Kotlin)
+├── backend-api/             # REST API (Spring Boot + Kotlin)
 │   ├── src/main/kotlin/
 │   │   └── com/healthpocket/api/
-│   │       ├── controller/         # Endpoints REST
-│   │       ├── service/            # Logique métier
-│   │       ├── repository/         # Accès données (JPA)
-│   │       ├── model/              # Entités JPA
+│   │       ├── controller/         # REST endpoints
+│   │       ├── service/            # Business logic
+│   │       ├── repository/         # Data access (JPA)
+│   │       ├── model/              # JPA entities
 │   │       ├── dto/                # Data Transfer Objects
 │   │       ├── security/           # JWT Authentication
 │   │       ├── config/             # Configuration (OpenAPI)
-│   │       └── exception/          # Gestion des erreurs
-│   ├── src/test/                   # Tests unitaires
+│   │       └── exception/          # Error handling
+│   ├── src/test/                   # Unit & integration tests
 │   └── build.gradle.kts
 │
 ├── database/
-│   └── schema.sql           # Script SQL PostgreSQL
+│   └── schema.sql           # PostgreSQL SQL script
 │
 └── README.md
 ```
 
-### Pattern MVVM
+### MVVM Pattern
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -95,126 +98,133 @@ healthpocket/
 
 ### Mobile (Android)
 
-| Technologie | Version | Usage |
-|-------------|---------|-------|
-| Kotlin | 1.9.21 | Langage principal |
-| Jetpack Compose | 1.5.0 | UI déclarative |
-| Room | 2.6.1 | Base de données locale |
-| Retrofit | 2.9.0 | Client HTTP |
-| Hilt | 2.50 | Injection de dépendances |
-| Navigation Compose | 2.7.6 | Navigation |
-| Material 3 | 1.2.0 | Design System |
-| Coroutines | 1.7.3 | Programmation asynchrone |
-| DataStore | 1.0.0 | Préférences utilisateur |
+| Technology         | Version | Usage                    |
+| ------------------ | ------- | ------------------------ |
+| Kotlin             | 1.9.21  | Main language            |
+| Jetpack Compose    | 1.5.0   | Declarative UI           |
+| Room               | 2.6.1   | Local database           |
+| Retrofit           | 2.9.0   | HTTP client              |
+| Hilt               | 2.50    | Dependency injection     |
+| Navigation Compose | 2.7.6   | Navigation               |
+| Material 3         | 1.2.0   | Design System            |
+| Coroutines         | 1.7.3   | Asynchronous programming |
+| DataStore          | 1.0.0   | User preferences         |
+| JUnit              | 4.13.2  | Unit testing             |
+| Mockito            | 5.7.0   | Mocking framework        |
+| Espresso           | 3.6.1   | UI testing               |
+| Turbine            | 1.0.0   | Flow testing             |
 
 ### Backend
 
-| Technologie | Version | Usage |
-|-------------|---------|-------|
-| Spring Boot | 3.2.0 | Framework backend |
-| Kotlin | 1.9.21 | Langage principal |
-| Spring Data JPA | 3.2.0 | ORM |
-| PostgreSQL | 16 | Base de données |
-| Spring Security | 6.2.0 | Authentification JWT |
-| Springdoc OpenAPI | 2.3.0 | Documentation API |
+| Technology        | Version | Usage                        |
+| ----------------- | ------- | ---------------------------- |
+| Spring Boot       | 3.2.0   | Backend framework            |
+| Kotlin            | 1.9.21  | Main language                |
+| Spring Data JPA   | 3.2.0   | ORM                          |
+| PostgreSQL        | 16      | Database                     |
+| Spring Security   | 6.2.0   | JWT Authentication           |
+| Springdoc OpenAPI | 2.3.0   | API documentation            |
+| MockK             | 1.13.8  | Kotlin mocking library       |
+| JUnit 5           | 5.10.1  | Testing framework            |
+| H2 Database       | 2.2.224 | In-memory database for tests |
 
-## 🚀 Installation et Démarrage
+## 🚀 Installation and Setup
 
-### Prérequis
+### Prerequisites
 
 - **Java** 17+
 - **Android Studio** Hedgehog (2023.1.1)+
-- **PostgreSQL** 16+ ou compte [Neon](https://neon.tech)
+- **PostgreSQL** 16+ or [Neon](https://neon.tech) account
 - **Gradle** 8.0+
 
-### 1. Cloner le projet
+### 1. Clone the Project
 
 ```bash
 git clone https://github.com/your-username/healthpocket.git
 cd healthpocket
 ```
 
-### 2. Configuration de la base de données
+### 2. Database Configuration
 
-#### Option A : PostgreSQL local
+#### Option A: Local PostgreSQL
 
 ```bash
-# Créer la base de données
+# Create the database
 createdb healthpocket
 
-# Exécuter le script de création
+# Run the creation script
 psql -d healthpocket -f database/schema.sql
 ```
 
-#### Option B : Neon (Cloud)
+#### Option B: Neon (Cloud)
 
-1. Créez un projet sur [Neon Console](https://console.neon.tech)
-2. Copiez la connection string
-3. Exécutez le script `database/schema.sql` via l'interface SQL
+1. Create a project on [Neon Console](https://console.neon.tech)
+2. Copy the connection string
+3. Execute the `database/schema.sql` script via the SQL interface
 
-### 3. Lancer le Backend
+### 3. Start the Backend
 
 ```bash
 cd backend-api
 
-# Configurer les variables d'environnement
+# Configure environment variables
 export DATABASE_URL=jdbc:postgresql://localhost:5432/healthpocket
 export DATABASE_USERNAME=postgres
 export DATABASE_PASSWORD=your_password
 export JWT_SECRET=your-secret-key-min-32-characters-long
 
-# Lancer l'application
+# Start the application
 ./gradlew bootRun
 ```
 
-L'API sera disponible sur `http://localhost:8080`
+The API will be available at `http://localhost:8080`
 
-Documentation Swagger : `http://localhost:8080/swagger-ui.html`
+Swagger documentation: `http://localhost:8080/swagger-ui.html`
 
-### 4. Lancer l'Application Mobile
+### 4. Start the Mobile App
 
 ```bash
 cd mobile-app
 
-# Ouvrir avec Android Studio
-# File > Open > sélectionner le dossier mobile-app
+# Open with Android Studio
+# File > Open > select the mobile-app folder
 
-# Ou en ligne de commande
+# Or via command line
 ./gradlew installDebug
 ```
 
-#### Configuration de l'API
+#### API Configuration
 
-Modifier `mobile-app/app/src/main/java/com/healthpocket/data/remote/ApiConfig.kt` :
+Edit `mobile-app/app/src/main/java/com/healthpocket/data/remote/ApiConfig.kt`:
 
 ```kotlin
 object ApiConfig {
-    const val BASE_URL = "http://10.0.2.2:8080/" // Émulateur Android
-    // const val BASE_URL = "http://YOUR_IP:8080/" // Appareil physique
+    const val BASE_URL = "http://10.0.2.2:8080/" // Android Emulator
+    // const val BASE_URL = "http://YOUR_IP:8080/" // Physical device
 }
 ```
 
-## 🔄 Fonctionnement Offline/Sync
+## 🔄 Offline/Sync Operation
 
-### Stratégie Offline-First
+### Offline-First Strategy
 
-L'application utilise le pattern **offline-first** :
+The application uses the **offline-first** pattern:
 
-1. **Toutes les données sont stockées localement** dans Room Database
-2. **Les modifications sont marquées** avec un flag `syncStatus` (`PENDING`, `SYNCED`, `ERROR`)
-3. **La synchronisation est tentée** automatiquement lors de la création/modification
-4. **En cas d'échec réseau**, les données restent en local avec statut `PENDING`
-5. **La synchronisation complète** peut être déclenchée via l'endpoint `/api/sync`
+1. **All data is stored locally** in Room Database
+2. **Modifications are marked** with a `syncStatus` flag (`PENDING`, `SYNCED`, `ERROR`)
+3. **Synchronization is attempted** automatically on creation/modification
+4. **In case of network failure**, data remains local with `PENDING` status
+5. **Full synchronization** can be triggered via the `/api/sync` endpoint
 
-### États de synchronisation
+### Synchronization States
 
-| État | Description |
-|------|-------------|
-| `SYNCED` | Données synchronisées avec le serveur |
-| `PENDING` | Modifications locales en attente de sync |
-| `ERROR` | Erreur lors de la dernière tentative |
+| State     | Description                       |
+| --------- | --------------------------------- |
+| `SYNCED`  | Data synchronized with server     |
+| `PENDING` | Local modifications awaiting sync |
+| `ERROR`   | Error during last sync attempt    |
 
-### Flux de synchronisation
+### Synchronization Flow
 
 ```
 ┌──────────────┐    Modification    ┌──────────────┐
@@ -240,40 +250,40 @@ L'application utilise le pattern **offline-first** :
                    └──────────┘     └──────────┘     └──────────┘
 ```
 
-## 📱 Écrans de l'application
+## 📱 Application Screens
 
-| Écran | Description |
-|-------|-------------|
-| **Login/Register** | Authentification utilisateur |
-| **Home (Dashboard)** | Vue d'ensemble : médicaments du jour, prochains RDV, journal |
-| **Medications** | Liste et gestion des médicaments |
-| **Appointments** | Calendrier des rendez-vous médicaux |
-| **Journal** | Suivi quotidien de l'humeur et des symptômes |
-| **Profile** | Informations personnelles et de santé |
-| **Settings** | Mode sombre, langue, préférences |
+| Screen               | Description                                                   |
+| -------------------- | ------------------------------------------------------------- |
+| **Login/Register**   | User authentication                                           |
+| **Home (Dashboard)** | Overview: today's medications, upcoming appointments, journal |
+| **Medications**      | Medication list and management                                |
+| **Appointments**     | Medical appointments calendar                                 |
+| **Journal**          | Daily mood and symptom tracking                               |
+| **Profile**          | Personal and health information                               |
+| **Settings**         | Dark mode, language, preferences                              |
 
-## 📚 Documentation API
+## 📚 API Documentation
 
-### Endpoints principaux
+### Main Endpoints
 
-| Méthode | Endpoint | Description |
-|---------|----------|-------------|
-| POST | `/api/auth/register` | Inscription |
-| POST | `/api/auth/login` | Connexion |
-| POST | `/api/auth/refresh` | Rafraîchir le token |
-| GET | `/api/users/profile` | Profil utilisateur |
-| PUT | `/api/users/profile` | Mise à jour profil |
-| GET | `/api/medications` | Liste des médicaments |
-| POST | `/api/medications` | Ajouter un médicament |
-| GET | `/api/appointments` | Liste des RDV |
-| POST | `/api/appointments` | Ajouter un RDV |
-| GET | `/api/health-logs` | Journal de santé |
-| POST | `/api/health-logs` | Nouvelle entrée |
-| GET | `/api/vitals` | Paramètres vitaux |
-| POST | `/api/vitals` | Ajouter une mesure |
-| POST | `/api/sync` | Synchronisation complète |
+| Method | Endpoint             | Description          |
+| ------ | -------------------- | -------------------- |
+| POST   | `/api/auth/register` | User registration    |
+| POST   | `/api/auth/login`    | User login           |
+| POST   | `/api/auth/refresh`  | Refresh token        |
+| GET    | `/api/users/profile` | User profile         |
+| PUT    | `/api/users/profile` | Update profile       |
+| GET    | `/api/medications`   | List medications     |
+| POST   | `/api/medications`   | Add medication       |
+| GET    | `/api/appointments`  | List appointments    |
+| POST   | `/api/appointments`  | Add appointment      |
+| GET    | `/api/health-logs`   | Health journal       |
+| POST   | `/api/health-logs`   | New entry            |
+| GET    | `/api/vitals`        | Vital metrics        |
+| POST   | `/api/vitals`        | Add measurement      |
+| POST   | `/api/sync`          | Full synchronization |
 
-### Exemple de requête
+### Example Request
 
 ```bash
 # Login
@@ -281,14 +291,14 @@ curl -X POST http://localhost:8080/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{"email": "user@example.com", "password": "password123"}'
 
-# Créer un médicament (avec token)
+# Create a medication (with token)
 curl -X POST http://localhost:8080/api/medications \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer YOUR_TOKEN" \
   -d '{
-    "name": "Doliprane",
-    "dosage": "1000mg",
-    "frequency": "3 fois par jour",
+    "name": "Ibuprofen",
+    "dosage": "400mg",
+    "frequency": "3 times a day",
     "scheduleTimes": ["08:00", "14:00", "20:00"],
     "startDate": "2024-01-15"
   }'
@@ -296,53 +306,157 @@ curl -X POST http://localhost:8080/api/medications \
 
 ## 🧪 Tests
 
-### Tests Mobile
+### Test Coverage
 
-```bash
-cd mobile-app
+HealthPocket includes a comprehensive testing suite with over **40 test files** covering:
 
-# Tests unitaires
-./gradlew test
+- **Unit Tests**: ViewModels, Repositories, Services, Utilities
+- **Integration Tests**: API Controllers, Database operations
+- **UI Tests**: Compose UI screens and navigation
 
-# Tests instrumentés
-./gradlew connectedAndroidTest
-```
+### Backend Tests
 
-### Tests Backend
+#### Service Layer Tests
+
+- `AuthServiceTest` - Authentication logic
+- `UserServiceTest` - User management
+- `MedicationServiceTest` - Medication operations
+- `AppointmentServiceTest` - Appointment management
+- `HealthLogServiceTest` - Health journal
+- `VitalMetricServiceTest` - Vital metrics tracking
+- `SyncServiceTest` - Data synchronization
+
+#### Controller Tests
+
+- `AppointmentControllerTest` - REST endpoints
+- `MedicationControllerTest` - API integration
+- `VitalMetricControllerTest` - Metrics API
+
+#### Security Tests
+
+- `JwtTokenProviderTest` - JWT token generation and validation
+
+#### Run Backend Tests
 
 ```bash
 cd backend-api
 
-# Tous les tests
+# Run all tests
 ./gradlew test
 
-# Avec couverture
+# Run tests with coverage report
 ./gradlew test jacocoTestReport
+
+# Run specific test class
+./gradlew test --tests "com.healthpocket.api.service.AuthServiceTest"
 ```
 
-## 🌍 Internationalisation
+### Mobile Tests
 
-L'application supporte :
-- 🇫🇷 Français (par défaut)
-- 🇬🇧 English
-- 🇪🇸 Español
+#### Unit Tests
 
-Les fichiers de traduction sont dans :
-- `mobile-app/app/src/main/res/values/strings.xml` (FR)
-- `mobile-app/app/src/main/res/values-en/strings.xml` (EN)
-- `mobile-app/app/src/main/res/values-es/strings.xml` (ES)
+**ViewModels**:
 
-## 🔐 Sécurité
+- `AuthViewModelTest` - Authentication flows
+- `MedicationsViewModelTest` - Medication list
+- `AddMedicationViewModelTest` - Add medication
+- `EditMedicationViewModelTest` - Edit medication
+- `MedicationDetailViewModelTest` - Medication details
+- `AppointmentsViewModelTest` - Appointment list
+- `AddAppointmentViewModelTest` - Add appointment
+- `AppointmentDetailViewModelTest` - Appointment details
+- `JournalViewModelTest` - Health journal
+- `SettingsViewModelTest` - Settings management
 
-- **Authentification JWT** avec access token et refresh token
-- **Mots de passe hashés** avec BCrypt
-- **HTTPS** recommandé en production
-- **Validation** des entrées côté serveur
-- **CORS** configuré pour l'API
+**Repositories**:
 
-## 📦 Structure des données
+- `MedicationRepositoryTest` - Offline-first data operations
+- `AppointmentRepositoryTest` - Appointment data layer
+- `HealthLogRepositoryTest` - Journal data layer
+- `VitalMetricRepositoryTest` - Metrics data layer
 
-### Entités principales
+**Utilities**:
+
+- `DateTimeUtilsTest` - Date/time formatting
+- `ColorUtilsTest` - Color parsing
+- `MetricUtilsTest` - Metric conversions
+- `ScheduleTimeUtilsTest` - Schedule parsing
+
+#### UI Tests (Espresso + Compose)
+
+- `AuthUITest` - Login/Registration screens
+- `HomeUITest` - Dashboard
+- `MedicationUITest` - Medication screens
+- `AppointmentUITest` - Appointment screens
+- `JournalUITest` - Journal screens
+- `ProfileUITest` - Profile screen
+- `SettingsUITest` - Settings screen
+- `VitalsUITest` - Vital metrics screen
+- `NavigationTest` - Navigation flows
+
+#### Run Mobile Tests
+
+```bash
+cd mobile-app
+
+# Run unit tests
+./gradlew test
+
+# Run unit tests for a specific flavor
+./gradlew testDebugUnitTest
+
+# Run instrumented tests (requires emulator/device)
+./gradlew connectedAndroidTest
+
+# Run specific test class
+./gradlew test --tests "com.healthpocket.ui.medications.MedicationsViewModelTest"
+```
+
+### Test Technologies
+
+#### Backend
+
+- **JUnit 5** - Test framework
+- **MockK** - Kotlin mocking library
+- **Spring Boot Test** - Integration testing
+- **H2 Database** - In-memory database for tests
+
+#### Mobile
+
+- **JUnit 4** - Test framework
+- **Mockito** - Mocking framework
+- **Turbine** - Flow testing library
+- **Espresso** - UI testing framework
+- **Compose Test** - Jetpack Compose testing
+- **Hilt Test** - Dependency injection for tests
+
+## 🌍 Internationalization
+
+The application supports:
+
+- �🇧 English (default)
+- 🇫🇷 French
+- 🇪🇸 Spanish
+- 🇭🇷 Croatian
+
+Translation files are located in:
+
+- `mobile-app/app/src/main/res/values/strings.xml` (EN - default)
+- `mobile-app/app/src/main/res/values-fr/strings.xml` (FR)
+- `mobile-app/app/src/main/res/values-es-rES/strings.xml` (ES)
+- `mobile-app/app/src/main/res/values-hr/strings.xml` (HR)
+
+## 🔐 Security
+
+- **JWT Authentication** with access token and refresh token
+- **Password hashing** with BCrypt
+- **HTTPS** recommended in production
+- **Input validation** on server side
+- **CORS** configured for API
+
+## 📦 Data Structure
+
+### Main Entities
 
 ```
 User
@@ -379,26 +493,36 @@ VitalMetric
 └── measured_at, notes
 ```
 
-## 🚧 Améliorations futures
+## 🚧 Future Improvements
 
-- [ ] Graphiques de suivi des paramètres vitaux
-- [ ] Export PDF des données de santé
-- [ ] Partage avec un professionnel de santé
-- [ ] Widgets Android pour accès rapide
-- [ ] Notifications push via Firebase
-- [ ] Authentification biométrique
+- [ ] Vital metrics tracking charts
+- [ ] PDF export of health data
+- [ ] Sharing with healthcare professionals
+- [ ] Android widgets for quick access
+- [ ] Push notifications via Firebase
+- [ ] Biometric authentication
 
-## 📄 Licence
+## 📝 License
 
-Ce projet est sous licence MIT. Voir le fichier [LICENSE](LICENSE) pour plus de détails.
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
 
-## 👥 Auteurs
+## 👥 Authors
 
-- Étudiant Ingénieur - Projet Académique
+- Engineering Student - Academic Project
 
-## 🙏 Remerciements
+## 🙏 Acknowledgments
 
 - [Material Design 3](https://m3.material.io/)
 - [Android Developers](https://developer.android.com/)
 - [Spring Boot](https://spring.io/projects/spring-boot)
 - [Neon Database](https://neon.tech/)
+
+---
+
+<div align="center">
+
+Made with ❤️ for better health management
+
+**HealthPocket** - Your health, in your pocket
+
+</div>
